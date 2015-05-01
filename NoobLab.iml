@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="web" name="Web">
+      <configuration>
+        <descriptors>
+          <deploymentDescriptor name="context.xml" url="file://$MODULE_DIR$/src/main/webapp/META-INF/context.xml" />
+          <deploymentDescriptor name="glassfish-web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/glassfish-web.xml" />
+          <deploymentDescriptor name="sun-web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/sun-web.xml" />
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/web.xml" />
+        </descriptors>
+        <webroots>
+          <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
+        </webroots>
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
+        </sourceRoots>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: taglibs:standard:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: javax:javaee-web-api:6.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.2" level="project" />
+    <orderEntry type="library" name="Maven: javax.mail:mail:1.4.5" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: commons-fileupload:commons-fileupload:1.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.0" level="project" />
+    <orderEntry type="library" name="Maven: rhino:js:1.7R2" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.7" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.ovea:ovea-crypto:1.5.ga" level="project" />
+  </component>
+</module>
+

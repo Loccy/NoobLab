@@ -1,0 +1,81 @@
+/* 
+    Document   : scoretable
+    Created on : Oct 1, 2012, 1:36:24 PM
+    Author     : paulneve
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+table.medal th:first-child {
+    text-align : left;
+}
+
+table.medal {
+    border-collapse: collapse;
+    border : 1px solid black;  
+    margin-left: auto;
+    margin-right : auto;
+}
+
+h1 {
+    font-family : Verdana, sans-serif;
+    font-size : 1.2em;
+    text-align : center;
+}
+
+table.medal th, table.medal td {
+    padding : 3px;
+    border : 1px solid black;
+    width : 1px;
+    font-family : Verdana, sans-serif;
+    font-size : 0.8em;
+}
+
+table.medal th:first-child, table.medal td:first-child {    
+    min-width : 200px;
+}
+
+table.medal td.score {
+    font-weight : bold;
+    font-size : 1.5em;
+}
+
+table.medal td.score {
+    text-align : center;
+}
+
+table.medal tr:last-child td:first-child {
+    text-align : right;
+}
+
+table.highscore th:first-child {
+    text-align : left;
+}
+
+table.highscore {
+    border-collapse: collapse;
+    border : 1px solid black;  
+    margin-left: auto;
+    margin-right : auto;
+}
+
+table.highscore th, table.highscore td {
+    padding : 10px;
+    border : 1px solid black;
+    width : 1px;
+    font-family : Verdana, sans-serif;
+    font-size : 0.8em;
+}
+
+table.highscore th {
+    vertical-align: bottom;
+}
+
+table.highscore td.score {
+    font-weight : bold;
+    font-size : 1.5em;
+}
+
+table.highscore td.score {
+    text-align : center;
+}
