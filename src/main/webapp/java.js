@@ -155,10 +155,9 @@ public class Code
 
 */}).toString().match(/[^]*\/\*([^]*)\*\/\}$/)[1];
 
-    var bobbifiedCode = getTabBundleCode(true)[0].join("CAPTAINCLIMAX").replace(/\n/g,"FUCKTHEPANTOMINE").replace(/"/g,"BASEBALLCAP");
+    var bobbifiedCode = getTabBundleCode(true)[0].join("CAPTAINCLIMAX").replace(/\n/g,"FUCKTHEPANTOMINE").replace(/"/g,"BASEBALLCAP").replace(/\r/g,"");
     codeIncludesClass = codeIncludesClass.replace(/SARRIESBOB/,bobbifiedCode);
     codeFiles.push(codeIncludesClass);
-
     
     var noOfFiles = codeFiles.length;
     var filesBack = 0;

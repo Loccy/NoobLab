@@ -36,7 +36,7 @@ public class LogEmotion extends HttpServlet {
 
         // get parameters
         String username = (String)request.getSession().getAttribute("username");
-        if (username == null) return;
+        if (username == null || username.equals("guest")) return;
 
         //String date = request.getParameter("datetime");
         String DATE_FORMAT = "HH:mm:ss yyyy/MM/dd";

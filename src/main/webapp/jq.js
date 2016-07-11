@@ -144,7 +144,8 @@ function encryptAndSubmitLogin()
     var charKey = $($("#hash").val().split(""));
     for (var i = 0; i < 4; i++)
     {
-        numKey.push(parseInt(charKey[i],16));
+        //numKey.push(parseInt(charKey[i],16));
+        numKey.push(charKey[i].charCodeAt());
     }
     
     var buffer = ovea.crypto.ascii.toInts(username);

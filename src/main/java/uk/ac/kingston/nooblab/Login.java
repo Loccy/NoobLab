@@ -45,7 +45,8 @@ public class Login extends HttpServlet {
         int[] key = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            key[i] = Integer.parseInt(sessId.charAt(i)+"",16);
+            key[i] = sessId.charAt(i);
+            //key[i] = Integer.parseInt(sessId.charAt(i)+"",16);
         }
         
         IntBuffer keyIB = IntBuffer.wrap(key);

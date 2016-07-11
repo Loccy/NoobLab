@@ -502,8 +502,63 @@ function updateCarolProgramBar(direction)
     $(currentCarol).find(".programbar").animate({"scrollTop":  $(currentCarol).find(".programbar")[0].scrollHeight}, "slow");
 }
 
+function maxMinCodeWeb(outputheight,force)
+{
+	var editorpane = $("#editor-wrapper");
+	var outputpane = $("#output-outer");
+	var outputtop = Math.round(parseFloat($("#toolbar").height()));
+	if (!editorpane.hasClass("maxed"))
+	{
+		editorpane.css("left","0px");
+		editorpane.css("width","50%");
+		editorpane.css("bottom","0px");
+		outputpane.css("position","fixed");
+		outputpane.css("top",outputtop+"px");
+		outputpane.css("height","calc(100% - "+outputtop+"px)");
+		outputpane.css("width","50%");
+		$("div#toolbar").css("width","100%");
+		 $("div#logoutitem").hide();
+	        $("div#navbar").hide();
+        	$("div#logoutitem").hide();
+        	$("body").css("overflow","hidden");
+        	$("span.maximisebutton").html("&#8744;");
+		resize();
+		editor.refresh();
+		editorpane.addClass("maxed");
+	}
+	else
+	{
+	       editorpane.css("left","");
+                editorpane.css("width","");
+                editorpane.css("bottom","");
+                outputpane.css("position","");
+                outputpane.css("top","");
+                outputpane.css("height","");
+                outputpane.css("width","");
+                $("div#toolbar").css("width","");
+                 $("div#logoutitem").show();
+                $("div#navbar").show();
+                $("div#logoutitem").show();
+                $("body").css("overflow","");
+                $("span.maximisebutton").html("&#8743;");
+                resize();
+                editor.refresh();
+		editorpane.removeClass("maxed");
+
+	}
+}
+
 function maxMinCode(outputheight,force)
 {    
+     if ($("div.parameter#language").text().trim() == "fullweb")
+     {
+        maxMinCodeWeb(outputheight,force);
+        return;
+     }
+
+    // otherwise....
+
+
     if (outputheight == undefined) outputheight = "120px";
     var el = $("#editor-wrapper");
     // maximise
@@ -2954,6 +3009,7 @@ function addNewTab(auto)
 
 function cheatSource(code)
 {
+    code = code.trim();
     var lev = cheatSourceLev(code);
     if (lev[0] > 2 && lev[1] != 0) return lev[1];
     return false;
@@ -2961,6 +3017,7 @@ function cheatSource(code)
 
 function cheatSourceLev(code)
 {
+        code = code.trim();
 	// look for any whitespace in the first line
 	var res = code.match(/(\s*)\n/);
 	if (res != null) res = res[1];

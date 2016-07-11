@@ -55,7 +55,11 @@
                         <c:set var="codestart" value="${fn:replace(codestart,'***CODE***$$','<br/>')}"></c:set>
                         <c:set var="codestart" value="${fn:replace(codestart,'$$','<br/>')}"></c:set>  
                         <c:set var="codestart" value="${fn:replace(codestart,'Filename: Tab 1<br/><br/>','')}"></c:set>  
-                        <pre>${codestart}</pre>                        
+                        <c:set var="codestart" value="${fn:replace(codestart,'>','&gt;')}"></c:set>
+			<c:set var="codestart" value="${fn:replace(codestart,'<','&lt;')}"></c:set>
+			<c:set var="codestart" value="${fn:replace(codestart,'&lt;br/&gt;','<br/>')}"></c:set>
+			<c:set var="codestart" value="${fn:replace(codestart,'&lt;hr/&gt;','<br/>')}"></c:set>
+			<pre>${codestart}</pre>                        
                     </td>
                 </tr>
             </c:forEach>

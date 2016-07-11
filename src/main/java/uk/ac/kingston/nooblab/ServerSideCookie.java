@@ -33,7 +33,7 @@ public class ServerSideCookie extends HttpServlet {
 
         // get parameters
         String username = (String)request.getSession().getAttribute("username");
-        if (username == null) return;
+        if (username == null || username.equals("guest")) return;
         
         String key = request.getParameter("key");
         String value = request.getParameter("value");

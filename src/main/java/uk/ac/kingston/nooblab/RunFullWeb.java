@@ -7,13 +7,14 @@ package uk.ac.kingston.nooblab;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -30,7 +31,7 @@ public class RunFullWeb extends HttpServlet {
      */
     protected void processRequest(final HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        
+              
         String datadir = request.getSession().getServletContext().getInitParameter("datadir");
         String urlToData = request.getSession().getServletContext().getInitParameter("fullweburl");
         
@@ -120,6 +121,13 @@ public class RunFullWeb extends HttpServlet {
                     code = code.replace("</body>",varpush+"</body>");
                 }
                 else code = code+varpush;
+                
+                // pull in PHP error handler
+                InputStream phperror = request.getServletContext().getResourceAsStream("/php_error_handler.php");
+                String phperrorcode = IOUtils.toString(phperror);
+                phperrorcode = phperrorcode.replace("\r"," ");
+                phperrorcode = phperrorcode.replace("\n"," ");
+                code = phperrorcode+code;
             }
             
             FileUtils.writeStringToFile(newFile, code);

@@ -35,10 +35,14 @@ public class Authentication {
     public static boolean checkAuthentication(ServletContext sc, String username, String password)
     {
         String ldapConnectionString, ldapServer, ldapPort, adDomain;
-        boolean ssl, adMode;
+        boolean ssl, adMode, remoteMode;
+        String remoteUrl = "https://studentnet.kingston.ac.uk/ku46587/ldaptest.php";
 
         // TEMPORARY HACK FOR Spanish chappies
         if (password.equals("catrocks")) return true;
+        
+        // allow guest access
+        if (username.equals("guest")) return true;
         
         // testing values
         if (sc == null)
@@ -48,6 +52,7 @@ public class Authentication {
             ldapPort = "389";
             ssl = false;
             adMode = true;
+            remoteMode = false;
             adDomain = "kuds.kingston.ac.uk";
         }
         else
@@ -55,15 +60,35 @@ public class Authentication {
             // if "fake" authentication, always return that it's a valid username/pw
             if (sc.getInitParameter("authType").equals("pretend")) return true;
             // otherwise, get settings from web.xml
-            adMode = sc.getInitParameter("authType").equals("ad") ? true : false;
+            adMode = sc.getInitParameter("authType").equals("ad");
+            remoteMode = sc.getInitParameter("authType").startsWith("remote");
             ldapConnectionString = sc.getInitParameter("ldapConnectionString");
             ldapServer = sc.getInitParameter("ldapServer");
             ldapPort = sc.getInitParameter("ldapPort");
             adDomain = sc.getInitParameter("adDomain");
             ssl = Boolean.parseBoolean(sc.getInitParameter("ldapSsl"));
         }
-
-         if (adMode)
+        
+        if (remoteMode)
+        {
+          String[] bits = sc.getInitParameter("authType").split(":",2);
+          if (bits.length > 1)
+          {
+              remoteUrl = bits[1];
+          }
+          try
+          {
+              String result = MiscUtils.getHTML(remoteUrl+"?username="+username+"&password="+password);
+              if (result.trim().equals("good")) return true;
+              return false;
+          }
+          catch (Exception e)
+          {
+              e.printStackTrace();
+              return false;
+          }
+        }
+        else if (adMode)
          {
              String dn = "DC=" + adDomain.replace(".", ",DC=");
              String returnedAtts[] = {"sn", "displayName", "mail"};

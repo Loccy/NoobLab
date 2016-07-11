@@ -36,7 +36,7 @@ public class LogActivity extends HttpServlet {
 
         // get parameters
         String username = (String)request.getSession().getAttribute("username");
-        if (username == null) return;
+        if (username == null || username.equals("guest")) return;
 
         //String date = request.getParameter("datetime");
         String DATE_FORMAT = "HH:mm:ss yyyy/MM/dd";
@@ -60,6 +60,7 @@ public class LogActivity extends HttpServlet {
     public static void logActivity(String username, String datetime, String activity,
             String position, String details, String code, HttpServletRequest request) throws IOException
     {                
+        if (username == null || username.equals("guest")) return;
         
         // replace any newlines in code
         code = code.replaceAll("\r\n?|\n","\\$\\$");                

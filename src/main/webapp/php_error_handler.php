@@ -42,7 +42,7 @@ switch ($error_level) {
 }
 }
 
-function shutdownHandler() //will be called when php script ends.
+function shutdownHandler() /* will be called when php script ends. */
 {
 	global $php_errors;
 	$lasterror = error_get_last();
@@ -57,9 +57,9 @@ function shutdownHandler() //will be called when php script ends.
     		case E_COMPILE_WARNING:
     		case E_PARSE:
 
-		// inject the error dialogue Javascript back in,
-		// seeing as how PHP gives us a delightful empty
-		// page when there's a show-stopping error
+		/* inject the error dialogue Javascript back in,
+		 seeing as how PHP gives us a delightful empty
+		 page when there's a show-stopping error */
 ?>
 <script type="text/javascript">
 var errordialog=function(msg, url, linenumber,lang){if (lang == undefined) lang = 'Javascript';var dialog=document.createElement("div");dialog.className='errordialog';dialog.style.position='fixed';dialog.style.border='2px solid black';dialog.style.margin='3px';dialog.style.padding='3px';dialog.style.fontFamily='monospace';dialog.style.backgroundColor='white';dialog.style.top='0px';dialog.style.left='0px';url = url.split('/').pop();dialog.innerHTML='<b style="color:red">'+lang+' Error: </b>' + msg +' at line number ' + linenumber +' of '+url;var siLoop = setInterval(function(){if (document.readyState == 'interactive' || document.readyState == 'complete') {clearInterval(siLoop);parent.$(document.body).append(dialog);parent.$(dialog).fadeTo(1,75);parent.$('div.tab').each(function(){if (parent.$(this).contents().eq(0).text() == url) {if (!parent.$(this).hasClass('selected')) {parent.$(this).click();}parent.editor.focus();parent.editor.setLineClass(linenumber-1,'error');parent.editor.setCursor(linenumber-1);};});};},1000);return true;};

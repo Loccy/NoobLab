@@ -127,13 +127,17 @@ public class JavaRunningUtils {
         {
             compileOptions = new String[]{
                 "-d", basedir+"/compiled",
+                "-target","1.6",
+                "-source","1.6",
                 "-cp", sc.getRealPath("WEB-INF/classes"), "-g"
             };
         }
         else
         {
             compileOptions = new String[]{
-                "-d", basedir+"/compiled"/*,
+                "-d", basedir+"/compiled",
+                "-target","1.6",
+                "-source","1.6",/*
                 "-cp", sc.getRealPath("WEB-INF/classes"), "-g" */
             };
         }
