@@ -311,7 +311,14 @@ function standardJavaRuntimeError(errorText)
         var methodName = junk2[0].split(".")[1].split("(")[0].trim();
         var lineNumber = junk2[1].split(":")[1].replace(")","").trim();
         var errorBlurb = junk[0].trim().replace(":","").split('"')[2].trim();
-        errorText = "Runtime error on line "+lineNumber+", in class "+className+", in method "+methodName+"<br/>";
+        if (className == "Pigin")
+        {
+            errorText = "Runtime error on line "+lineNumber+"<br/>";
+        }
+        else
+        {
+            errorText = "Runtime error on line "+lineNumber+", in class "+className+", in method "+methodName+"<br/>";        
+        }
         errorText += errorBlurb;
         
         if (className+".java" != $("div.tab.selected").text().trim())
