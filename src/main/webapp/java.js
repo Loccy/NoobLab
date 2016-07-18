@@ -179,13 +179,24 @@ public class Code
         success : function(data) {
             if (data.indexOf("**ERROR**") != -1)
             {
-                var msg = data.split(":");
-                msg.shift(); msg.shift();
-                var className = msg.shift().split("/").pop();
-                var lineno = parseInt(msg.shift());
-                var details = data.split(/\.java:\d+:/)[1].replace(/<|>/ig,function(m){
-                    return '&'+(m=='>'?'g':'l')+'t;';
-                }).replace(/\n/g,"<br/>");
+                if (data.indexOf("**NEWJAVA**") == -1)
+                {
+                    var msg = data.split(":");
+                    msg.shift(); msg.shift();
+                    var className = msg.shift().split("/").pop();
+                    var lineno = parseInt(msg.shift());
+                    var details = data.split(/\.java:\d+:/)[1].replace(/<|>/ig,function(m){
+                        return '&'+(m=='>'?'g':'l')+'t;';
+                    }).replace(/\n/g,"<br/>");
+                }
+                else
+                {
+                    var msg = data.split(":");
+                    var className = msg[1].split("/").pop().replace(".java","");
+                    var lineno = msg[1].replace(/[^0-9]/g,"");
+                    var details = data.split("error:")[1].trim();
+                    details = details.replace(/\n/g,"<br/>");
+                }
                 status('Error on line '+lineno+' in class '+className+"<br/>"+details,"error");
                 if (className != $("div.tab.selected").text().trim())
                 {                    
@@ -196,6 +207,7 @@ public class Code
                     }).parent().click();
                     // frell me, JQuery is bloody awesome
                 }
+                
                 LOGsyntaxError("Error in line "+lineno+" of "+className+", "+details);
                 editor.focus(); 
                 editor.setCursor(parseInt(lineno)-1);
@@ -287,11 +299,36 @@ function standardJavaRuntimeError(errorText)
         LOGbreak();
     }
     else
-    {    
+    {  /*
         errorText = errorText
                         .replace(/\t/g,"  ")
-                        .replace("at Pigin.main(Pigin.java from DynamicJavaSourceCodeObject","(while running your NoobLab code")
-                        .replace("from DynamicJavaSourceCodeObject","");                        
+                        .replace("at Pigin.main(Pigin.java","(while running your NoobLab code")
+                        .replace("from DynamicJavaSourceCodeObject",""); */
+        
+        var junk = errorText.split(/\t/);        
+        var junk2 = junk[1].replace("at ","").split("(");
+        var className = junk2[0].split(".")[0].trim();        
+        var methodName = junk2[0].split(".")[1].split("(")[0].trim();
+        var lineNumber = junk2[1].split(":")[1].replace(")","").trim();
+        var errorBlurb = junk[0].trim().replace(":","").split('"')[2].trim();
+        errorText = "Runtime error on line "+lineNumber+", in class "+className+", in method "+methodName+"<br/>";
+        errorText += errorBlurb;
+        
+        if (className+".java" != $("div.tab.selected").text().trim())
+        {                    
+            // switch to the right tab for the error
+            $("div.tab").not(".newtab").contents()
+                .filter(function() {
+                  return this.nodeType === 3 && $(this).text() == className+".java"; //Node.TEXT_NODE
+            }).parent().click();
+            // frell me, JQuery is bloody awesome
+        }
+
+        editor.focus(); 
+        editor.setCursor(parseInt(lineNumber)-1);
+        editor.setLineClass(parseInt(lineNumber)-1,"error");
+        enableRun();
+         
         LOGerror(errorText);
     }
     status("<pre>"+errorText+"</pre>","error");

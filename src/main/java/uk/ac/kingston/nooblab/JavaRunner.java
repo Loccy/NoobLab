@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.SystemUtils;
 import uk.ac.kingston.nooblab.java.JavaRunningUtils;
 
 /**
@@ -71,6 +72,10 @@ public class JavaRunner extends HttpServlet
                         
             if ("**ERROR**".equals(compileresults[0]))
             {
+                if (SystemUtils.isJavaVersionAtLeast(170))
+                {
+                    compileresults[0] = "**ERROR**NEWJAVA**";                           
+                }
                 pw.print(compileresults[0]+":"+compileresults[1]);
                 pw.close();
                 return;
@@ -103,6 +108,10 @@ public class JavaRunner extends HttpServlet
                         
             if ("**ERROR**".equals(compileresults[0]))
             {
+                if (SystemUtils.isJavaVersionAtLeast(170))
+                {
+                    compileresults[0] = "**ERROR**NEWJAVA**";                           
+                }
                 pw.print(compileresults[0]+":"+compileresults[1]);
                 pw.close();
                 return;

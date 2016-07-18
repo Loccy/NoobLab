@@ -14,6 +14,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 
 import javax.servlet.RequestDispatcher;
@@ -21,7 +22,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.LocalTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -148,6 +153,74 @@ public class Main extends HttpServlet
                 request.getSession().setAttribute("module", originalCNo);                
             }
             String basedir = MiscUtils.getDataDir(request)+"/"+username+"/";       
+            
+             // is this a restricted piece of content that needs to be unlocked at
+            // a particular place and/or time?
+            ipRestricts = doc.select("div.parameter[id=lockPlace]").text().trim();            
+            if (!ipRestricts.equals(""))
+            {
+                // get their current unlock file
+                String unlockstr = "";
+                try {
+                    unlockstr = FileUtils.readFileToString(new File(basedir+"/unlocked.txt"));
+                } catch (Exception e) {};
+                // if not already unlcoked
+                if (!unlockstr.contains(originalCNo))
+                {
+                    boolean validTime = false;
+                    boolean validPlace = false;
+                    // do we have a lockTimeDay?
+                    // Should be in format Mon 09:00-11:00
+                    String lockTimeDay = doc.select("div.parameter[id=lockTimeDay]").text().trim();
+                    if (lockTimeDay.equals(""))
+                    {
+                        validTime = true;
+                    }
+                    else
+                    {
+                        // check whether it's a valid time
+                        String[] x = lockTimeDay.split(" ");
+                        String day = x[0];
+                        x = x[1].split("-");
+                        LocalTime startime = new LocalTime(x[0]);
+                        startime = startime.minusMinutes(10);
+                        LocalTime endtime = new LocalTime(x[1]);
+                        endtime = endtime.plusMinutes(10);
+                        String currentDay = StringUtils.left(new SimpleDateFormat("EEEE", Locale.ENGLISH).format(System.currentTimeMillis()),3);
+                        LocalTime currentTime = new LocalTime();
+                        DateTimeComparator compare = DateTimeComparator.getTimeOnlyInstance();
+                        
+                        if (currentDay.equalsIgnoreCase(day) && currentTime.isAfter(startime) && currentTime.isBefore(endtime))
+                        {
+                            validTime = true;
+                        }
+                    }
+                    for (String ipRestrict : ipRestricts.split(","))
+                    {
+                        if (!request.getRemoteAddr().contains(ipRestrict)) validPlace = true;
+                    }
+                    if (!validTime || !validPlace)
+                    {
+                        doc.select("div.parameter[id=courseNo]").html("BLOCKED-"+originalCNo);
+                        // remove all sections
+                        doc.select("div.section").remove();
+                        // add a "you naught boy" section
+                        doc.body().append("<div class=\"section\" id=\"blocked\">"+
+                        "<h2 class=\"title\">Content requires unlocking</h2>"+
+                        "<b>This particular content must be unlocked by logging into it at/during a scheduled workshop session.</b>"+
+                        "<p>Your tutor will give you the details as to when and where you need to unlock this content.</p>"+
+                        "<p>Once you have unlocked this page, you will be able to work on it remotely on any computer and at any time you like.</p>"+
+                        "<p>Contact your tutor for further information, or if you feel you have received this message in error.</p></div>");
+                    }
+                    else
+                    {
+                        // need to update the unlock file
+                        if (!unlockstr.equals("")) unlockstr += ",";
+                        unlockstr += originalCNo;
+                        FileUtils.writeStringToFile(new File(basedir+"/unlocked.txt"),unlockstr);
+                    }
+                }
+            }
             
              // is this a restricted piece of content based on top level parameter#testRestrict?
             Elements globalTestRestrict = doc.select("div.parameter[id=testRestrict]");

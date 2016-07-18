@@ -13,11 +13,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
@@ -25,12 +22,10 @@ import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
-import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.lang.SystemUtils;
 
 /**
  *
@@ -71,7 +66,7 @@ public class JavaRunningUtils {
         // create "file" objects for our code
         DynamicJavaSourceCodeObject javaFileObjects[] = new DynamicJavaSourceCodeObject[codes.length];
         String[] classNames = new String[codes.length];
-     
+        
         for (int i = 0; i < codes.length; i ++)
         {
             String pkg = serverRun ? "defaultpackage" : "";
@@ -122,6 +117,15 @@ public class JavaRunningUtils {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager sjfm = compiler.getStandardFileManager(null, Locale.getDefault(), null);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+        
+        // check to see if oldrt exists
+        // extract it from Doppio dir and put it in temp if not
+        File oldrt = new File(System.getProperty("java.io.tmpdir")+"/oldrt.jar");
+        if (!oldrt.exists())
+        {
+            FileUtils.copyInputStreamToFile(sc.getResourceAsStream("/doppio/vendor/java_home/lib/rt.jar"), oldrt);
+        }
+        
         String[] compileOptions;
         if (sc != null)
         {
@@ -129,8 +133,10 @@ public class JavaRunningUtils {
                 "-d", basedir+"/compiled",
                 "-target","1.6",
                 "-source","1.6",
-                "-cp", sc.getRealPath("WEB-INF/classes"), "-g"
-            };
+                "-bootclasspath", oldrt.getCanonicalPath(),
+                "-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
+                //"-cp", sc.getRealPath("/WEB-INF/classes"), "-g"
+            };            
         }
         else
         {
@@ -138,10 +144,10 @@ public class JavaRunningUtils {
                 "-d", basedir+"/compiled",
                 "-target","1.6",
                 "-source","1.6",/*
-                "-cp", sc.getRealPath("WEB-INF/classes"), "-g" */
+                "-cp", sc.getRealPath("/WEB-INF/classes"), "-g" */
             };
         }
-
+        
         boolean status = compiler.getTask(null, sjfm, diagnostics, Arrays.asList(compileOptions), null, Arrays.asList(javaFileObjects)).call();
         try { sjfm.close(); } catch (IOException ex) { ex.printStackTrace();}
         if (!status)
