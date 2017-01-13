@@ -20,6 +20,14 @@
         <servlet-name>BotController</servlet-name>
         <servlet-class>uk.ac.kingston.nooblab.BotController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CPPRunner</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.CPPRunner</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CPPConsole</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.c.CPPConsole</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RunPage</servlet-name>
         <url-pattern>/RunPage</url-pattern>
@@ -145,6 +153,14 @@
         <servlet-name>BotController</servlet-name>
         <url-pattern>/BotController</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CPPRunner</servlet-name>
+        <url-pattern>/CPPRunner</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CPPConsole</servlet-name>
+        <url-pattern>/CPPConsole</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>240</session-timeout>
     </session-config>
@@ -153,7 +169,7 @@
         <description>Authentication type</description>
         <!-- three types: ldap, ad or pretend -->
         <param-name>authType</param-name>
-        <param-value>remote:https://studentnet.kingston.ac.uk/ku46587/ldaptest.php</param-value>
+        <param-value>remote:https://kunet.kingston.ac.uk/ku46587/pnnl.php</param-value>
     </context-param>
     <context-param>
         <description>AD domain</description>
@@ -195,7 +211,7 @@
     <context-param>
         <description>Mailhost for admin notifications</description>
         <param-name>mailhost</param-name>
-        <param-value>smtp.kingston.ac.uk</param-value>
+        <param-value>127.0.0.1</param-value>
     </context-param>
     <context-param>
         <description>Admin address for admin notifications</description>
@@ -205,6 +221,6 @@
     <context-param>
         <description>From address for admin notifications</description>
         <param-name>fromaddress</param-name>
-        <param-value>paul@kingston.ac.uk</param-value>
+        <param-value>paul@paulneve.com</param-value>
     </context-param>
 </web-app>

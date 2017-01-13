@@ -5,11 +5,11 @@
 
 package uk.ac.kingston.nooblab;
 
+import java.math.BigInteger;
 import java.util.Hashtable;
 import javax.naming.Context;
 
 import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
@@ -17,6 +17,7 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.servlet.ServletContext;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -78,7 +79,11 @@ public class Authentication {
           }
           try
           {
-              String result = MiscUtils.getHTML(remoteUrl+"?username="+username+"&password="+password);
+              // simple obscufate as hex - should hopefully be doing this over https anyway, but just to
+              // avoid casual log viewing revealing of passwords.              
+              String obUsername = Hex.encodeHexString(username.getBytes());
+              String obPassword = Hex.encodeHexString(password.getBytes());              
+              String result = MiscUtils.getHTML(remoteUrl+"?x1="+obUsername+"&x2="+obPassword);
               if (result.trim().equals("good")) return true;
               return false;
           }

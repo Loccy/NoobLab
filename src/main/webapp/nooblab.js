@@ -2316,6 +2316,17 @@ function run()
     {
         runFullWeb(getTabBundleCode());
     }
+    else if ($("div.parameter#language").text().trim() == "cpp")
+    {
+        // give tabs C++ style names, if necessary
+        $("div.tab").not(".newtab").contents().filter(function() {
+            return this.nodeType === Node.TEXT_NODE;
+        }).each(function(){
+            var title = $(this).text();
+            if (title.slice(-4) != ".cpp") $(this).replaceWith(title+".cpp");
+        })
+        runCPP(getTabBundleCode(true));
+    }
     else // plain ol' JS
     {
         var $fakedoc = $("div.fakedoc");
@@ -2448,13 +2459,22 @@ function save(tabs)
             return;
         }        
     }
-    // if not Java, or pigin Java, or can't figure out the class name...
+    else if (language.slice(0,7) == "fullweb")
+    {
+        // assume that the extension for "fullweb" code is already there...
+        saveState();
+        var filename = $(".tab.selected").text().trim();
+        innerSave(filename);
+        return;
+    }
+    
+    // if not Java, or fullweb, or pigin Java, or can't figure out the class name...
     var msg;
     var extension;
     if (language.slice(0,4) == "java" && $("div.parameter#multi").text().trim() == "true" && !tabs)  
     {
         msg =    
-        "Unable to determine the class name from your code - please a filename to save your file as.<br/>&nbsp;<br/>"+
+        "Unable to determine the class name from your code - please enter filename to save your file as.<br/>&nbsp;<br/>"+
         "Note that in Java, you MUST save the file with the same name as your class name. So, for example, "+
         "if your class is called or is going to be called <b>HelloWorld</b>, then you must save your file "+
         "as <b>HelloWorld.java</b>. <b>HELLOWORLD.JAVA</b>, <b>helloworld.java</b> or <b>flibble.java</b> "+
@@ -2538,6 +2558,22 @@ function stop()
         outputframe.stopRequested = true;
         enableRun();
     }
+    else if ($("div.parameter#language").text().trim() == "cpp")
+    {
+        if (cppcompiling == true)
+        {
+            cppcompiling = false;
+            enableRun();
+            cout("\nCompilation terminated with the 'STOP' button."," rgb(255,0,0)");
+        }
+        else
+        {
+            if (cppworker != undefined) cppworker.terminate();
+            cppworker = undefined;
+            enableRun();
+            cout("\nProgram terminated with the 'STOP' button."," rgb(255,0,0)");
+        }
+    }
     else
     {
         outputframe.halt = true;
@@ -2561,7 +2597,6 @@ function disableRun()
     disableoverlay.css("opacity","0.5");
     $(".kinderbuttons img").freezeEvents();
     $(".kinderbuttons").wrap(disableoverlay);
-    
 }
 
 function postRun()
@@ -2716,7 +2751,16 @@ function selectEditorTab(source,norename)
     }
     function doTheRest(){
     var name = $(source).text().trim();
-    if (name.slice(-4) == ".htm" || name.slice(-5) == ".html")
+    if (name.slice(-4) == ".cpp" || $("div.parameter#language").text().trim() == "cpp")
+    {
+        editor.setOption("mode","text/x-c++src");
+        $("input#tidy").prop("onclick", null);
+        $("input#tidy").unbind("click");
+        $("input#tidy").click(function(){tidyCode();});
+        $("input#tidy").hide();
+        $("input#tidy").val("Tidy");
+    }
+    else if (name.slice(-4) == ".htm" || name.slice(-5) == ".html")
     {
         editor.setOption("mode","text/html");
         $("input#tidy").prop("onclick", null);
@@ -3072,6 +3116,7 @@ function toggleBlockly()
 }
 
 function blocklyCodeUpdate() {
+    if ($("div.parameter#blockly").text().trim() != "true") return;
     var $blocklyCodePreview = $("#code-blockly").contents().find(".blocklyToolboxDiv #blocklyCodePreview");
 
     var originalCode = getCode($blocklyCodePreview).replace(/[0-9]+/,"").replace(/\n[0-9]+/g,"\n");

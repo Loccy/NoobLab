@@ -271,6 +271,7 @@ function cheatNotify(medalDetails,source)
         type : "POST",
         url : contextPath + "/AdminNotify"
     });
+    logActivity("CheatNotify",CLSstr(),"");
 }
 
 function LOGtestFailed(details)

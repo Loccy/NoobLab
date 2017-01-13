@@ -105,6 +105,7 @@ public class MiscUtils {
     public static String getHTML(String urlToRead) throws Exception {
         StringBuilder result = new StringBuilder();
         URL url = new URL(urlToRead);
+        System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));

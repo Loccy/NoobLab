@@ -198,12 +198,12 @@ public class Code
                     details = details.replace(/\n/g,"<br/>");
                 }
                 status('Error on line '+lineno+' in class '+className+"<br/>"+details,"error");
-                if (className != $("div.tab.selected").text().trim())
+                if (className+".java" != $("div.tab.selected").text().trim())
                 {                    
                     // switch to the right tab for the error
                     $("div.tab").not(".newtab").contents()
                         .filter(function() {
-                          return this.nodeType === 3 && $(this).text() == className; //Node.TEXT_NODE
+                          return this.nodeType === 3 && $(this).text().trim() == className+".java"; //Node.TEXT_NODE
                     }).parent().click();
                     // frell me, JQuery is bloody awesome
                 }

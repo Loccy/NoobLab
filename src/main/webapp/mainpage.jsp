@@ -62,6 +62,9 @@
         
         <%-- pcode "compiler" --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/psuedocode.js"></script>
+        
+        <%-- C++ --%>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/cpp.js"></script>
 
         <%-- stratified Javascript --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/oni-apollo.js"></script>

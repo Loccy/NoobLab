@@ -8,6 +8,7 @@ package uk.ac.kingston.nooblab;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,6 +46,7 @@ public class RunFullWeb extends HttpServlet {
         String[] files = fullcode.split("\\*\\*\\*TAB\\*\\*\\*");        
         
         // clean up previous efforts
+        String basedir = datadir;
         datadir = datadir + "/fullweb/"+username;
         File dd = new File(datadir);
         FileUtils.deleteQuietly(dd);
@@ -122,25 +124,28 @@ public class RunFullWeb extends HttpServlet {
                 }
                 else code = code+varpush;
                 
-                // pull in PHP error handler
-                InputStream phperror = request.getServletContext().getResourceAsStream("/php_error_handler.php");
-                String phperrorcode = IOUtils.toString(phperror);
-                phperrorcode = phperrorcode.replace("\r"," ");
-                phperrorcode = phperrorcode.replace("\n"," ");
-                code = phperrorcode+code;
             }
             
             FileUtils.writeStringToFile(newFile, code);
             
-            /*
-            if (givenDefaultPage == null)
-            {
-                if (filename.toLowerCase().endsWith(".html") || filename.toLowerCase().endsWith(".htm"))
-                {
-                    if (!"index.html".equals(actualDefaultPage)) actualDefaultPage = filename;
-                }
-            }            */                            
         }
+        
+        // pull in PHP error handler
+        InputStream phperror = request.getServletContext().getResourceAsStream("/php_error_handler.php");
+        String phperrorcode = IOUtils.toString(phperror);
+
+        // if PHP error handler does not exist in noobdata dir, create it
+        File datadirAsFile = new File(basedir+"/php_error_handler.php");
+        if (!datadirAsFile.exists())
+        {
+            FileUtils.writeStringToFile(datadirAsFile, phperrorcode);
+        }
+        
+        // create .htaccess and .user.ini in user's home dir
+        String htaccess = "<IfModule mod_php5.c>\nphp_value auto_prepend_file "+basedir+"/php_error_handler.php\n</IfModule>";
+        FileUtils.writeStringToFile(new File(datadir+"/.htaccess"),htaccess);
+        String userini = "auto_prepend_file="+basedir+"/php_error_handler.php";
+        FileUtils.writeStringToFile(new File(datadir+"/.user.ini"),userini);
         
         request.setAttribute("defaultPage", urlToData+"/fullweb/"+username+"/"+actualDefaultPage);                                                        
         RequestDispatcher rd = request.getRequestDispatcher("runfullweb.jsp");

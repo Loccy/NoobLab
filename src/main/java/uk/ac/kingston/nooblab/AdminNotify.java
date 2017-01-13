@@ -10,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
  *
@@ -44,12 +45,12 @@ public class AdminNotify extends HttpServlet
                
         try
         {
-            MiscUtils.sendMail(mailhost, adminaddress, fromaddress, subject+" ("+username+")", details);
-            out.println("success");
+            MiscUtils.sendMail(mailhost, adminaddress, fromaddress, subject+" ("+username+")", details);            
         }
         catch (Exception e)
         {
             out.println("fail email");
+            out.println(ExceptionUtils.getFullStackTrace(e));
         }                
     }
 
