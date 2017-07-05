@@ -103,10 +103,9 @@ function cout(data,colour)
 {
         data = data.replace(/\n/g,"<br/>");        
         if (colour == "red") // errr-oooorrrrr (points at screen)
-        {
-            alert("errorr");
+        {            
             // extract tab index
-            var filename = data.match(/[0-9]\.cpp/)[0];
+            var filename = data.match(/[0-9]\.cpp/);
             var tabNo = filename.replace(/\.cpp/,"");
             data = data.replace(filename,"");
             data = data.replace(/error:&nbsp;/,"");
@@ -147,18 +146,20 @@ function coutclear()
      $("body",outputframe.document).css("font-family","monospace");
      $("body",outputframe.document).css("word-break","normal");
      $("body",outputframe.document).append("<span></span>");
-     $("body",outputframe.document).append('<div id="cin"><input style="width: 100%; background-color: transparent; border: 0px; font-family: monospace; outline : none;"/></div>');
-     $("body",outputframe.document).find("div#cin input").focus();
-     $("body",outputframe.document).find("div#cin input").keydown(function(key){
+     $("body",outputframe.document).append('<div id="cin" contenteditable style="display: inline-block; min-width: 1em; outline: 0px solid transparent"></div>');
+     $("body",outputframe.document).find("div#cin").focus();
+     $("body",outputframe.document).click(function(){ $("body",outputframe.document).find("div#cin").focus() });
+     $("body",outputframe.document).find("div#cin").keyup(function(key){
          if (key.which == 13)
          {
-             var newstdin = $("body",outputframe.document).find("div#cin input").val();
+             var newstdin = $("body",outputframe.document).find("div#cin").text();             
              $.ajax({
                 type: "POST",
                 url: contextPath+"/CPPConsole",
                 data : { line : newstdin, mode : "add" },
                 async: false
-            });
+            }); 
+             if (cppworker != undefined) cppworker.postMessage({action : "updateStdin",params : newstdin });
              /*cppstdin += newstdin;
              if (cppworker != undefined) cppworker.postMessage({action : "updateStdin",params : cppstdin });*/
              /*var request = indexedDB.open('cppconsole');
@@ -173,7 +174,7 @@ function coutclear()
                 idb.close();
              } */
              cout(newstdin+"\n");
-             $("body",outputframe.document).find("div#cin input").val("");
+             $("body",outputframe.document).find("div#cin").text("");
          }
      });
 }

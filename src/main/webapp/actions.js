@@ -193,7 +193,7 @@ function LOGcontentScroll(distance)
 }
 
 function LOGtestPassed(medal)
-{
+{    
     if (!medal)
     {
         medal = "";

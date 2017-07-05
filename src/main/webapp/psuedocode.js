@@ -535,7 +535,8 @@ function displayPcodeCompError(errorArr)
     $(outputframe.window.document.body).append('<span style="font-family: monospace; color: red; font-weight: bolder">Error detected: '+errorText+'<br/>Error at or around line number '+(errorLine+1)+'</span>.');    
     editor.focus(); 
     editor.setCursor(errorLine);
-    editor.setLineClass(errorLine,"error");
+    //editor.setLineClass(errorLine,"error");
+    editor.addLineClass(errorLine,"background","error");
 }
 
 function getTokens(line)

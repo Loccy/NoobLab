@@ -1,6 +1,6 @@
 //BASIC OUTPUT FROM WORKER ************
 if(typeof(self) != undefined)
-{
+{   
 	self.console = {
 		clear: function()
 		{
@@ -33,21 +33,25 @@ if(typeof(self) != undefined)
 	}
         
         self.lastline = null;
+        self.cppstdin = null;
         
         var Module = {
             preRun: function() {     
-                function stdin() {  
+                function stdin() {                  
                   if (self.lastline == null)
                   {
-                    do
-                    {
+                    //do
+                    //{
                       var line = "**(empty)**";
                       var ajax = new XMLHttpRequest();
-                      ajax.open('GET', self.urlcontext+'/CPPConsole?mode=get', false);
-                      ajax.send(null);
-                      line = ajax.responseText.trim();
-                      var t = new Date().getTime(); while (new Date().getTime() < t + 1000);
-                    } while (line == "**(empty)**");
+                      do
+                      {
+                        ajax.open('GET', self.urlcontext+'/CPPConsole?mode=get', false);
+                        ajax.send(null);
+                        line = ajax.responseText.trim();
+                      } while (ajax.status != 200);
+                      //var t = new Date().getTime(); while (new Date().getTime() < t + 1000);                        
+                    //} while (line == "**(empty)**");
                   }
                   if (self.lastline == null)
                   {

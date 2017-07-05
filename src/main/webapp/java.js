@@ -211,7 +211,8 @@ public class Code
                 LOGsyntaxError("Error in line "+lineno+" of "+className+", "+details);
                 editor.focus(); 
                 editor.setCursor(parseInt(lineno)-1);
-                editor.setLineClass(parseInt(lineno)-1,"error");
+                //editor.setLineClass(parseInt(lineno)-1,"error");
+                editor.addLineClass(parseInt(lineno)-1,"background","error");
                 enableRun();
             }
             else
@@ -333,7 +334,8 @@ function standardJavaRuntimeError(errorText)
 
         editor.focus(); 
         editor.setCursor(parseInt(lineNumber)-1);
-        editor.setLineClass(parseInt(lineNumber)-1,"error");
+        editor.addLineClass(parseInt(lineNumber)-1,"background","error");
+        //editor.setLineClass(parseInt(lineNumber)-1,"error");
         enableRun();
          
         LOGerror(errorText);

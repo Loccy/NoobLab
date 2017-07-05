@@ -35,6 +35,9 @@ lastScroll = 0;
 // last 20ish lines of the log file
 lastLogEntries = [];
 
+// Blockly
+Blockly = null;
+
 function rot13(str) {
   return str.replace(/[a-zA-Z]/g, function(c) {
     return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
@@ -668,7 +671,7 @@ function createFakeDocs() // and carols :-)
         var editor = CodeMirror.fromTextArea($(this).parent().find("textarea")[0], {
             mode: 'text/html',
             tabMode: 'indent',
-            onCursorActivity: function() {
+            onCursorActivity: function() {                                
                 if (editor) {
                     $(iframe.contentWindow.document).find("body").html(editor.getValue());
                     setTimeout(function(){resizeIframe(iframe)},200);
@@ -1168,10 +1171,26 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
 
 function greatSuccessHtml(medal,fb)
 {
-	if (!fb) fb = ""; else fb += "&nbsp;</br/>";
+    // legacy
+    medalGreatSuccess(medal,fb);        
+}
+
+function medalGreatSuccess(medal,fb)
+{
+    if (typeof fb === "object") // array of feedbacks
+    {
+        var fbstr = "";
+        for (var i = 0; i < fb.length-1; i++)
+        {
+            fbstr = fbstr + '<div style="margin-bottom: 1em">'+fb[i]+'</div>';
+        }
+        fbstr = fbstr + '<div>'+fb[i]+'</div>';
+        fb = fbstr;
+    }
+    if (!fb) fb = ""; else fb += "&nbsp;</br/>";
     var iframeDoc = document.getElementById("outputframe").contentDocument;
 
-    $("body",iframeDoc).append('<div id="testresult" style="font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 50%; margin-top: -100px; padding : 10px; width: 95%; box-sizing: border-box; color: green">'+fb+'Well done! Your work passed the test!</div>');
+    $("body",iframeDoc).append('<div id="testresult" style="font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 10px; padding : 10px; width: 95%; box-sizing: border-box; color: green">'+fb+'Well done! Your work passed the test!</div>');
 
        if (medal)
        {
@@ -1196,6 +1215,22 @@ function greatSuccessHtml(medal,fb)
 
 function epicFailHtml(SUCCESSFULTESTS,NUMBEROFTESTS,fb)
 {
+    // legacy
+    medalEpicFail(SUCCESSFULTESTS,NUMBEROFTESTS,fb);
+}
+
+function medalEpicFail(SUCCESSFULTESTS,NUMBEROFTESTS,fb)
+{
+        if (typeof fb === "object") // array of feedbacks
+        {
+            var fbstr = "";
+            for (var i = 0; i < fb.length-1; i++)
+            {
+                fbstr = fbstr + '<div style="margin-bottom: 1em">'+fb[i]+'</div>';
+            }
+            fbstr = fbstr + '<div>'+fb[i]+'</div>';
+            fb = fbstr;
+        }
 	if (!fb) fb = ""; else fb += "&nbsp;</br/>";
 	if (fb.trim() != "")
 	{
@@ -1206,7 +1241,7 @@ function epicFailHtml(SUCCESSFULTESTS,NUMBEROFTESTS,fb)
 	}
     var iframeDoc = document.getElementById("outputframe").contentDocument;
 
-    $("body",iframeDoc).append('<div id="testresult" style="font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 50%; margin-top: -100px; padding : 10px; width: 95%; box-sizing: border-box; color: red">'+fb+'Sorry! Your work did not produce what we were looking for! It passed '+SUCCESSFULTESTS+' of '+NUMBEROFTESTS+' test(s).</div>');
+    $("body",iframeDoc).append('<div id="testresult" style="font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 10px; padding : 10px; width: 95%; box-sizing: border-box; color: red">'+fb+'Sorry! Your work did not produce what we were looking for! It passed '+SUCCESSFULTESTS+' of '+NUMBEROFTESTS+' test(s).</div>');
     $("div#testresult",iframeDoc).css("opacity",0.8);
 
     parent.LOGtestFailed(SUCCESSFULTESTS+"/"+NUMBEROFTESTS);
@@ -1460,7 +1495,248 @@ function handleTestCasesHtml()
     });
 }
 
+function indent(code)
+{
+    return "  "+(code.trim().replace(/\n/g,"\n  ").trim())
+}
+
+function genericHandleTestCases(func)
+{
+     $(".testCase").each(function(){         
+        //$(this).children().hide();
+        var id = $(this)[0].id;
+        if ($(this).find("div.id").length != 0)
+        {
+            id = $(this).find("div.id").text().trim();
+        }
+        if (id == undefined) id = "";
+        
+        // get medal details, if any
+        var medal09876 = undefined;
+        if ($(this).find("div.medalType").length != 0)
+        {
+            medal09876 = $(this).find("div.medalType").text().trim();
+            if ($(this).find("div.medalDesc").length != 0)
+            {
+                medal09876 += ":"+$(this).find("div.medalDesc").text().trim()+":"+id;
+            }
+            else
+            {
+                medal09876 += ":"+id;
+            }
+        }
+        if (medal09876 != undefined) $(this).attr("data-medal",medal09876);
+        
+        $(this).attr("data-id",id);                
+        var pea = $(this).clone();        
+        
+        var linkText = " >>> Click here to test your code <<<"
+        if (medal09876 != undefined)
+        {
+            linkText = linkText.replace("code","code for a "+medal09876.split(":")[0]+" medal");
+            linkText = linkText.replace("ribbon medal","ribbon");
+        }
+        
+        $(this).text(linkText);
+        $(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
+        $(this).find("input").click(function(e){
+           e.stopPropagation(); 
+        });
+        $(this).find("button").eq(0).click(function(e){
+            e.stopPropagation();
+           var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
+            var inp = $(this).parent().find("input").val();
+            if (inp == pw)
+            {
+                LOGtestStart(id,editor.getValue(),undefined,medal09876);                
+                setTimeout(function(){
+                    alert("test passed");
+                },1000);                
+            } 
+        });
+        $(this).find("button").eq(1).click(function(e){
+            e.stopPropagation();
+            $(this).parent().find("button,br,input").hide();
+        }).click();   
+        $(this).css({
+            border : "1px solid black",
+            background : "white",
+            cursor : "hand",
+            cursor : "pointer",
+            padding : "5px",
+            fontWeight : "bold",
+            textAlign : "center"
+        });
+        $(this).click(function(e){            
+            lasttestlink = this;
+            
+            var attempts = $(lasttestlink).attr("data-fails");
+            if (isNaN(attempts)) attempts = 0;
+            attempts++;
+            $(lasttestlink).attr("data-fails",attempts);
+            
+            $(this).find("div.emotionselection").remove();
+            // hidden override option
+            if (e.shiftKey)
+            {
+                $(this).find("button,br,input").show();
+                return;
+            }
+            lasttestlink = this;
+            
+            var attempts = $(lasttestlink).attr("data-fails");
+            if (isNaN(attempts)) attempts = 0;
+            attempts++;
+            $(lasttestlink).attr("data-fails",attempts);
+            
+            $(this).find("div.emotionselection").remove();
+            // hidden override option
+            if (e.shiftKey)
+            {
+                $(this).find("button,br,input").show();
+                return;
+            }
+            func(pea);
+        });
+    });        
+}
+
 function handleTestCases()
+{
+    handleTestCasesJS(); // legacy
+}
+
+function handleTestCasesPython()
+{    
+    genericHandleTestCases(function(source){        
+       var code = 
+'import noobtest\n\
+noobdata = {\n\
+  "numberOfTests" : 0,\n\
+  "successfulTests" : 0,\n\
+  "errorsDuringTest" : []\n\
+}\n\
+\n\
+';             
+               
+        var tests = $(source).find(".test");        
+        var medaldata = $(source).attr("data-medal");        
+        var id = $(source).attr("data-id");        
+        if (medaldata) medaldata = medaldata.replace(/"/g,"''");
+        
+        var inputTestList = [];
+        
+        tests.each(function(){                
+               var finalOutput = $(this).find(".testFinalOutput").text().trim();
+               var finalOutputCode = $(this).find(".testFinalOutputCode").text().trim();
+               var codeIncludes = $(this).find(".codeIncludes").text().trim();
+               var repeat = $(this).attr("data-repeat");               
+               var initcond = $(this).attr("data-initcond");
+               var endTestCode = $(this).find(".endTestCode").text().trim();                              
+               
+               // if we have an initial condition, add it
+               if (initcond) code += initcond+"\n";
+                              
+               var inputTests = $(this).find(".inputTest");
+               inputTests.each(function(){
+                   console.log($(this).text().trim());
+                inputTestList.push($(this).text().trim());
+               });               
+               
+                var oneCheck = "# START OF TEST RUN\n\n";
+               if ($("div.parameter#language").text().trim() == "pythoncarol")
+               {
+                   oneCheck += "import carol;carol.initialiseCarol()\n";
+               }
+               var codeInEditor = editor.getValue();
+               codeInEditor += "\n\n";               
+               codeInEditor = indent(codeInEditor);
+               
+               codeInEditor = "try:\n"+codeInEditor+"\nexcept Exception as e:\n";
+               codeInEditor += "  noobtest.feedback('Your code caused an error during the test. If you do not get an error when you run your code, your code probably does something completely unexpected for this particular exercise.')\n";
+               codeInEditor += "  noobdata['errorsDuringTest'].append(e)\n\n";
+              
+	       oneCheck += codeInEditor+"\n";
+               oneCheck += "noobdata['numberOfTests'] = noobdata['numberOfTests'] + 1\n\n";                              
+               
+                // are we dealing with a simple output comparison or Python-based test code?
+                
+               if (finalOutput != "")
+               {
+                   if (finalOutput.charAt(0) != "!")
+                   {
+                        oneCheck += "\n"+'if "'+finalOutput+'" in noobtest.getCode():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
+                   }
+                   else
+                   {
+                       finalOutput = finalOutput.substr(1);
+                       oneCheck += "\n"+'if "'+finalOutput+'" not in noobtest.getCode():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
+                   }
+               }
+               else if (finalOutputCode != "")
+               {
+                   finalOutputCode = indent(finalOutputCode);
+                   oneCheck +="\n"+'def noobTestRun():\n'+finalOutputCode+'\n\n';
+                   oneCheck += "\n"+'if noobTestRun():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
+               }
+               
+               // if we have a check for the code needing to include a particular
+               // aspect
+               if (codeIncludes != "")
+               {                   
+                   // this is actually a discrete test so increment
+                   oneCheck += "\nnoobdata['numberOfTests'] = noobdata['numberOfTests'] + 1\n";
+                   if (codeIncludes.charAt(0) != "!")
+                   {
+                       oneCheck += "\n"+'if "'+codeIncludes.toLowerCase()+'" in noobtest.getCode(): noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\n\n";
+                   }
+                   else
+                   {
+                       codeIncludes = codeIncludes.substr(1);
+                       oneCheck += "\n"+'if "'+codeIncludes.toLowerCase()+'" not in noobtest.getCode(): noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\n\n";
+                   }
+               }
+                              
+               if (repeat)
+               {
+                   oneCheck = indent(oneCheck);
+                   oneCheck = "for noobrepeat in range(0,"+repeat+"):\n"+oneCheck+"\n\n";
+               }
+               
+               // add the check code block to our main code
+               code += "\n\n"+oneCheck;
+
+               // finally, if there's a final condition for this test
+               if (endTestCode)
+               {
+                   code += "\n\n# FINAL CONDITION\n\n"
+                   code += "\nnoobdata[['numberOfTests'] = noobdata['numberOfTests'] + 1\n";
+                   
+                   endTestCode = indent(endTestCode);                   
+                   code +="\n"+'def noobTestRun():\n'+endTestCode+'\n\n';
+                   code += "\n"+'if noobTestRun(): noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\n";
+               }
+                                             
+        });
+        // now, determine whether we've passed all tests               
+        code += "\n"+'if noobdata["successfulTests"] == noobdata["numberOfTests"]:\n'+
+                     '  noobtest.greatSuccess("'+id+'","'+medaldata+'")\n'+
+                     'else:\n'+
+                     '  noobtest.epicFail(noobdata["successfulTests"],noobdata["numberOfTests"])\n';
+        
+        // we should be able to run this...!
+        LOGtestStart(id,editor.getValue(),false,medaldata)
+        if (inputTestList.length == 0) inputTestList = undefined;
+        
+        if ($("div.parameter#language").text().trim() == "pythoncarol") 
+        {
+            carol.initialiseCarol();            
+        }
+        setTimeout(function() { runPython(code,true,inputTestList); },1);        
+    });
+}
+
+function handleTestCasesJS()
 {
     $(".testCase").each(function(){                
         var id = $(this)[0].id;
@@ -1666,7 +1942,7 @@ function handleTestCases()
                 hiddenRun(code,"true");
             }
         };
-        
+                
         var linkText = " >>> Click here to test your code <<<"
         if (medal09876 != undefined)
         {
@@ -1704,7 +1980,7 @@ function handleTestCases()
             padding : "5px",
             fontWeight : "bold",
             textAlign : "center"
-        });
+        });        
         $(this).click(func);
     });
 }
@@ -2154,6 +2430,24 @@ function contentNav(sectionNo,delay,nosave)
     document.location.hash = "#"+(parseInt(sectionNo)+1);
 }
 
+function runPython(code,istest,input)
+{
+    // add an extra pass on the end - this fixes things if the last instruction is
+    // an asynchronous Carol instruction
+    code += "\npass\n";
+    document.getElementById("codeinput").value = code;
+    disableRun();
+    if (!istest) LOGrun(code);
+    var form = document.forms[0];
+    document.forms[0].action = contextPath+"/RunPython";
+    $(form).find("textarea[name=inputbuffer]").remove();
+    if (input)
+    {                        
+        $(form).append('<textarea style="width:0px;height:0px;visibility:hidden" name="inputbuffer">'+JSON.stringify(input)+'</textarea>');
+    }
+    document.forms[0].submit();
+}
+
 function hiddenRun(code,test,codefortest)
 {	
     // fudge console.log to println
@@ -2269,7 +2563,8 @@ function run()
 
     for (i = 0; i < editor.lineCount(); i++)
     {
-        editor.setLineClass(i,null);
+        editor.removeLineClass(i,"background");
+        //editor.setLineClass(i,null);
     }
     
     if ($("div.parameter#blockly").text().trim() == "true")
@@ -2326,6 +2621,14 @@ function run()
             if (title.slice(-4) != ".cpp") $(this).replaceWith(title+".cpp");
         })
         runCPP(getTabBundleCode(true));
+    }
+    else if ($("div.parameter#language").text().trim() == "python" || $("div.parameter#language").text().trim() == "pythoncarol")
+    {
+        if ($("div.parameter#language").text().trim() == "pythoncarol") 
+        {
+            carol.initialiseCarol();            
+        }
+        setTimeout(function() { runPython(code) },1); // not sure why the setTimout is needed for Carol following the initialise, but hey...
     }
     else // plain ol' JS
     {
@@ -2574,6 +2877,10 @@ function stop()
             cout("\nProgram terminated with the 'STOP' button."," rgb(255,0,0)");
         }
     }
+    else if ($("div.parameter#language").text().indexOf("python") != -1)
+    {
+        outputframe.Sk.halt("Program terminated by user");
+    }
     else
     {
         outputframe.halt = true;
@@ -2616,7 +2923,8 @@ function highlightLine(lineno)
 {
     editor.focus(); 
     editor.setCursor(lineno);
-    editor.setLineClass(lineno,"error");
+    //editor.setLineClass(lineno,"error");
+    editor.addLineClass(lineno,"background","error");
 }
 
 function resize()
@@ -2701,8 +3009,7 @@ function pasteCodeBundle(source)
 }
 
 function selectEditorTab(source,norename)
-{
-    // if already selected, return...
+{    
     if (!$(source).hasClass("selected"))
     {
         //otherwise...
@@ -2749,7 +3056,7 @@ function selectEditorTab(source,norename)
 		}
 	});
     }
-    function doTheRest(){
+    function doTheRest(){        
     var name = $(source).text().trim();
     if (name.slice(-4) == ".cpp" || $("div.parameter#language").text().trim() == "cpp")
     {
@@ -2823,7 +3130,7 @@ function deleteSelectedEditorTab()
                 editor.setValue("");
                 if ($("div.parameter#language").text().trim() == "fullweb")
                 {
-		  $("div.tab.selected").text("index.html");
+		  $("div.tab.selected").html('index.html<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
                 }
                 else
         	{
@@ -2864,7 +3171,7 @@ function populateTabs(data)
     // wipe out existing tabs
     $("#code-titlebar div.tab").not("div.newtab").remove();
     $.each(data,function(i,tab){
-        var newtab = $('<div onclick="selectEditorTab(this)" class="tab">'+tab[0].trim()+'</div>');
+        var newtab = $('<div onclick="selectEditorTab(this)" class="tab">'+tab[0].trim()+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i></div>');
         // put code in existing tab into a hidden pre.code
         var newpre = $('<pre class="code"/>');
         newpre.text(tab[1].trim());
@@ -3044,7 +3351,7 @@ function addNewTab(auto)
     
     function inner(tabName)
     {
-        var newtab = $('<div onclick="selectEditorTab(this)" class="tab">'+tabName+'</div>');
+        var newtab = $('<div onclick="selectEditorTab(this)" class="tab">'+tabName+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i></div>');
         $("#code-titlebar div.newtab").before(newtab);
 	sizeTabs();
         $(newtab).click();
@@ -3120,8 +3427,17 @@ function blocklyCodeUpdate() {
     var $blocklyCodePreview = $("#code-blockly").contents().find(".blocklyToolboxDiv #blocklyCodePreview");
 
     var originalCode = getCode($blocklyCodePreview).replace(/[0-9]+/,"").replace(/\n[0-9]+/g,"\n");
-
-    var code = Blockly.Pseudocode.workspaceToCode();
+    
+    var code;
+    if ($("div.parameter#language").text().trim() == "python" || $("div.parameter#language").text().trim() == "pythoncarol")
+    {
+        code = Blockly.Python.workspaceToCode();
+    }
+    else
+    {
+        code = Blockly.Pseudocode.workspaceToCode();
+    }
+    //var code = Blockly.Pseudocode.workspaceToCode();
     editor.setValue(code);
     code = code.replace(/ /g,"&nbsp;");
     var splitted = code.split(/\n/);
@@ -3148,7 +3464,8 @@ function blocklyCodeUpdate() {
 }
 
 function restoreBlockly(oldBlockly)
-{
+{   
+    if (Blockly == null) Blockly = $("iframe#code-blockly").get(0).contentWindow.Blockly;
     Blockly.mainWorkspace.clear();
     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, Blockly.Xml.textToDom(oldBlockly));
     blocklyCodeUpdate();
@@ -3239,6 +3556,10 @@ $(document).ready(function()
    {
        handleTestCasesHtml();
    }
+   else if ($("div.parameter#language").text().trim().indexOf("python") != -1)
+   {
+       handleTestCasesPython();
+   }
    else handleTestCases(); 
   
    if ($("div.parameter#language").text().trim() == "java")
@@ -3257,8 +3578,16 @@ $(document).ready(function()
        $("input#tidy").hide();
        // and turn off code highlighting and autoindenting
        // as it makes equally no sense
-       editor.setOption("mode","text/plain");
-   }      
+       editor.setOption("mode","text/plain");       
+       //editor.setOption("indentUnit",4);
+   }
+   
+   if ($("div.parameter#language").text().trim() == "python" || $("div.parameter#language").text().trim() == "pythoncarol")
+   {
+       editor.setOption("mode","python");
+       // hide the tidy button (cos it'll make no sense in Python)
+       $("input#tidy").hide();
+   }
 
     if ($("div.parameter#multi").text().trim() == "true" ||  $("div.parameter#language").text().trim() == "fullweb")
     {
@@ -3270,7 +3599,7 @@ $(document).ready(function()
 
         $("#code-titlebar").css("text-align","left");
         $("#code-titlebar").empty();
-        $("#code-titlebar").append('<div onclick="deleteSelectedEditorTab()" class="tabdelete">X</div>');
+        //$("#code-titlebar").append('<div onclick="deleteSelectedEditorTab()" class="tabdelete">X</div>');
         $("#code-titlebar").append('<div class="tab newtab" onclick="addNewTab()">+</div>');
         $("#code-titlebar").append('<div style="clear: both"></div>');
         addNewTab(true);
@@ -3280,13 +3609,13 @@ $(document).ready(function()
     else if ($("div.parameter#language").text().trim() == "java")
     {
        $("div.CodeMirror").prepend('<pre class="javastatic">import java.util.Scanner;\n\npublic class SomeJavaCode\n{\n  public static void main(String[] args)\n  {</pre>');
-       $("div.CodeMirror").append('<pre style="padding-bottom: 5px" class="javastatic">  } // end of main method\n} // end of class</pre>');
+       $("div.CodeMirror div.CodeMirror-scroll").append('<pre style="padding-bottom: 5px; position: relative; left: -12px; margin-top: 15px; z-index: 1000" class="javastatic">  } // end of main method\n} // end of class</pre>');
     }
     
     if ($("div.parameter#language").text().trim() == "fullweb")
     {
         // make default one index.html
-        $("div.tab").eq(0).contents().eq(0).replaceWith("index.html");
+        $("div.tab").eq(0).contents().eq(0).replaceWith('index.html');
     }
     
     if ($("div.parameter#lectureSlideUrl").length != 0)
@@ -3451,6 +3780,25 @@ $(document).ready(function()
        },500); // give it half a second so we can read what we've got
     });
     
+    // prevent clicking within the watermark whitespace
+    editor.on("cursorActivity",function(){
+       if (editor.getCursor().line == 0)
+       {
+            var max = editor.getLine(0).trim().length;
+            if (editor.getCursor().ch > max+1) editor.setCursor(0,max+1);
+       } 
+    });
+    
+    // remap tabs to spaces
+    editor.setOption("extraKeys", {
+        Tab: function(cm) {
+          var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+          cm.replaceSelection(spaces);
+        }
+      });
+      
+    editor.setOption("indentUnit",2);
+    
     // install logging for scroll
     $(document).ready(function(){
         setTimeout(function(){
@@ -3516,6 +3864,33 @@ $(document).ready(function()
             howDoYouFeelAbout($lastfail,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");    
         }
     },1000); */
+    
+    // add play/pause controls to any animated gifs    
+        $("img[src$=gif]").load(function(){
+           console.log($(this).attr("src"));
+           var sg = new SuperGif({gif: this});
+           sg.load(function(){
+               var div = $(sg.get_canvas()).parent();
+               $(div).append('<div class="pntoolbar" style="position: absolute; right: 3px; bottom : 3px;"><button style="height: 30px; width: 30px; padding: 0px; line-height: 30px; border-radius: 15px; cursor: pointer; text-align: center; outline: 0px"><i class="fa fa-pause"></i></button>');                                             
+    
+                $(div).find("button").click(function(){
+                if (sg.get_playing())
+                {
+                    // pause
+                    $(div).find("button i").removeClass("fa-pause");
+                    $(div).find("button i").addClass("fa-play");
+                    sg.pause();
+                }
+                else
+                {
+                    // pause
+                    $(div).find("button i").removeClass("fa-play");
+                    $(div).find("button i").addClass("fa-pause");
+                    sg.play();
+                }                
+            });   
+           });
+        });    
 
 });
 
@@ -3557,7 +3932,6 @@ function zoomOut()
 }
 
 $(window).resize(function() {
-
         //confirm window was actually resized
         if($(window).height()!=lastWindowHeight || $(window).width()!=lastWindowWidth){
 
@@ -3568,6 +3942,4 @@ $(window).resize(function() {
             //call my function
             resize();
         }
-
-
 });

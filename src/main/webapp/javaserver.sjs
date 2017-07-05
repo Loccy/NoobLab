@@ -82,7 +82,8 @@ function actuallyDoRunJava(codeFiles,main,mainPkg)
                     '<p>');
                 editor.focus(); 
                 editor.setCursor(parseInt(lineno)-1);
-                editor.setLineClass(parseInt(lineno)-1,"error");
+                //editor.setLineClass(parseInt(lineno)-1,"error");
+                editor.addLineClass(parseInt(lineno)-1,"background","error");
             }
         }
     });

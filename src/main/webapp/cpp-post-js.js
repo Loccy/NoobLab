@@ -15,9 +15,8 @@ Module["printErr"] = function(msg) {
 
 if(typeof(self) != undefined)
 {
-    self.lastconsoleline = "";
     self.urlcontext = "";
-    self.db = undefined;
+    self.db = undefined;    
     
     var request = self.indexedDB.open('cppconsole');
     cout("Past DB line on PRE\n");
@@ -36,29 +35,7 @@ if(typeof(self) != undefined)
                         return;
                 }
                 if( e.data.action == "callMain")
-                {
-                    /*setInterval(function(){
-                        cout("pantaloons");
-                        // build last console line
-                        var transaction = self.db.transaction(['cpplines'], "readwrite");
-                        var objectStore = transaction.objectStore('cpplines');
-                        objectStore.openCursor().onsuccess = function(event)
-                        {
-                            cout("In cursor success");
-                            var cursor = event.target.result;
-                            if (cursor) 
-                            {
-                                self.lastcursorline = cursor.value.cppline;
-                                cursor.delete();
-                            }
-                            else
-                            {
-                                cout("Shouldn't get here yet");
-                            }
-                        }
-                    },1000); */
-
-                    //cout(Module.callMain.toString());
+                {                    
                     coutclear();
                     self.urlcontext = e.data.urlcontext;
                     Module.callMain();           
@@ -74,7 +51,7 @@ if(typeof(self) != undefined)
                 {
                     self.urlcontext = e.data.urlcontext;
                     cout("set URL context");
-                }
+                }                                
         }, false);
     }
      

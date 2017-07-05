@@ -44,25 +44,14 @@
 
 #code-titlebar {
     margin: 0px;
-    width: 100%; font: 11px sans-serif; text-align: center;
+    width: 100%; font: 12px sans-serif; text-align: center;
     background-color: #ECE9D8;
     border: 1px solid #888;
     position : relative;
-    height : 15px;
+    height : 16px;
     white-space : nowrap;
     box-sizing : border-box;
 }
-
-#code-titlebar div.tabdelete {
-    position: absolute; bottom: -22px; right: 4px;
-    border : 1px solid #888;
-    background-color: #ECE9D8;
-    cursor : hand;
-    cursor : pointer;
-    padding : 2px;
-    z-index : 1;
-}
-
 
 #code-titlebar div.tab {
     cursor: hand; cursor: pointer; border-right: 1px solid #888;
@@ -72,6 +61,10 @@
     box-sizing : border-box;
     position : relative;
     overflow : hidden;
+}
+
+#code-titlebar div.tab i.close {
+    margin-left: 0.8em;
 }
 
 div.tab:after {
@@ -143,8 +136,8 @@ pre.javastatic {
   -moz-box-sizing : border-box;
   -ms-box-sizing : border-box;
   -webkit-box-sizing : border-box;
-    font-size : 0.8em;
-    color : grey;
+    font-size : 0.8em !important;
+    color : grey !important;
     width : 100%;
     background: #D5DCDC !important;
     padding : 3px !important;
@@ -602,6 +595,10 @@ span.fakedoctab {
 span.fakedoctab.selected {
     background : black;
     color : white;
+}
+
+div.CodeMirror {
+    height : 100%;
 }
 
 @media print {

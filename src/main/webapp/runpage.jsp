@@ -48,7 +48,7 @@ approach to DOM manipulation. --%>
                     Error detected: ${error}
                 </span>
                 <script type="text/javascript">
-                    parent.editor.focus(); parent.editor.setCursor(${linenumber-1}); parent.editor.setLineClass(${linenumber},"error");
+                    parent.editor.focus(); parent.editor.setCursor(${linenumber-1}); parent.editor.addLineClass(${linenumber},"background","error");
                     
                     if (parent.$("div.parameter#blockly").text().trim() == "true")
                     {
@@ -285,7 +285,8 @@ approach to DOM manipulation. --%>
                         {
                             parent.editor.focus(); 
                             parent.editor.setCursor(errorLine-1);
-                            parent.editor.setLineClass(errorLine-1,"error");                            
+                            //parent.editor.setLineClass(errorLine-1,"error");                            
+                            parent.editor.addLineClass(errorLine-1,"background","error");                            
                             if (parent.$("div.parameter#blockly").text().trim() == "true")
                             {
                                 console.log(parent.$("#code-blockly").contents().text()); //find(".blocklyToolboxDiv").find("#bcp"+errorLine-1).text());                                
@@ -322,7 +323,8 @@ approach to DOM manipulation. --%>
                      if (errorLine > 0) {
                             parent.editor.focus(); 
                             parent.editor.setCursor(errorLine-1);
-                            parent.editor.setLineClass(errorLine-1,"error");
+                            //parent.editor.setLineClass(errorLine-1,"error");
+                            parent.editor.addLineClass(errorLine-1,"background","error");
                             if (parent.$("div.parameter#blockly").text().trim() == "true")
                             {                                
                                 parent.$("#code-blockly").contents().find(".blocklyToolboxDiv").find("#bcp"+(errorLine-1)).addClass("error");

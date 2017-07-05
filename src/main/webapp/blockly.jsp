@@ -19,15 +19,15 @@
         <script type="text/javascript" src="blockly/blocks/variables.js"></script>
         <script type="text/javascript" src="blockly/blocks/carol.js"></script>  
 
-        <script type="text/javascript" src="blockly/generators/pcode.js"></script>
-        <script type="text/javascript" src="blockly/generators/pcode/colour.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/logic.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/math.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/text.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/loops.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/procedures.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/variables.js"></script>  
-        <script type="text/javascript" src="blockly/generators/pcode/carol.js"></script>
+        <script type="text/javascript" src="blockly/generators/${param.language}.js"></script>
+        <script type="text/javascript" src="blockly/generators/${param.language}/colour.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/logic.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/math.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/text.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/loops.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/procedures.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/variables.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/carol.js"></script>
         <script type="text/javascript" src="blockly/msg/js/en.js"></script>
         <style>
             html, body {
@@ -44,6 +44,9 @@
             .blocklyTreeLabel {
         	font-size: 12px !important;
                 font-family: Tahoma, Arial, sans-serif !important;
+            }
+            .blocklyTreeRow {
+                margin-bottom : 0px !important;
             }
             .blocklyText {
                 font-size: 12px !important;
@@ -98,12 +101,12 @@
         </style>
         <script>
             function init() {
-		if (parent.$("div.parameter#language").text().trim() != "pcarol")
+		if (parent.$("div.parameter#language").text().trim() != "pcarol" && parent.$("div.parameter#language").text().trim() != "pythoncarol")
             	{
                 	parent.$("xml#toolbox",document).find("category[name=Carol]").remove();
             	}
                 Blockly.inject(document.body,
-                        {path: './blockly/', toolbox: document.getElementById('toolbox')});
+                        {path: './blockly/', toolbox: document.getElementById('toolbox'), sounds : false });
                 // Let the top-level application know that Blockly is ready.
                 window.parent.blocklyLoaded(Blockly);
                 Blockly.addChangeListener(window.parent.blocklyCodeUpdate);                

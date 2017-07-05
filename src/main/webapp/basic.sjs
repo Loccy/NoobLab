@@ -165,7 +165,8 @@ function runbasic(inp,noLog)
                     {
                         editor.focus(); 
                         editor.setCursor(i);
-                        parent.editor.setLineClass(i,"error");
+                        //parent.editor.setLineClass(i,"error");
+                        parent.editor.addLineClass(i,"background","error");
                     }
                 }
                 // enable run button

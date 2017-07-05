@@ -126,7 +126,8 @@ Blockly.Pseudocode.init = function() {
     }
 
     var defvars = [];
-    var variables = Blockly.Variables.allVariables();
+    //var variables = Blockly.Variables.allVariables();
+    var variables = Blockly.getMainWorkspace().variableList;
     /*for (var x = 0; x < variables.length; x++) {
       defvars[x] = 'var ' +
           Blockly.Pseudocode.variableDB_.getName(variables[x],
@@ -193,9 +194,10 @@ Blockly.Pseudocode.scrub_ = function(block, code) {
   // Only collect comments for blocks that aren't inline.
   if (!block.outputConnection || !block.outputConnection.targetConnection) {
     // Collect comment for this block.
-    var comment = block.getCommentText();
+    var comment = false; //block.getCommentText();
+    // PN: ugly hack. Comments? Us? Don't be ridiculous.
     if (comment) {
-      commentCode += this.prefixLines(comment, '// ') + '\n';
+      commentCode += this.prefixLines(comment, 'rem ') + '\n';
     }
     // Collect comments for all value arguments.
     // Don't collect comments for nested statements.
@@ -205,7 +207,7 @@ Blockly.Pseudocode.scrub_ = function(block, code) {
         if (childBlock) {
           var comment = this.allNestedComments(childBlock);
           if (comment) {
-            commentCode += this.prefixLines(comment, '// ');
+            commentCode += this.prefixLines(comment, 'rem ');
           }
         }
       }

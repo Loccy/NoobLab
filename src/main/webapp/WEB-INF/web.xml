@@ -28,6 +28,10 @@
         <servlet-name>CPPConsole</servlet-name>
         <servlet-class>uk.ac.kingston.nooblab.c.CPPConsole</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>RunPython</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.RunPython</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RunPage</servlet-name>
         <url-pattern>/RunPage</url-pattern>
@@ -160,6 +164,10 @@
     <servlet-mapping>
         <servlet-name>CPPConsole</servlet-name>
         <url-pattern>/CPPConsole</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RunPython</servlet-name>
+        <url-pattern>/RunPython</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>240</session-timeout>

@@ -15,6 +15,20 @@ var carolDiv;
 
 var isTest;
 
+function spanner(msg)
+{
+    var Sk = $("iframe#outputframe").get(0).contentWindow.Sk;    
+    if (typeof Sk === 'undefined')
+    {
+        throw new Error(msg)
+    }
+    else
+    {        
+        Sk.halt(msg);
+        throw new Error(msg);
+    }
+}
+
 function initialiseCarol(test,reset)
 {
     isTest = test;
@@ -22,7 +36,7 @@ function initialiseCarol(test,reset)
 
     if (carolDiv == undefined)
     {
-        throw new Error("You need a Carol grid to be on the screen before you can run a Carol program! Scroll down (or up) until an appropriate grid is in the browser window.");
+        spanner("You need a Carol grid to be on the screen before you can run a Carol program! Scroll down (or up) until an appropriate grid is in the browser window.");
     }
 
     // find carol starting point   
@@ -243,7 +257,7 @@ function move(distance,dir)
         if (carolXpos < 0 || carolYpos < 0 || carolXpos > (carolsize-1) || carolYpos > (carolsize-1) || getSquare().hasClass("blocked"))
         {
             size = parseInt(size / 4);
-            /* throw new Error("Carol can't move in that direction! Carol's giving up!"); */
+            /* spanner("Carol can't move in that direction! Carol's giving up!"); */
         }
         if (x != 0) $(carolImg).animate({"margin-left" : size*x},moveDelay*3);
         if (y != 0) $(carolImg).animate({"margin-top" : size*y},moveDelay*3);
@@ -278,7 +292,7 @@ function move(distance,dir)
 
         if (carolXpos < 0 || carolYpos < 0 || carolXpos > (carolsize-1) || carolYpos > (carolsize-1) || getSquare().hasClass("blocked"))
         {
-             throw new Error("Carol can't move in that direction! Carol's giving up!");
+             spanner("Carol can't move in that direction! Carol's giving up!");
         }
 
         $(carolImg).remove();
@@ -286,7 +300,7 @@ function move(distance,dir)
         if (parent.$("div.parameter#realcarol").text().trim() == "true") hold(3000);
         hold(moveDelay);
     }
-    //if (atGoal() && !isTest) /* return */ throw new Error("NOTERRORCarol has found her way home and is stopping and putting her feet up.");
+    //if (atGoal() && !isTest) /* return */ spanner("NOTERRORCarol has found her way home and is stopping and putting her feet up.");
 }
 
 function pickUp()
@@ -294,7 +308,7 @@ function pickUp()
     // where are we? :-)
     if (!getSquare().hasClass("pickup"))
     {
-        /* return */ throw new Error("Nothing in the square to pick up! Carol's brain hurts now so she's giving up.");
+        /* return */ spanner("Nothing in the square to pick up! Carol's brain hurts now so she's giving up.");
     }
     
     // otherwise, what are we picking up? :-)
@@ -334,13 +348,13 @@ function putDown(index)
     // if there's something already there!
     if (getSquare().hasClass("pickup"))
     {
-        /* return */ throw new Error ("Can't put something down there! There's already something there, so Carol gives up!");
+        /* return */ spanner ("Can't put something down there! There's already something there, so Carol gives up!");
     }
     
     // nothing in basket
     if (carolBasket.length == 0)
     {
-        /* return */ throw new Error ("Carol hasn't got anything in her trolley to put down, so she gives up!");
+        /* return */ spanner ("Carol hasn't got anything in her trolley to put down, so she gives up!");
     }
     
     if (index == undefined) index = carolBasket.length - 1;
@@ -348,7 +362,7 @@ function putDown(index)
     
     if (item.length == 0)
     {
-        /* return */ throw new Error ("Carol doesn't have that many things in her trolley, so she's giving up!");
+        /* return */ spanner ("Carol doesn't have that many things in her trolley, so she's giving up!");
     }
     
     item = item[0];
@@ -446,7 +460,7 @@ function isPickupVisible(distanceMode)
 function distanceToPickup()
 {
     var distance = isPickupVisible(true);
-    if (distance < 0) throw new Error("Carol can't see a pickup in the direction she's facing, so she's giving up.");    
+    if (distance < 0) spanner("Carol can't see a pickup in the direction she's facing, so she's giving up.");    
     return distance;
 }
 
@@ -598,6 +612,10 @@ exports.atGoal = function() {
 
 exports.notAtGoal = function() {
     return notAtGoal();
+}
+
+exports.getMoveDelay = function() {
+    return moveDelay;
 }
 
 exports.printCommands = function() {

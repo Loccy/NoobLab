@@ -28,23 +28,25 @@
         
         <%-- xml for codemirror, needed for HTMl apparently --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/xml/xml.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/xml/xml.css">                 
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/xml/xml.css">  --%>               
         <%-- javascript highlighting for codemirror --%>                        
         <script src="${pageContext.request.contextPath}/codemirror/mode/javascript/javascript.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/javascript/javascript.css"/>        
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/javascript/javascript.css"/>        
         <%-- css/html for Codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/css/css.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/css/css.css">
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/css/css.css"> --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/htmlmixed/htmlmixed.js"></script>                
         
         <%-- basic highlighting for codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/basic/basic.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/basic/basic.css"/>
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/basic/basic.css"/> --%>
         <%-- java highlighting for codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/clike/clike.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/clike/clike.css"/>        
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/clike/clike.css"/> --%>   
         <%-- and PHP --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/php/php.js"></script>
+        <%-- and Python --%>
+        <script src="${pageContext.request.contextPath}/codemirror/mode/python/python.js"></script>
 
         <%-- prettyprint --%>
         <script src="${pageContext.request.contextPath}/prettify.js"></script>
@@ -77,6 +79,9 @@
             var javaserver = require("${pageContext.request.contextPath}/javaserver");
         </script>
         
+        <%-- gifpauserxtreme (for animated gifs) --%>        
+        <script type="text/javascript" src="${pageContext.request.contextPath}/gifpause/libgif.js"></script>                
+        
         <%-- font awesome --%>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
         
@@ -86,7 +91,7 @@
         </script>
         
         <%-- blockly --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blockly_compressed.js"></script>
+        <%-- <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blockly_compressed.js"></script>
 
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/colour.js"></script>  
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/logic.js"></script>  
@@ -106,7 +111,7 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/procedures.js"></script>  
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/variables.js"></script>  
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/carol.js"></script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/msg/js/en.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/msg/js/en.js"></script> --%>
         
 
     </head>
@@ -231,28 +236,15 @@
         </script>
         <div id="editor-wrapper">
             <div id="code-titlebar"><%--<div id="code-blocklytoggle" unselectable="on" onclick="toggleBlockly()">Hide visual editor</div>--%>[ Code ]</div>
-            <iframe id="code-blockly" src="${pageContext.request.contextPath}/blockly.jsp"></iframe>
+            <iframe id="code-blockly" src="${pageContext.request.contextPath}/blockly.jsp?language=${requestScope.blocklylang}"></iframe>
             <div id="code-main"><!-- editor will go in here --></div>
         </div>
-        <script type="text/javascript">
-            function cursorCheck()
-            {
-                if (editor)
-                {
-                    if (editor.getCursor().line == 0)
-                    {
-                        var whitespacelength = editor.getValue().split("\n")[0].replace(/\s+$/g, '').length;
-                        if (editor.getCursor().ch > whitespacelength+1) editor.setCursor(0,whitespacelength);
-                    }
-                }
-            }
-            
+        <script type="text/javascript">            
             if ($("div.parameter#language").text().trim() == "basic")
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",
-                    mode:  "basic",
-                    onCursorActivity: cursorCheck,
+                    mode:  "basic",                    
                     lineNumbers: false
                 });
             }
@@ -261,8 +253,7 @@
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",                    
                     mode: "text/x-java",
-                    tabMode : "shift",
-                    onCursorActivity: cursorCheck,
+                    //tabMode : "shift",                    
                     lineNumbers: true
                 });
             }
@@ -272,8 +263,7 @@
                     value: "${codetext}",
                     mode : "text/plain",
                     tabMode : "shift",
-                    lineNumbers: true,
-                    onCursorActivity: cursorCheck,
+                    lineNumbers: true,                    
                     onKeyEvent : function(a,b){
                         if (stoppit) return;
                         if ($("div.parameter#blockly").text().trim() == "true")
@@ -298,9 +288,7 @@
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",
-                    mode:  "javascript",
-                    tabMode : "shift",
-                    onCursorActivity: cursorCheck,
+                    mode:  "javascript",                                        
                     lineNumbers: true
                 });
             }
