@@ -154,6 +154,16 @@ public class Main extends HttpServlet
             }
             String basedir = MiscUtils.getDataDir(request)+"/"+username+"/";       
             
+            String language = doc.select("div.parameter[id=language]").text();
+            if ("python".equals(language) || "pythoncarol".equals(language))
+            {
+                request.setAttribute("blocklylang","python");                
+            }
+            else
+            {                
+                request.setAttribute("blocklylang","pcode");
+            }
+            
              // is this a restricted piece of content that needs to be unlocked at
             // a particular place and/or time?
             ipRestricts = doc.select("div.parameter[id=lockPlace]").text().trim();            

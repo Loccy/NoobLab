@@ -17,11 +17,12 @@ function runCPP(codes)
     cppcompiling = true;
     
     var filenames = codes[1];
-    var codeFiles = codes[0];
+    var codeFiles = codes[0];    
     
     $.ajax({
         data : {
             code : codeFiles,
+            filenames : filenames,
             mode : "submitCode",
             
            // main : main,
@@ -43,7 +44,7 @@ function runCPP(codes)
                 cppworker.onerror = function(err) { 
 			//cout("Error in code","red"); 
 			cout("\n"+err.message,"red"); 
-			console.log(err);
+			//console.log(err);
                         enableRun();
 		}
 
@@ -101,23 +102,26 @@ function runCPP(codes)
 
 function cout(data,colour) 
 {
-        data = data.replace(/\n/g,"<br/>");        
+        data = data.replace(/\n/g,"<br/>");
+        data = data.replace(/Uncaught Error:/g,"");
         if (colour == "red") // errr-oooorrrrr (points at screen)
         {            
-            // extract tab index
-            var filename = data.match(/[0-9]\.cpp/);
-            var tabNo = filename.replace(/\.cpp/,"");
-            data = data.replace(filename,"");
-            data = data.replace(/error:&nbsp;/,"");
-            data = data.replace(/Uncaught Error:/,"");
-            var location  = data.match(/:[0-9]*:[0-9]*:/g)[0].split(/:/g);
-            var lineno = location[1];
-            var colno = location[3];
-            // select offending editor tab
-            if (!($("div.tab").eq(tabNo-1).hasClass("selected"))) selectEditorTab($("div.tab").eq(tabNo-1));
-            // highlight offending line
-            alert(lineno);
-            highlightLine(parseInt(lineno));
+            try
+            {
+                var filename = data.match(/in&nbsp;(.+?)&nbsp;at&nbsp;/)[1];                
+                var lineno = data.match(/at&nbsp;line&nbsp;([0-9]+),/)[1];
+                var colno = data.match(/column&nbsp;([0-9]+):/)[1];
+                filename = filename.replace(/&nbsp;/g," ");                
+                // select offending editor tab
+                var targetTab = $("div.tab").filter(function() {
+                    return $(this).clone().children().remove().end().text().trim() === filename.trim();
+                });
+                
+                if (!$(targetTab).hasClass("selected")) selectEditorTab($(targetTab));                
+                highlightLine(parseInt(lineno-1));
+            }
+            catch (e)
+            {}              
         }
     
         var lastspan = $("body",outputframe.document).find("span").last();        

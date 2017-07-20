@@ -8,6 +8,8 @@ package uk.ac.kingston.nooblab;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,18 +41,20 @@ public class CPPRunner extends HttpServlet {
          if ("submitCode".equals(mode))
          {
              String[] codes = request.getParameterValues("code[]");
+             String[] filenames = request.getParameterValues("filenames[]");
              request.getSession().setAttribute("submittedcode", codes);
+             request.getSession().setAttribute("submittedfilenames", filenames);
              pw.println("qapla");
          }
          else
          {
             File js = new File(System.getProperty("java.io.tmpdir")+"/cpp-post-js.js");
-           // if (!js.exists())
+            if (!js.exists())
             {
                 FileUtils.copyInputStreamToFile(request.getServletContext().getResourceAsStream("/cpp-post-js.js"), js);
             }
             js = new File(System.getProperty("java.io.tmpdir")+"/cpp-pre-js.js");
-           // if (!js.exists())
+            if (!js.exists())
             {
                 FileUtils.copyInputStreamToFile(request.getServletContext().getResourceAsStream("/cpp-pre-js.js"), js);
             }
@@ -61,15 +65,40 @@ public class CPPRunner extends HttpServlet {
             datadir = datadir + "/fullweb/"+username;
 
              String[] codes = (String[])request.getSession().getAttribute("submittedcode");
+             String[] filenames = (String[])request.getSession().getAttribute("submittedfilenames");
              request.getSession().removeAttribute("submittedcode");
+             request.getSession().removeAttribute("submittedfilenames");
              // compile our code
-             String[] result = CPPRunningUtils.compileCode(codes,datadir);
+             String[] result = CPPRunningUtils.compileCode(codes,filenames,datadir);
              if (result.length == 1) // errrrr-orrrrrr (points at red text on screen)
              {
                 String errorText = result[0];
-                errorText = errorText.replace("\r","");
-                errorText = errorText.split("file",2)[1];
-                errorText = "Error at line "+errorText;
+                String errorDetails = "Error parsing failed :-(";
+                String filename = "unknown.cpp";
+                int lineNo = -1;
+                int rowNo = -1;
+                try
+                {
+                    Pattern pattern = Pattern.compile(".+\\/(.+?):([0-9]+?):([0-9]+?):.*error: (.*)");
+                    Matcher matcher = pattern.matcher(errorText);    
+                    if (matcher.find())
+                    {
+                        filename = matcher.group(1);
+                        lineNo = Integer.parseInt(matcher.group(2));
+                        rowNo = Integer.parseInt(matcher.group(3));
+                        errorDetails = matcher.group(4);
+                    }
+                    else
+                    {
+                        errorDetails = errorText;
+                    }
+                }
+                catch (Exception e) { errorDetails = e.getMessage(); e.printStackTrace(); };
+                
+                errorText = "Error in "+filename+" at line "+lineNo+", column "+rowNo+": "+errorDetails;
+                                
+                errorText = errorText.replace("\r","");                
+                //errorText = "Error at line "+errorText;
                 errorText = errorText.replace("\"","&quot;");
                 errorText = errorText.replace("\n","<br/>");
                 errorText = errorText.replace(" ","&nbsp;");

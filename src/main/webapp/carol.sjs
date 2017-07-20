@@ -331,6 +331,15 @@ function pickUp()
 
 function printBasket()
 {
+    if (typeof cls == "undefined")
+    {    
+      cls = outputframe.cls;
+    }
+    if (typeof println == "undefined")
+    {
+      println = outputframe.outf;
+    }
+
     // print out the basket
     cls();
     if (carolBasket.length == 0)

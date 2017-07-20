@@ -217,11 +217,12 @@ public class StudentStatuses
                 }
             }
             for (String[] medalLine : medalLines)
-            {                
+            {                                
                 String[] details = medalLine[3].split(":");
                 String grade = details[0];
                 String id = details[details.length-1];
                 String current = tests.get(id);
+                if (current == null) current = "";                
                 if (current.equals("") || current.equals("bronze") || (current.equals("silver") && grade.equals("gold") ) )
                 {                    
                     tests.put(id,grade);

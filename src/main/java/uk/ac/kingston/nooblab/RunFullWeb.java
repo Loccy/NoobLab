@@ -87,7 +87,8 @@ public class RunFullWeb extends HttpServlet {
                                                         "if (parent.$(this).contents().eq(0).text() == url) {"+
                                                             "if (!parent.$(this).hasClass('selected')) {parent.$(this).click();}"+
                                                             "parent.editor.focus();"+
-                                                            "parent.editor.setLineClass(linenumber-1,'error');"+
+                                                            //"parent.editor.setLineClass(linenumber-1,'error');"+
+                                                            "parent.editor.addLineClass(linenumber-1,'background','error');"+
                                                             "parent.editor.setCursor(linenumber-1);"+
                                                         "};"+
                                                     "});"+

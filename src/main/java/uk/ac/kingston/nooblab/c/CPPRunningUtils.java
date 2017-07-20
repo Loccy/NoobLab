@@ -30,27 +30,25 @@ public class CPPRunningUtils {
      * @return An array pf strings. Index 0 is any error text. Index 
      * @throws IOException 
      */
-    public static String[] compileCode(String[] codes, String destinationDir) throws IOException
+    public static String[] compileCode(String[] codes, String[] filenames, String destinationDir) throws IOException
     {
         // stash source files somewhere in the temp directory
         String temp = System.getProperty("java.io.tmpdir");
         // create temp directory in system temp
         String tempdirStr = temp+RandomStringUtils.randomAlphabetic(10);
-        System.out.println(tempdirStr);
+        //System.out.println(tempdirStr);
         File tempdir = new File(tempdirStr);
         tempdir.mkdir();
+        
+        String emcl = (System.getProperty("os.name")+"").startsWith("Windows") ? "em++.bat" : "em++";
+        CommandLine cmdLine = new CommandLine(emcl);
+        
         for (int i = 0; i < codes.length; i++)
         {
             String code = codes[i];            
-            String filename = tempdirStr+"/file"+(i+1)+".cpp";
+            String filename = tempdirStr+"/"+filenames[i];            
             FileUtils.writeStringToFile(new File(filename),code);
-        }
-        // should now have the source files in tempdir as file1.cpp, file2.cpp etc
-        String emcl = (System.getProperty("os.name")+"").startsWith("Windows") ? "em++.bat" : "em++";
-        CommandLine cmdLine = new CommandLine(emcl);
-        for (int i = 1; i < codes.length+1; i++)
-        {
-            cmdLine.addArgument(tempdirStr+"/file"+i+".cpp",true);
+            cmdLine.addArgument(filename,true);
         }
         cmdLine.addArgument("--pre-js");
         cmdLine.addArgument(temp+"/cpp-pre-js.js",true);
@@ -61,7 +59,7 @@ public class CPPRunningUtils {
         //cmdLine.addArgument("-s");
         //cmdLine.addArgument("EMTERPRETIFY_ASYNC=1");
         cmdLine.addArgument("-s");
-        cmdLine.addArgument("INVOKE_RUN=0");
+        cmdLine.addArgument("ASSERTIONS=0");
         cmdLine.addArgument("-o");
         cmdLine.addArgument(destinationDir+"/cppout.js");
         DefaultExecutor executor = new DefaultExecutor();

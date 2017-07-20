@@ -44,8 +44,19 @@ var $builtinmodule = function(name)
         Sk.hold(parent.carol.getMoveDelay());             
     });
     
-    mod.getState = new Sk.builtin.func(function(){       
-        return Sk.builtin.list(parent.carol.getState());        
+    mod.getState = new Sk.builtin.func(function(x,y){        
+        if (x == undefined && y == undefined)
+        {
+            return Sk.builtin.list(parent.carol.getState());
+        }
+        else
+        {
+            var ret = parent.carol.getState(x.v,y.v);
+            console.log("Returning "+ret);
+            console.log(x);
+            console.log(y);
+            return Sk.builtin.str(ret);
+        }
     });
     
     mod.atGoal = new Sk.builtin.func(function(){       

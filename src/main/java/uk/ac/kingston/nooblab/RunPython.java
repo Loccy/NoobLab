@@ -3,13 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package uk.ac.kingston.nooblab.c;
+package uk.ac.kingston.nooblab;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Paul
  */
-public class CPPConsole extends HttpServlet {
+public class RunPython extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,53 +29,22 @@ public class CPPConsole extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin","*");
-        
-        response.setContentType("text/plain");        
-        ArrayList<String> consoleLines = (ArrayList)request.getSession().getAttribute("cppconsole");
-        if (consoleLines == null)
+            throws ServletException, IOException {        
+        String fullcode = request.getParameter("codeinput");
+        String inputbuffer = request.getParameter("inputbuffer");
+        String pythonmaxcycles = request.getParameter("pythonmaxcycles");
+        // default max cycles for python is 500 instructions
+        if (pythonmaxcycles == null || pythonmaxcycles.trim().equals("")) pythonmaxcycles = "500";
+        request.setAttribute("pythoncode",fullcode);
+        request.setAttribute("pythonmaxcycles",pythonmaxcycles);
+        if (inputbuffer != null)
         {
-            consoleLines = new ArrayList<String>();
-            request.getSession().setAttribute("cppconsole",consoleLines);
+            inputbuffer = inputbuffer.replace("'","\\'");
         }
-        PrintWriter out = response.getWriter();
-        
-        String mode = request.getParameter("mode");
-        if ("get".equals(mode))
-        {
-            /* if (consoleLines.size() == 0)
-            {
-                out.println("**(empty)**");
-            }
-            else
-            {
-                String topline = consoleLines.get(0);
-                consoleLines.remove(0);
-                request.getSession().setAttribute("cppconsole", consoleLines);
-                out.println(topline);
-            } */
-            while (consoleLines.size() == 0)
-            {
-                try { Thread.sleep(100); } catch (InterruptedException ex) {}
-                consoleLines = (ArrayList)request.getSession().getAttribute("cppconsole");
-            }
-            String topline = consoleLines.get(0);
-            consoleLines.remove(0);
-            request.getSession().setAttribute("cppconsole", consoleLines);
-            out.println(topline);
-            
-        }
-        else // add
-        {
-            String newline = request.getParameter("line");
-            if (newline == null) newline = "";
-            newline = newline.trim();
-            consoleLines.add(newline);
-            request.getSession().setAttribute("cppconsole", consoleLines);
-            out.println("qapla");
-        }
-      
+        if (inputbuffer == null || inputbuffer.trim().equals("")) inputbuffer = "undefined";
+        request.setAttribute("inputbuffer",inputbuffer);
+        RequestDispatcher rd = request.getRequestDispatcher("runpython.jsp");
+        rd.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -2618,7 +2618,8 @@ function run()
             return this.nodeType === Node.TEXT_NODE;
         }).each(function(){
             var title = $(this).text();
-            if (title.slice(-4) != ".cpp") $(this).replaceWith(title+".cpp");
+            if (title.indexOf(".") == -1) $(this).replaceWith(title+".cpp");
+            //if (title.slice(-4) != ".cpp") $(this).replaceWith(title+".cpp");
         })
         runCPP(getTabBundleCode(true));
     }
@@ -3051,7 +3052,7 @@ function selectEditorTab(source,norename)
 				var existing = $(source).text().trim();
 				r = r + "."+existing.split('.').pop();
 			}
-			$(source).text(r);
+			$(source).html(r+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
 			doTheRest();
 		}
 	});
