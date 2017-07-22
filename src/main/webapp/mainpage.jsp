@@ -83,7 +83,7 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/gifpause/libgif.js"></script>                
         
         <%-- font awesome --%>
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
         
         <%-- bring watermark client side --%>
         <script type="text/javascript">
@@ -149,7 +149,7 @@
             <div style="float: left"><input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/></div>
             <div style="float: left"><input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/></div>
             <div style="float: left"><input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/></div>
-            <div style="float: right"><i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i><span class="maximisebutton" onclick="maxMinCode()" style="position: relative; top: 3px; right: 2px; cursor: hand; cursor: pointer; border: 1px solid black">&#8743;</span></div>
+            <div style="float: right"><i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>
             <div style="clear: both"></div>
         </div>
         <script type="text/javascript">

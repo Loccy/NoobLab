@@ -66,7 +66,7 @@ public class CPPRunningUtils {
             }
             String filename = tempdirStr+"/"+filenames[i];            
             FileUtils.writeStringToFile(new File(filename),code);
-            cmdLine.addArgument(filename,true);
+            cmdLine.addArgument("\""+filename+"\"",true);
         }
         cmdLine.addArgument("--pre-js");
         cmdLine.addArgument(temp+"/cpp-pre-js.js",true);

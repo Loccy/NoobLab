@@ -520,11 +520,13 @@ function maxMinCodeWeb(outputheight,force)
 		outputpane.css("height","calc(100% - "+outputtop+"px)");
 		outputpane.css("width","50%");
 		$("div#toolbar").css("width","100%");
-		 $("div#logoutitem").hide();
+		$("div#logoutitem").hide();
 	        $("div#navbar").hide();
         	$("div#logoutitem").hide();
         	$("body").css("overflow","hidden");
-        	$("span.maximisebutton").html("&#8744;");
+                $("span.maximisebutton").removeClass("fa-window-maximize");
+                $("span.maximisebutton").addClass("fa-window-restore");
+        	//$("span.maximisebutton").html("&#8744;");
 		resize();
 		editor.refresh();
 		editorpane.addClass("maxed");
@@ -539,11 +541,13 @@ function maxMinCodeWeb(outputheight,force)
                 outputpane.css("height","");
                 outputpane.css("width","");
                 $("div#toolbar").css("width","");
-                 $("div#logoutitem").show();
+                $("div#logoutitem").show();
                 $("div#navbar").show();
                 $("div#logoutitem").show();
                 $("body").css("overflow","");
-                $("span.maximisebutton").html("&#8743;");
+                //$("span.maximisebutton").html("&#8743;");
+                $("span.maximisebutton").removeClass("fa-window-restore");
+                $("span.maximisebutton").addClass("fa-window-maximize");                
                 resize();
                 editor.refresh();
 		editorpane.removeClass("maxed");
@@ -577,7 +581,9 @@ function maxMinCode(outputheight,force)
         $("div#navbar").hide();
         $("div#logoutitem").hide();
         $("body").css("overflow","hidden");
-        $("span.maximisebutton").html("&#8744;");
+       // $("span.maximisebutton").html("&#8744;");
+       $("span.maximisebutton").removeClass("fa-window-maximize");
+       $("span.maximisebutton").addClass("fa-window-restore");
         resize();
         editor.refresh();
     }
@@ -595,7 +601,9 @@ function maxMinCode(outputheight,force)
         $("div#logoutitem").show();
         el.removeAttr("data-origBottom");
         $("body").css("overflow","");   
-        $("span.maximisebutton").html("&#8743;");
+       // $("span.maximisebutton").html("&#8743;");
+       $("span.maximisebutton").removeClass("fa-window-restore");
+       $("span.maximisebutton").addClass("fa-window-maximize");    
         resize();
         editor.refresh();
     }
