@@ -8,6 +8,7 @@ package uk.ac.kingston.nooblab.c;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
@@ -43,10 +44,28 @@ public class CPPRunningUtils {
         String emcl = (System.getProperty("os.name")+"").startsWith("Windows") ? "em++.bat" : "em++";
         CommandLine cmdLine = new CommandLine(emcl);
         
-        for (int i = 0; i < codes.length; i++)
+        ArrayList<String> correctedFilenames = new ArrayList();        
+        // check filenames for .h files
+        for (int i = 0; i < filenames.length; i++)
         {
-            String code = codes[i];            
-            String filename = tempdirStr+"/"+filenames[i];            
+            if (filenames[i].endsWith(".h"))
+            {
+                correctedFilenames.add(filenames[i]);
+                // append .cpp to filename of .h - will end up with .h.cpp
+                filenames[i] = filenames[i]+".cpp";
+            }
+        }
+        
+        for (int i = 0; i < codes.length; i++)
+        {            
+            String code = codes[i];
+            // correct references to .h files to .h.cpp
+            for (String correctedFilename : correctedFilenames)
+            {
+                code = code.replace("\""+correctedFilename+"\"","\""+correctedFilename+".cpp\"");
+            }
+            String filename = tempdirStr+"/"+filenames[i];
+            System.out.println(filename);
             FileUtils.writeStringToFile(new File(filename),code);
             cmdLine.addArgument(filename,true);
         }
@@ -59,7 +78,7 @@ public class CPPRunningUtils {
         //cmdLine.addArgument("-s");
         //cmdLine.addArgument("EMTERPRETIFY_ASYNC=1");
         cmdLine.addArgument("-s");
-        cmdLine.addArgument("ASSERTIONS=0");
+        cmdLine.addArgument("INVOKE_RUN=0");
         cmdLine.addArgument("-o");
         cmdLine.addArgument(destinationDir+"/cppout.js");
         DefaultExecutor executor = new DefaultExecutor();

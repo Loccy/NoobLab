@@ -49,12 +49,12 @@ public class CPPRunner extends HttpServlet {
          else
          {
             File js = new File(System.getProperty("java.io.tmpdir")+"/cpp-post-js.js");
-            if (!js.exists())
+            //if (!js.exists())
             {
                 FileUtils.copyInputStreamToFile(request.getServletContext().getResourceAsStream("/cpp-post-js.js"), js);
             }
             js = new File(System.getProperty("java.io.tmpdir")+"/cpp-pre-js.js");
-            if (!js.exists())
+            //if (!js.exists())
             {
                 FileUtils.copyInputStreamToFile(request.getServletContext().getResourceAsStream("/cpp-pre-js.js"), js);
             }

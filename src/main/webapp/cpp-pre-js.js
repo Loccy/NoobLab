@@ -45,8 +45,8 @@ if(typeof(self) != undefined)
                       var line = "**(empty)**";
                       var ajax = new XMLHttpRequest();
                       do
-                      {
-                        ajax.open('GET', self.urlcontext+'/CPPConsole?mode=get', false);
+                      {                          
+                        ajax.open('GET','CPPConsole?mode=get', false);
                         ajax.send(null);
                         line = ajax.responseText.trim();
                       } while (ajax.status != 200);

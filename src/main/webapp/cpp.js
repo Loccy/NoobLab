@@ -87,9 +87,7 @@ function runCPP(codes)
                             cppworker = undefined;
                             cout("\nProgram completed with no errors.","green");
                             enableRun();
-                        }
-                        
-                        
+                        }                        
 		});
             }
             else
