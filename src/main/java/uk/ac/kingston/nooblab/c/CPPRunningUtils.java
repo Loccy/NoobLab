@@ -64,8 +64,7 @@ public class CPPRunningUtils {
             {
                 code = code.replace("\""+correctedFilename+"\"","\""+correctedFilename+".cpp\"");
             }
-            String filename = tempdirStr+"/"+filenames[i];
-            System.out.println(filename);
+            String filename = tempdirStr+"/"+filenames[i];            
             FileUtils.writeStringToFile(new File(filename),code);
             cmdLine.addArgument(filename,true);
         }
