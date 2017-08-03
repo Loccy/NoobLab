@@ -256,14 +256,14 @@
                     //tabMode : "shift",                    
                     lineNumbers: true
                 });
-            }
+            }            
             else if ($("div.parameter#language").text().trim() == "pcode" || $("div.parameter#language").text().trim() == "pcarol")
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",
                     mode : "text/plain",
                     tabMode : "shift",
-                    lineNumbers: true,                    
+                    lineNumbers: true/*,                    
                     onKeyEvent : function(a,b){
                         if (stoppit) return;
                         if ($("div.parameter#blockly").text().trim() == "true")
@@ -281,9 +281,9 @@
                                 stoppit = false;
                             });
                         }
-                    }
+                    }*/
                 });
-            }
+            } 
             else
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
@@ -303,8 +303,9 @@
         <div style="clear: both"></div>
         <div id="usermenu">
             <div><a class="medallink" href="${pageContext.request.contextPath}/ScoreTable?type=mymedals">View my medals</a></div>
-            <div><a class="medallink" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>
+            <div><a class="medallink" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>            
             <!--<div onclick="setName()">Set my name</div>-->
+            <div class="disabled" id="toggleblocks" onclick="toggleBlocks()">Disable blocks</div>
             <div id="reallogout" onclick="logout()">Logout</div>
         </div>
         <div id="logoutitem" onclick="toggleOptions()">Options</a></div>

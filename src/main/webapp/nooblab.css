@@ -386,8 +386,12 @@ img#nooblabemo {
     border-bottom : 1px solid gray;
 }
 
+#usermenu div.disabled {
+    color : gray;
+}
 
-#usermenu div:hover {
+
+#usermenu div:not(.disabled):hover {
     background: #CFE5E8;
 }
 
@@ -621,6 +625,10 @@ div#editor-wrapper { display : none }
 div#output-outer { display : none }
 }
 
+/* Apprise */
+.appriseOuter {
+    max-width : 50% !important;
+}
 
 /* Colourbox CSS */
 

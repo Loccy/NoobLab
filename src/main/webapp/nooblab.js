@@ -2669,7 +2669,15 @@ function run()
     {
         if ($("div.parameter#language").text().trim() == "pythoncarol") 
         {
-            carol.initialiseCarol();            
+            try
+            {
+                if (code.toLowerCase().indexOf("carol.") !=-1 ) carol.initialiseCarol();            
+            }
+            catch (e)
+            {
+                apprise("You need to have a maze visible on the screen to run a Carol program. Scroll the screen so that a maze is visible and is selected with a thick black border around it, and try again.");
+                //console.log(JSON.stringify(e));
+            }
         }
         setTimeout(function() { runPython(code) },1); // not sure why the setTimout is needed for Carol following the initialise, but hey...
     }
@@ -3580,6 +3588,45 @@ function javaPidjinCodeWrapper()
     editor.refresh();
 }
 
+function toggleBlocks()
+{
+    // do nothing if blocks not in play    
+    if ($("div#usermenu div#toggleblocks").hasClass("disabled")) return;
+    var cookieStatus = $.cookie("disableblocks");
+    if (cookieStatus != "true")
+    {
+        var msg = "This will disable the blocks and enable the text-based code editor for all block-based exercises.<p>"
+        msg +=    "You are advised to save any current work as any block-based programs may not be retained as text-based code.<p>";
+        msg +=    "Are you sure you want to proceed?";
+        apprise(msg, {verify:true},function(r)
+        {
+            if (r) {
+              $.cookie("disableblocks","true", {expires: 365, path: '/'});
+              setTimeout(function(){
+                  location.reload();
+              },1000);
+            }   
+        });        
+    }
+    else
+    {
+        var msg = "This will disable the text-based code editor and re-enable blocks for relevant exercises.<p>"
+        msg +=    "You MUST save your work if you want to keep it. Your code WILL NOT be converted to blocks!<p>";
+        msg +=    "Are you sure you want to proceed?";
+        apprise(msg, {verify:true},function(r)
+        {
+            if (r) {
+              $.cookie("disableblocks","false", {expires: 365, path: '/'});
+              setTimeout(function(){
+                  location.reload();
+              },1000);
+            }   
+        });
+    }
+    
+    //$.cookie('nlpp-'+courseNo+"-"+lessonNo+"-code",code, {expires: 365, path: '/'});
+}
+
 originalTexts = {};
 
 $(document).ready(function()
@@ -3775,13 +3822,13 @@ $(document).ready(function()
                      restoreBlockly(oldBlockly);
                  }
 
-                 if($("div.parameter#blockly").text().trim() == "true" && oldBlockly == "")
+/*                 if($("div.parameter#blockly").text().trim() == "true" && oldBlockly == "")
                  {
                      // not blockly - hide/disable it
                      $("div.parameter#blockly").remove();
                      $("#code-blockly").hide();
                      $("#code-blocklytoggle").hide(); 
-                 }
+                 } */
 
                  lastSaveStateCode = oldCode;
                  lastcode = oldCode; // levenshtein index code
@@ -3915,7 +3962,15 @@ $(document).ready(function()
   			$("div#content").css("background-color","#FFCCCC");
   		}
 	});
-        
+
+    if ($("div.parameter#blockly").text().trim() == "true" && $.cookie("disableblocks") == "true")
+    {
+        $("div.parameter#blockly").text("disabled");
+        $("div#usermenu div#toggleblocks").text("Enable blocks");
+        $("div#usermenu div#toggleblocks").removeClass("disabled");
+        $("div#code-titlebar").html('[ Code <i onclick="toggleBlocks()" class="fa fa-cube" style="cursor:pointer; color: red;" aria-hidden="true"></i> ]');
+    }
+    
     // enable blockly if material calls for it
     if ($("div.parameter#blockly").text().trim() == "true")
     {
@@ -3926,6 +3981,9 @@ $(document).ready(function()
     	$("div#editor-wrapper").css("bottom","220px");
 	// and hide the code pane
 	if ($("div.parameter#kinder").text().trim() != "true") $("div#code-main").hide();
+        // and enable the "disable blocks" option
+        $("div#usermenu div#toggleblocks").removeClass("disabled");
+        $("div#code-titlebar").html('[ Code <i onclick="toggleBlocks()" class="fa fa-cube" style="cursor: pointer; color: green;" aria-hidden="true"></i> ]');
     }
     else // hide blockly's zoom in/out buttons
     {
