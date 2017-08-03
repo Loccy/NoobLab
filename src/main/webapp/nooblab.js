@@ -1,5 +1,7 @@
 var lasttestlink = 0;
 
+var linecount = 1;
+
 var emolevel = 5;
 
 var carolImage = "carol";
@@ -73,6 +75,7 @@ function codePaste(e)
         {
             var actualCode = getCode(e);
             editor.setValue(actualCode);
+            javaPidjinCodeWrapper(true);
             LOGcodePaste(actualCode);
             lastcode = actualCode; // levenshtein index code
 	    editor.setOption("readOnly");
@@ -519,6 +522,7 @@ function maxMinCodeWeb(outputheight,force)
 		outputpane.css("top",outputtop+"px");
 		outputpane.css("height","calc(100% - "+outputtop+"px)");
 		outputpane.css("width","50%");
+                $("div#horizontaldrag").css("right","calc(50%)");                
 		$("div#toolbar").css("width","100%");
 		$("div#logoutitem").hide();
 	        $("div#navbar").hide();
@@ -526,6 +530,7 @@ function maxMinCodeWeb(outputheight,force)
         	$("body").css("overflow","hidden");
                 $("span.maximisebutton").removeClass("fa-window-maximize");
                 $("span.maximisebutton").addClass("fa-window-restore");
+                //$("div#horizontaldrag").hide();
         	//$("span.maximisebutton").html("&#8744;");
 		resize();
 		editor.refresh();
@@ -533,7 +538,9 @@ function maxMinCodeWeb(outputheight,force)
 	}
 	else
 	{
-	       editorpane.css("left","");
+                var right = parseInt($("div#horizontaldrag").css("right"));
+                var left = window.innerWidth-right;
+	        editorpane.css("left","");
                 editorpane.css("width","");
                 editorpane.css("bottom","");
                 outputpane.css("position","");
@@ -547,7 +554,21 @@ function maxMinCodeWeb(outputheight,force)
                 $("body").css("overflow","");
                 //$("span.maximisebutton").html("&#8743;");
                 $("span.maximisebutton").removeClass("fa-window-restore");
-                $("span.maximisebutton").addClass("fa-window-maximize");                
+                $("span.maximisebutton").addClass("fa-window-maximize");
+                var tbwidth = parseInt($("div#toolbar").css("width"));                
+                //$("div#horizontaldrag").css("left",window.innerWidth-tbwidth);
+                //$("div#horizontaldrag").show();                
+                
+                if ($("div#horizontaldrag").hasClass("changed"))
+                {                    
+                     var width = parseInt($("div#content").css("width")); 
+                     width = window.innerWidth - width - 15;
+                     $("div#editor-wrapper").css("width",width+"px");
+                     $("div#toolbar").css("width",width+"px");
+                     $("div#output-outer").css("width",width+"px");                     
+                     $("div#horizontaldrag").css("right",width+"px");
+                }
+                
                 resize();
                 editor.refresh();
 		editorpane.removeClass("maxed");
@@ -584,6 +605,7 @@ function maxMinCode(outputheight,force)
        // $("span.maximisebutton").html("&#8744;");
        $("span.maximisebutton").removeClass("fa-window-maximize");
        $("span.maximisebutton").addClass("fa-window-restore");
+       $("div#horizontaldrag").hide();
         resize();
         editor.refresh();
     }
@@ -604,6 +626,17 @@ function maxMinCode(outputheight,force)
        // $("span.maximisebutton").html("&#8743;");
        $("span.maximisebutton").removeClass("fa-window-restore");
        $("span.maximisebutton").addClass("fa-window-maximize");    
+       
+       if ($("div#horizontaldrag").hasClass("changed"))
+       {
+            var width = parseInt($("div#horizontaldrag").css("right")); 
+            $("div#editor-wrapper").css("width",width+"px");
+            $("div#toolbar").css("width",width+"px");
+            $("div#output-outer").css("width",width+"px");
+            $("div#content").css("right",width+"px");
+       }
+       
+       $("div#horizontaldrag").show();       
         resize();
         editor.refresh();
     }
@@ -1843,7 +1876,7 @@ function handleTestCasesJS()
                    codeInEditor = pcodeToJs(codeInEditor);
                }
 
-		if($("div.parameter#language").text().trim() == "carol" || $("div.parameter#language").text().trim() == "pcarol")
+	       if($("div.parameter#language").text().trim() == "carol" || $("div.parameter#language").text().trim() == "pcarol")
                {
 		   codeInEditor = "carol.initialiseCarol();\n"+codeInEditor;
 		}
@@ -2552,7 +2585,8 @@ function watermarkEditorCode()
 	// current tab
 	code = whiteSpaceify(code);
 	var cursor = editor.getCursor();
-	editor.setValue(code);	
+	editor.setValue(code);
+        javaPidjinCodeWrapper(true);
 	editor.setCursor(cursor);
 	// add whitespace watermark to first line of any
 	// tabs
@@ -2843,7 +2877,11 @@ function clearEditor()
 {
     apprise("Are you sure you want to clear the code pane? If you have not saved your work, you will lose any code currently entered.",
             {verify:true}, function(r){
-                if (r) editor.setValue("");
+                if (r)
+                {
+                    editor.setValue("");
+                    javaPidjinCodeWrapper(true);
+                }
                 if ($("div.parameter#blockly").text().trim() == "true") Blockly.mainWorkspace.clear();
                 LOGcodeClear();
             });
@@ -3003,6 +3041,7 @@ function pasteCodeBundle(source)
                 addNewTab(true);
                 $("div.tab.selected").text(tabname);
                 editor.setValue(code);
+                javaPidjinCodeWrapper(true);
             });
             // select first tab
             //$("div.tab").not(".newtab").eq(0).click();
@@ -3041,6 +3080,7 @@ function selectEditorTab(source,norename)
             x = spancursor[1];        
         }
         editor.setValue(code);
+        javaPidjinCodeWrapper(true);
         // this next line doesn't seem to work...
         //editor.setCursor(y,x);
         // select
@@ -3137,6 +3177,7 @@ function deleteSelectedEditorTab()
               {
 		// last tab - so we delete its contents and we rename it
                 editor.setValue("");
+                javaPidjinCodeWrapper(true);
                 if ($("div.parameter#language").text().trim() == "fullweb")
                 {
 		  $("div.tab.selected").html('index.html<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
@@ -3313,6 +3354,7 @@ function tidyCode()
     code = js_beautify(editor.getValue());
     code = code.replace(/ArrayList \< (.+) \>/g,"ArrayList<$1>");
     editor.setValue(code);
+    javaPidjinCodeWrapper(true);
 }
 
 function logout()
@@ -3497,34 +3539,46 @@ function strop(level)
 }
 
 function xgetMismatchedTags(xmlString) 
-		{
-			xmlString.replace(/ /g,"");
-			var starts = xmlString.match(/<[a-z|A-Z|0-9]*[^\/]*?>/g);
-			var ends = xmlString.match(/<\/[a-z|A-Z|0-9]*?>/g);
-			if (starts == null) starts = [];
-			if (ends == null) ends = [];
-			// otherwise, find the farged tag...
-			var diff;
-			var starterror = "";
-			var enderror = "";
-			for (var i = 0; i < starts.length; i++)
-			{
-				starts[i] = starts[i].split(" ")[0];
-				if (starts[i].slice(-1) != ">") starts[i] += ">";
-				
-			}
-			for (var i = 0; i < ends.length; i++)
-			{
-				ends[i] = ends[i].replace("/","");
-			}
-			var startdiff = starts.diff(ends);
-			if (startdiff.length > 0)
-			{
-				enderror = "Missing start or end tags for: "+startdiff.join(" ");
-				enderror = enderror.replace(/</g,"</");
-			}
-			return enderror;
-		}
+{
+        xmlString.replace(/ /g,"");
+        var starts = xmlString.match(/<[a-z|A-Z|0-9]*[^\/]*?>/g);
+        var ends = xmlString.match(/<\/[a-z|A-Z|0-9]*?>/g);
+        if (starts == null) starts = [];
+        if (ends == null) ends = [];
+        // otherwise, find the farged tag...
+        var diff;
+        var starterror = "";
+        var enderror = "";
+        for (var i = 0; i < starts.length; i++)
+        {
+                starts[i] = starts[i].split(" ")[0];
+                if (starts[i].slice(-1) != ">") starts[i] += ">";
+
+        }
+        for (var i = 0; i < ends.length; i++)
+        {
+                ends[i] = ends[i].replace("/","");
+        }
+        var startdiff = starts.diff(ends);
+        if (startdiff.length > 0)
+        {
+                enderror = "Missing start or end tags for: "+startdiff.join(" ");
+                enderror = enderror.replace(/</g,"</");
+        }
+        return enderror;
+}
+
+var jpHeader = null;
+var jpFooter;
+function javaPidjinCodeWrapper()
+{
+    if ($("div.parameter#language").text().trim() != "java" || $("div.parameter#multi").text().trim() == "true") return;
+    if (jpHeader != null) jpHeader.clear();
+    if (jpFooter != null) jpFooter.clear();    
+    jpHeader = editor.addLineWidget(0,$('<pre class="javastatic top">import java.util.Scanner;\n\npublic class SomeJavaCode\n{\n  public static void main(String[] args)\n  {</pre>').get(0),{above:true,coverGutter:true});
+    jpFooter = editor.addLineWidget(editor.lineCount(),$('<pre class="javastatic bottom">  } // end of main method\n} // end of class</pre>').get(0),{coverGutter:true});
+    editor.refresh();
+}
 
 originalTexts = {};
 
@@ -3617,8 +3671,10 @@ $(document).ready(function()
     // if no multitabs but using Java, add the skeleton class around the editor
     else if ($("div.parameter#language").text().trim() == "java")
     {
-       $("div.CodeMirror").prepend('<pre class="javastatic">import java.util.Scanner;\n\npublic class SomeJavaCode\n{\n  public static void main(String[] args)\n  {</pre>');
-       $("div.CodeMirror div.CodeMirror-scroll").append('<pre style="padding-bottom: 5px; position: relative; left: -12px; margin-top: 15px; z-index: 1000" class="javastatic">  } // end of main method\n} // end of class</pre>');
+        javaPidjinCodeWrapper(true);
+//       $("div.CodeMirror div.CodeMirror-scroll").prepend('<pre class="javastatic top">import java.util.Scanner;\n\npublic class SomeJavaCode\n{\n  public static void main(String[] args)\n  {</pre>');
+//       $("div.CodeMirror div.CodeMirror-scroll").append('<pre class="javastatic bottom" style="padding-bottom: 5px; position: relative; left: 0px; margin-top: 15px; z-index: 1000">  } // end of main method\n} // end of class</pre>');
+        
     }
     
     if ($("div.parameter#language").text().trim() == "fullweb")
@@ -3708,7 +3764,11 @@ $(document).ready(function()
                  {                                                  
                      populateTabs(oldCode);                                
                  }
-                 else editor.setValue(oldCode);
+                 else
+                 {
+                     editor.setValue(oldCode);
+                     javaPidjinCodeWrapper(true);
+                 }
 
                  if($("div.parameter#blockly").text().trim() == "true" && oldBlockly != "")
                  {
@@ -3796,6 +3856,15 @@ $(document).ready(function()
             var max = editor.getLine(0).trim().length;
             if (editor.getCursor().ch > max+1) editor.setCursor(0,max+1);
        } 
+    });
+    
+    // update footer in java pidgin mode
+    editor.on("change",function(){
+       if (editor.lineCount() != linecount)
+       {
+           linecount = editor.lineCount();
+           javaPidjinCodeWrapper();
+       }
     });
     
     // remap tabs to spaces
@@ -3900,7 +3969,71 @@ $(document).ready(function()
             });   
            });
         });    
-
+        
+     // hook mouse events for window resize/drag
+     var dragY = null;
+     var dragX = null;
+     $("div#output-titlebar").mousedown(function(){
+         // if we're in web move and maximised, do nothing
+         if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed")) return;
+         // otherwise...
+         // create a big div over the top of everything
+         $("body").append('<div id="resizeoverlay" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 20000;"></div>');
+         //$("body").children().last().css("background","rgba(123,245,76,0.7)");
+         $("div#output-titlebar").css("z-index",20001);
+         dragY = setInterval(function(){            
+            $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
+       	    $("div#editor-wrapper").css("bottom",window.innerHeight-globalMouseY+"px");
+            $("#outputframe").css("height",window.innerHeight-globalMouseY+"px");                      
+         },10);
+     });
+     $("div#horizontaldrag").mousedown(function(){
+         // create a big div over the top of everything
+         $("body").append('<div id="resizeoverlay" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 20000;"></div>');
+         //$("body").children().last().css("background","rgba(123,245,76,0.7)");
+         $("div#horizontaldrag").css("z-index",20001);
+         $("div#horizontaldrag").addClass("changed");
+         dragX = setInterval(function(){
+            var width = window.innerWidth-globalMouseX;
+            if (width < 450 || globalMouseX < 450) return;
+            if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed"))
+            {                
+                $("div#horizontaldrag").css("right",width+"px");
+                $("div#editor-wrapper").css("width",globalMouseX+"px");
+                $("div#output-outer").css("width",width+"px");               
+            }
+            else
+            {
+                $("div#horizontaldrag").css("right",width+"px");
+                $("div#editor-wrapper").css("width",width+"px");
+                $("div#toolbar").css("width",width+"px");
+                $("div#output-outer").css("width",width+"px");
+                $("div#content").css("right",width+"px");
+            }
+         },10);
+     })
+     onmouseup = function()
+     {
+         if (dragY != null)
+         {
+             clearInterval(dragY);
+             dragY = null;
+             $("div#resizeoverlay").remove();
+         }
+         if (dragX != null)
+         {
+             clearInterval(dragX);
+             dragX = null;
+             $("div#resizeoverlay").remove();
+         }
+     }         
+     
+     var globalMouseX;
+     var globalMouseY;
+     onmousemove = function(e){
+         globalMouseX = e.clientX;
+         globalMouseY = e.clientY;
+     }
 });
 
 function getKNo()

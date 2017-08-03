@@ -19,6 +19,7 @@
     top : 0;
     right: 0px;
     bottom : 50%;
+    box-sizing : border-box;
 }
 
 
@@ -39,6 +40,9 @@
     width: 100%; font: 11px sans-serif; text-align: center;
     background-color: #ECE9D8; border-bottom: 1px solid #888;
     height : 13px;
+    cursor : move; 
+    cursor : grab; 
+    user-select : none;
 }
 
 
@@ -163,6 +167,15 @@ pre.javastatic {
     bottom : 0px;
 }
 
+#horizontaldrag {
+    position : fixed;
+    right : 580px;
+    top : 0px;
+    bottom : 0px;
+    width : 5px;
+    background : rgba(200,200,200,0.7);
+    cursor : move;
+}
 
 iframe#outputframe {
     width : 100%;

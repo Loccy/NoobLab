@@ -36,7 +36,7 @@ public class CPPRunningUtils {
         // stash source files somewhere in the temp directory
         String temp = System.getProperty("java.io.tmpdir");
         // create temp directory in system temp
-        String tempdirStr = temp+RandomStringUtils.randomAlphabetic(10);
+        String tempdirStr = temp+"/"+RandomStringUtils.randomAlphabetic(10);
         //System.out.println(tempdirStr);
         File tempdir = new File(tempdirStr);
         tempdir.mkdir();
