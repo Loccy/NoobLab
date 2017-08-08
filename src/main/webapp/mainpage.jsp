@@ -308,7 +308,7 @@
             <div class="disabled" id="toggleblocks" onclick="toggleBlocks()">Disable blocks</div>
             <div id="reallogout" onclick="logout()">Logout</div>
         </div>
-        <div id="logoutitem" onclick="toggleOptions()">Options</a></div>
+        <div id="logoutitem" onclick="toggleOptions()">Options</div>
         <div id="horizontaldrag"></div>
     </body>
 </html>

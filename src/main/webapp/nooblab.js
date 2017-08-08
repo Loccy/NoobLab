@@ -11,6 +11,16 @@ String.prototype.trim = function() {
     return $.trim(this)
 }
 
+///// taken from https://stackoverflow.com/questions/10983066/use-full-width-excluding-overflow-scrollbar-with-position-absolute
+// Adds scrollbar width to window
+
+$(function() {
+  var $container = $("<div>").css({ height: 1, overflow: "scroll" }).appendTo("body");
+  var $child = $("<div>").css({ height: 2 }).appendTo($container);
+  window.SCROLLBAR_WIDTH = $container.width() - $child.width();
+  $container.remove();
+});
+
 var editor;
 var visibleFakeDoc;
 var visibleFakeDocWrapper;
@@ -562,7 +572,7 @@ function maxMinCodeWeb(outputheight,force)
                 if ($("div#horizontaldrag").hasClass("changed"))
                 {                    
                      var width = parseInt($("div#content").css("width")); 
-                     width = window.innerWidth - width - 15;
+                     width = window.innerWidth - width - 5;
                      $("div#editor-wrapper").css("width",width+"px");
                      $("div#toolbar").css("width",width+"px");
                      $("div#output-outer").css("width",width+"px");                     
@@ -4028,6 +4038,15 @@ $(document).ready(function()
            });
         });    
         
+     // correct position of options box and navlecture to accommodate scrollbar
+     var r = parseInt($("div#logoutitem").css("right"));
+     $("div#usermenu,div#logoutitem").css("right",(r+window.SCROLLBAR_WIDTH+10)+"px");
+     if ($("div.parameter#lectureSlideUrl").length != 0)
+     {
+         var w = parseInt($("div#logoutitem").css("width"));
+         $("div#navlecture").css("right",(r+window.SCROLLBAR_WIDTH+20+w)+"px");
+     }
+        
      // hook mouse events for window resize/drag
      var dragY = null;
      var dragX = null;
@@ -4042,7 +4061,8 @@ $(document).ready(function()
          dragY = setInterval(function(){            
             $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
        	    $("div#editor-wrapper").css("bottom",window.innerHeight-globalMouseY+"px");
-            $("#outputframe").css("height",window.innerHeight-globalMouseY+"px");                      
+            $("#outputframe").css("height",window.innerHeight-globalMouseY+"px");
+            editor.refresh();
          },10);
      });
      $("div#horizontaldrag").mousedown(function(){
@@ -4066,7 +4086,13 @@ $(document).ready(function()
                 $("div#editor-wrapper").css("width",width+"px");
                 $("div#toolbar").css("width",width+"px");
                 $("div#output-outer").css("width",width+"px");
-                $("div#content").css("right",width+"px");
+                $("div#content").css("right",(width+5)+"px");
+                $("div#usermenu,div#logoutitem").css("right",(width+window.SCROLLBAR_WIDTH+10)+"px");
+                if ($("div.parameter#lectureSlideUrl").length != 0)
+                {
+                    var w = parseInt($("div#logoutitem").css("width"));
+                    $("div#navlecture").css("right",(width+window.SCROLLBAR_WIDTH+20+w)+"px");
+                }
             }
          },10);
      })
@@ -4076,7 +4102,7 @@ $(document).ready(function()
          {
              clearInterval(dragY);
              dragY = null;
-             $("div#resizeoverlay").remove();
+             $("div#resizeoverlay").remove();             
          }
          if (dragX != null)
          {
