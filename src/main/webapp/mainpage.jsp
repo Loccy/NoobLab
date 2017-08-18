@@ -309,6 +309,6 @@
             <div id="reallogout" onclick="logout()">Logout</div>
         </div>
         <div id="logoutitem" onclick="toggleOptions()">Options</div>
-        <div id="horizontaldrag"></div>
+        <div id="horizontaldrag"></div>        
     </body>
 </html>

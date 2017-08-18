@@ -31,6 +31,20 @@ var $builtinmodule = function(name)
        return Sk.builtin.list(feedbacks); 
     });
     
+    mod.jsEval = new Sk.builtin.func(function(code){
+       code = code.v;
+       var result = eval(code);
+       if (typeof result == "string")
+       {
+            return Sk.builtin.str(result);
+       }
+       else return result;
+    });
+    
+    mod.debug = new Sk.builtin.func(function(msg){        
+        console.log(msg.v);
+    });
+    
     mod.cls = new Sk.builtin.func(function(){
        cls();
    });

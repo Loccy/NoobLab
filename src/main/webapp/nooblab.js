@@ -752,7 +752,7 @@ function createFakeDocs() // and carols :-)
         updateVisibleFakeDoc();
         highlightCarols();
     } ,3000);
-    $(window).scroll(function(){
+    $("div#content").scroll(function(){
         updateVisibleFakeDoc();
     });
 }
@@ -762,12 +762,12 @@ function highlightCarols()
     var whatToDo = function()
     {
         $("div.fakedoc.carol").css("border","1px solid black");
-        $(getCarolDiv()).css("border","3px solid black");
+        $(getCarolDiv()).css("border","3px solid black");        
     }
     if ($("div.fakedoc.carol").length != 0)
     {
         whatToDo();
-        $(window).scroll(function(){
+        $("div#content").scroll(function(){
             whatToDo();
         });        
     }
@@ -3743,7 +3743,11 @@ $(document).ready(function()
     if ($("div.parameter#lectureSlideUrl").length != 0)
     {
         // add a link for the lecture slides
-        $("body").append('<div id="navlecture"><a class="iframe" href="'+$("div.parameter#lectureSlideUrl").text().trim()+'"><i class="fa fa-graduation-cap"></i></a></div>');
+        $("body").append('<div id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
+        $("body").append('<div id="lectureslides"><iframe src="'+$("div.parameter#lectureSlideUrl").text().trim()+'"></iframe></div>');
+        $("div#navlecture").click(function(){            
+            $("div#lectureslides").visibilityToggle();
+        });
     }
     
     if ($("div.parameter#kinder").text().trim() == "true")
@@ -4087,6 +4091,7 @@ $(document).ready(function()
                 $("div#toolbar").css("width",width+"px");
                 $("div#output-outer").css("width",width+"px");
                 $("div#content").css("right",(width+5)+"px");
+                $("div#lectureslides").css("right",(width+5)+"px");                
                 $("div#usermenu,div#logoutitem").css("right",(width+window.SCROLLBAR_WIDTH+10)+"px");
                 if ($("div.parameter#lectureSlideUrl").length != 0)
                 {

@@ -131,7 +131,7 @@ function internalRunPython()
         {
             // force a DOM redraw on chrome
             //$('pre#python-code').hide().show(0);
-            var cont = confirm("Your program seems to be stuck in a loop, or is otherwise really busy! Do you want to Click OK to continue running or select Cancel. Maybe you have an infinite loop somewhere...");
+            var cont = confirm("Your program seems to be stuck in a loop, or is otherwise really busy! Click OK to continue running or select Cancel to abort. Maybe you have an infinite loop somewhere...");
             if (!cont) throw "Program aborted during possible infinite loop.";
         }
         if (Sk.paulspanner)
@@ -171,6 +171,11 @@ function internalRunPython()
     };
 
     // run python code
+    // reset Carol's move delay, if she's involved.
+    if (prog.indexOf("import carol") != -1)
+    {
+        parent.carol.setDelay(300);
+    }
     var myPromise = Sk.misceval.callsimAsync(handlers, function(){
         // handle
         console.log(prog);

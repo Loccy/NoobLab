@@ -14,6 +14,10 @@ var $builtinmodule = function(name)
         Sk.hold(parent.carol.getMoveDelay()*3);             
     });
     
+    mod.setDelay = new Sk.builtin.func(function(delay){
+       parent.carol.setDelay(delay); 
+    });
+    
     mod.up = new Sk.builtin.func(function(){       
         parent.carol.up();
         Sk.hold(parent.carol.getMoveDelay()*3);             
@@ -42,6 +46,10 @@ var $builtinmodule = function(name)
     mod.turnLeft = new Sk.builtin.func(function(){       
         parent.carol.turnLeft();
         Sk.hold(parent.carol.getMoveDelay());             
+    });
+    
+    mod.getDirection = new Sk.builtin.func(function(){       
+        return Sk.builtin.str(parent.getCarolDiv().find("img.carol").attr("src").split("-")[1].split(".")[0].trim());   
     });
     
     mod.getState = new Sk.builtin.func(function(x,y){        

@@ -172,7 +172,27 @@ $.fn.textNodes = function() {
   return $(ret);
 };
 
-;;;;;
+;;;;;;;;;
+
+
+// Jquery visibility functions
+// nicked from https://stackoverflow.com/questions/9614622/equivalent-of-jquery-hide-to-set-visibility-hidden
+
+jQuery.fn.visible = function() {
+    return this.css('visibility', 'visible');
+};
+
+jQuery.fn.invisible = function() {
+    return this.css('visibility', 'hidden');
+};
+
+jQuery.fn.visibilityToggle = function() {
+    return this.css('visibility', function(i, visibility) {
+        return (visibility == 'visible') ? 'hidden' : 'visible';
+    });
+};
+
+;;;;;;;;;;;;;
 
 // jquery get textWidth function
 // nicked from http://stackoverflow.com/questions/1582534/calculating-text-width-with-jquery
