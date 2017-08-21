@@ -1548,7 +1548,7 @@ function handleTestCasesHtml()
 
 function indent(code)
 {
-    return "  "+(code.trim().replace(/\n/g,"\n  ").trim())
+    return "  "+(code.replace(/\n/g,"\n  ").trim())
 }
 
 function genericHandleTestCases(func)
@@ -1726,8 +1726,8 @@ noobdata = {\n\
                }
                else if (finalOutputCode != "")
                {
-                   finalOutputCode = indent(finalOutputCode);
-                   oneCheck +="\n"+'def noobTestRun():\n'+finalOutputCode+'\n\n';
+                   finalOutputCode = "try:\n"+indent(finalOutputCode)+"\nexcept Exception as e:\n"+indent("pass");                   
+                   oneCheck +="\n"+'def noobTestRun():\n'+indent(finalOutputCode)+'\n\n';
                    oneCheck += "\n"+'if noobTestRun():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
                }
                
@@ -1783,7 +1783,7 @@ noobdata = {\n\
         {
             carol.initialiseCarol();            
         }
-        setTimeout(function() { runPython(code,true,inputTestList); },1);        
+        setTimeout(function() { runPython("::istest::"+code,true,inputTestList); },1);        
     });
 }
 

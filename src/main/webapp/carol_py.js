@@ -15,7 +15,8 @@ var $builtinmodule = function(name)
     });
     
     mod.setDelay = new Sk.builtin.func(function(delay){
-       parent.carol.setDelay(delay); 
+       if (delay.v < 0) delay.v = 1;
+       parent.carol.setDelay(delay.v); 
     });
     
     mod.up = new Sk.builtin.func(function(){       

@@ -33,8 +33,8 @@ public class RunPython extends HttpServlet {
         String fullcode = request.getParameter("codeinput");
         String inputbuffer = request.getParameter("inputbuffer");
         String pythonmaxcycles = request.getParameter("pythonmaxcycles");
-        // default max cycles for python is 500 instructions
-        if (pythonmaxcycles == null || pythonmaxcycles.trim().equals("")) pythonmaxcycles = "500";
+        // default max cycles for python is 5000 instructions
+        if (pythonmaxcycles == null || pythonmaxcycles.trim().equals("")) pythonmaxcycles = "5000";
         request.setAttribute("pythoncode",fullcode);
         request.setAttribute("pythonmaxcycles",pythonmaxcycles);
         if (inputbuffer != null)

@@ -4,6 +4,7 @@ var consoleupdatepid;
 var hook = false;
 var hookcommand = "";
 var lastLineNo = -1;
+var isTest = false;
 
 Sk.externalLibraries = {
             carol : {
@@ -53,7 +54,17 @@ function outf(text,status) {
         {
             parent.LOGerror(text);
         }
-        parent.editor.addLineClass(errorline-1,"background","error");
+        
+        if (!isTest)
+        {
+            parent.editor.addLineClass(errorline-1,"background","error");
+        }
+        else
+        {
+            console.log(text);
+            text = text.split(":")[1].trim();
+            text = "Your program caused an error as NoobLab was testing it. This means it is not a full solution to the exercise! Make sure you have tested your code against all of the possible scenarios of the exercise.<p>The error was: "+text;
+        }
     }
     if (status)
     {
@@ -118,6 +129,11 @@ function internalRunPython()
 {
     var proccount = 0;
     var prog = $("pre#python-code").text();
+    if (prog.indexOf("::istest::") != -1)
+    {
+        isTest = true;
+        prog = prog.replace("::istest::","");
+    }
     Sk.configure({inputfun : inputfunky, output:outf, read:builtinRead, debugging : true });    
     
     // set up hooks for each python cycle

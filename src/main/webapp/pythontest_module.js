@@ -7,6 +7,14 @@ var $builtinmodule = function(name)
        alert(text.v); 
     });
     
+    mod.setMaxCycles = new Sk.builtin.func(function(maxCycles){
+        pythonmaxcycles = maxCycles;
+    });
+    
+    mod.getMaxCycles = new Sk.builtin.func(function(){
+        return pythonmaxcycles;
+    });
+    
     mod.getOutput = new Sk.builtin.func(function(){
        return Sk.builtin.str($("div#output-py").clone().children().remove().end().text().trim()); 
     });
