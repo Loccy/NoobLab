@@ -28,12 +28,14 @@ function runjava()
     
     // reset and show console
     $("div#console pre",outputframe.document).show();
+    // give console focus
     
     // JQuery console is as glitchy as hell. If at first you don't succeed...
     //$("div#main pre",outputframe.document).text("");
     outputframe.controller.reset();    
     outputframe.controller.reset();    
     outputframe.controller.reset();    
+    $("div#console pre",outputframe.document).focus();
     
     var codeMess = getTabBundleCode();
     if (codeMess.match(/import\s*java.awt/) || codeMess.match(/import\s*javax.swing/))
