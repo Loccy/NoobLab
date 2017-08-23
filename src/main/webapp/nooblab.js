@@ -4015,9 +4015,8 @@ $(document).ready(function()
         }
     },1000); */
     
-    // add play/pause controls to any animated gifs    
-        $("img[src$=gif]").load(function(){
-           console.log($(this).attr("src"));
+    // add play/pause controls to any animated gifs         
+        $("img[src$=gif]").each(function(){           
            var sg = new SuperGif({gif: this});
            sg.load(function(){
                var div = $(sg.get_canvas()).parent();

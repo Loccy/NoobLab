@@ -231,4 +231,9 @@
         <param-name>fromaddress</param-name>
         <param-value>paul@paulneve.com</param-value>
     </context-param>
+    <context-param>
+        <description>Set this to determine whether image requests are forced HTTPS</description>
+        <param-name>httpsOnImages</param-name>
+        <param-value>true</param-value>
+    </context-param>
 </web-app>

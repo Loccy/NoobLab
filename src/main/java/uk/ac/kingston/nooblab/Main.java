@@ -53,6 +53,8 @@ public class Main extends HttpServlet
         // set request parameter to de-crap IE on KU network
         response.addHeader("X-UA-Compatible", "IE=Edge");
         
+        boolean httpsOnImages = "true".equalsIgnoreCase(getServletContext().getInitParameter("httpsOnImages"));
+        
         String contentsrc = request.getParameter("contentsrc");        
         if (contentsrc == null)
         {
@@ -286,7 +288,7 @@ public class Main extends HttpServlet
             // make all the IMG elements have explicit/absolute URLs
             Elements imgs = doc.select("img");
             for (Element i : imgs)
-            {
+            {                
                 i.attr("src",i.absUrl("src"));
             }
             
