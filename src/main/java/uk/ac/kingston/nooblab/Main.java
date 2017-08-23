@@ -288,8 +288,13 @@ public class Main extends HttpServlet
             // make all the IMG elements have explicit/absolute URLs
             Elements imgs = doc.select("img");
             for (Element i : imgs)
-            {                
-                i.attr("src",i.absUrl("src"));
+            {
+                String url = i.absUrl("src");                
+                if (httpsOnImages)                
+                {
+                    url = url.replace("http:","https:");                    
+                }
+                i.attr("src",url);
             }
             
             // handle the submission boxes
