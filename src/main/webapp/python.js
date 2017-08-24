@@ -4,6 +4,8 @@ var consoleupdatepid;
 var hook = false;
 var hookcommand = "";
 var lastLineNo = -1;
+var lastLine = "";
+var proglines = [];
 var isTest = false;
 
 Sk.externalLibraries = {
@@ -25,6 +27,69 @@ Sk.hold = function(waittime) {
 Sk.halt = function(msg) {
     Sk.paulspanner = msg;
 }
+
+// override Sk...readline
+// needed to make input evaluate numeric only input and not always return
+// strings
+Sk.existingReadline = Sk.builtin.file.prototype.readline.func_code;
+Sk.builtin.file.prototype.readline = new Sk.builtin.func(function(a, b) { 
+    var result = Sk.existingReadline(a,b);
+    if (result instanceof Sk.misceval.Suspension)
+    {
+        // plug in our alternate resume code with number handling
+        result.oldresume = result.resume;
+        result.resume = function() {
+            var d = result.oldresume();
+            // if the last line of code run that got us here included input(...
+            if (lastLine.match(/\binput\s*\(/g))
+            {
+                if (d.v.match(/^\d+$/)) return new Sk.builtin.int_(parseInt(d.v)); // no decimal point
+                if (d.v.match(/^\d+\.\d+$/)) return new Sk.builtin.float_(parseFloat(d.v)); // decimal point
+            }
+            return d;
+        }
+    }
+    return result;
+});
+
+/*
+ * Code below is de-minified from skulpt-min.js - for reference when writing above
+Sk.builtin.file.prototype.readlinex = new Sk.builtin.func(function(a, b) {
+        if (0 === a.fileno) {
+            var c, d, e;
+            c = c ? c.v : "";
+            c = Sk.inputfun(c);
+            return c instanceof Promise ? (e = new Sk.misceval.Suspension,
+            e.resume = function() {
+                alert(d);
+                console.log(typeof d);
+                console.log("Trying");
+                console.log(new Sk.builtin.int_(parseInt(d)));
+                console.log("Success");
+                console.log("e.resume");
+                if (d.match(/^[\d|\.]+$/)) return new Sk.builtin.int_(parseInt(d));
+                return new Sk.builtin.str(d);                
+            }
+            ,
+            e.data = {
+                type: "Sk.promise",
+                promise: c.then(function(a) {
+                    return d = a
+                }, function(a) {
+                    d = "";
+                    return a
+                })
+            },
+            e) : new Sk.builtin.str(c)
+        }
+        c = "";
+        a.currentLine < a.lineList.length && (c = a.lineList[a.currentLine],
+        a.currentLine++);
+        console.log("through bottom");
+        if (c.match(/^[\d|\.]+$/)) return Sk.builtin.int_(parseInt(c));
+        return new Sk.builtin.str(c)
+    }
+ ); */
 
 function cls()
 {
@@ -129,6 +194,7 @@ function internalRunPython()
 {
     var proccount = 0;
     var prog = $("pre#python-code").text();
+    proglines = prog.split("\n");
     if (prog.indexOf("::istest::") != -1)
     {
         isTest = true;
@@ -143,6 +209,7 @@ function internalRunPython()
         //outf("Suspended! Now resuming...");
         proccount++;
         lastLineNo = susp.child.lineno;
+        lastLine = proglines[lastLineNo-1];
         if (proccount > pythonmaxcycles)
         {
             // force a DOM redraw on chrome

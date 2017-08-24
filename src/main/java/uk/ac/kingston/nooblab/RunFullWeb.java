@@ -132,7 +132,7 @@ public class RunFullWeb extends HttpServlet {
         }
         
         // pull in PHP error handler
-        InputStream phperror = request.getServletContext().getResourceAsStream("/php_error_handler.php");
+        InputStream phperror = request.getServletContext().getResourceAsStream("/noobdata/php_error_handler.php");
         String phperrorcode = IOUtils.toString(phperror);
 
         // if PHP error handler does not exist in noobdata dir, create it
