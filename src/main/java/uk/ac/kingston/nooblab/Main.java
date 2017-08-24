@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 
 import javax.servlet.RequestDispatcher;
@@ -293,6 +294,13 @@ public class Main extends HttpServlet
                 if (httpsOnImages)                
                 {
                     url = url.replace("http:","https:");                    
+                }
+                // if this is a gif, assume it's animated (who uses static GIFs?!)
+                // if so, add a random blah to the end to make sure it doesn't cache
+                // also need to end it with .gif for the Javascript end
+                if (url.endsWith(".gif"))
+                {
+                    url += "?fner="+UUID.randomUUID().toString()+"&fakeExt=.gif";
                 }
                 i.attr("src",url);
             }

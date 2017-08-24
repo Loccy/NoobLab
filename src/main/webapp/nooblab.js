@@ -3639,7 +3639,8 @@ function toggleBlocks()
 
 originalTexts = {};
 
-$(document).ready(function()
+//$(document).load(function()
+window.onload = function()
 {           
    var title = $("div.parameter#lessonName").text().trim();
    if (title.length == 0) title = "NoobLab";
@@ -4014,9 +4015,9 @@ $(document).ready(function()
             howDoYouFeelAbout($lastfail,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");    
         }
     },1000); */
-    
+        
     // add play/pause controls to any animated gifs         
-        $("img[src$=gif]").each(function(){           
+        $("img[src$=gif]").each(function(){            
            var sg = new SuperGif({gif: this});
            sg.load(function(){
                var div = $(sg.get_canvas()).parent();
@@ -4122,7 +4123,8 @@ $(document).ready(function()
          globalMouseX = e.clientX;
          globalMouseY = e.clientY;
      }
-});
+}
+//});
 
 function getKNo()
 {
