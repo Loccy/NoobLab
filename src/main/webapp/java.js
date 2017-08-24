@@ -16,7 +16,7 @@ function getMainsPkgs(codeTabs)
 }
 
 function runjava()
-{
+{   
     // clear anything left over from tests
     javaSuccessfulRun = standardJavaSuccessfulRun;
     javaRuntimeError = standardJavaRuntimeError;
@@ -35,9 +35,6 @@ function runjava()
     outputframe.controller.reset();    
     outputframe.controller.reset();    
     outputframe.controller.reset();    
-    // Latest codemirror cocks up focus
-    $("div#console pre",outputframe.document).click();
-    outputframe.focus();
     
     var codeMess = getTabBundleCode();
     if (codeMess.match(/import\s*java.awt/) || codeMess.match(/import\s*javax.swing/))
@@ -45,7 +42,7 @@ function runjava()
         apprise("This code tries to use graphical libraries that are not supported in NoobLab."+
                 "You cannot run this code in this environment. If this message was unexpected, please speak to your tutor.");
         return;
-    }
+    }    
     
     var codeTabs = getTabBundleCode(true)[0];   
 
@@ -108,7 +105,7 @@ function runjava()
 }
 
 function actuallyDoRunJava(codeFiles,main,actuallyRun)
-{
+{       
     if (main[1] != undefined)
     {
         main[1] += ".";
@@ -127,7 +124,7 @@ function actuallyDoRunJava(codeFiles,main,actuallyRun)
     
     // remove any "files" already in Doppio
     //outputframe.doCommand("rm *");
-    outputframe.doCommand("clear_cache");
+    outputframe.doCommand("clear_cache");    
 
     // The following ugly hack is dedicated to Bob Hambrook.
     // RIP mate. 5th November 2014.
@@ -167,7 +164,7 @@ public class Code
     var filesBack = 0;
     
     // push code first
-    status("Compiling...");
+    status("Compiling...");        
     
     $.ajax({
         data : {
@@ -241,6 +238,12 @@ public class Code
                                 status("");
 				try
 				{
+                                    // Latest codemirror cocks up focus
+                                    setTimeout(function()
+                                    {
+                                        outputframe.focus();
+                                        $("div#console pre",outputframe.document).click();                                        
+                                    },500);
                                    outputframe.doCommand("java "+main);     
 				}
 				catch (e)
@@ -316,8 +319,14 @@ function standardJavaRuntimeError(errorText)
         var methodName = junk2[0].split(".")[1].split("(")[0].trim();
         var lineNumber = junk2[1].split(":")[1].replace(")","").trim();
         var errorBlurb = junk[0].trim().replace(":","").split('"')[2].trim();
-        if (className == "Pigin")
-        {
+        if ($("div.parameter#multi").text().trim() != "true")  //(className == "Pigin")
+        {            
+            if (className == "java" && errorBlurb.indexOf("java.util.NoSuchElementException") != -1 && errorBlurb.indexOf("bad input") != -1)
+            {
+                // someone's probably typed text into a nextInt scanner...
+                lineNumber = errorBlurb.split("line")[1].trim();
+                errorBlurb = "Bad input (did you enter text into Scanner.nextInt, perhaps?)";
+            }
             errorText = "Runtime error on line "+lineNumber+"<br/>";
         }
         else

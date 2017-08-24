@@ -2610,6 +2610,11 @@ function watermarkEditorCode()
 
 function run()
 {
+    // I really regret "upgrading" CodeMirror... I am not sure why this code
+    // is causing the scroll position to bounce around... but let's solve the
+    // symptom rather than the disease.
+    var editorScrollpos = editor.getScrollInfo(); 
+    
     watermarkEditorCode();
     var code = editor.getValue();
     saveState();
@@ -2619,6 +2624,8 @@ function run()
         editor.removeLineClass(i,"background");
         //editor.setLineClass(i,null);
     }
+    
+    editor.scrollTo(editorScrollpos.left,editorScrollpos.top);
     
     if ($("div.parameter#blockly").text().trim() == "true")
     {
