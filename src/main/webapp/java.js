@@ -35,7 +35,9 @@ function runjava()
     outputframe.controller.reset();    
     outputframe.controller.reset();    
     outputframe.controller.reset();    
-    $("div#console pre",outputframe.document).focus();
+    // Latest codemirror cocks up focus
+    $("div#console pre",outputframe.document).click();
+    outputframe.focus();
     
     var codeMess = getTabBundleCode();
     if (codeMess.match(/import\s*java.awt/) || codeMess.match(/import\s*javax.swing/))
