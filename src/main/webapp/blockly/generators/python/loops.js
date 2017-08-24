@@ -85,10 +85,25 @@ Blockly.Python['controls_for'] = function(block) {
       Blockly.Python.PASS;
 
   var code = '';
-  var range;
+  var range = "range("+argument0+",";
+  if (Blockly.isNumber(argument1))
+  {            
+      range += argument1*1 + 1;
+  }
+  else
+  {
+      range += "("+argument1+")+1";
+  }    
+  if (increment != 1) range += ","+increment;
+  range += ")";
+  
+  // Original blockly Code below.
+  // SERIOUSLY, Google? What... the juddering... fuck?????
+  // We'll be commenting that RIGHT out, thank you very much.
+  // I have no idea what they were trying to achieve here.
 
   // Helper functions.
-  var defineUpRange = function() {
+  /* var defineUpRange = function() {
     return Blockly.Python.provideFunction_(
         'upRange',
         ['def ' + Blockly.Python.FUNCTION_NAME_PLACEHOLDER_ +
@@ -181,7 +196,8 @@ Blockly.Python['controls_for'] = function(block) {
       // We cannot determine direction statically.
       range = generateUpDownRange(startVar, endVar, increment);
     }
-  }
+  }*/
+    
   code += 'for ' + variable0 + ' in ' + range + ':\n' + branch;
   return code;
 };
@@ -209,9 +225,10 @@ Blockly.Python['controls_while'] = function(block) {
 Blockly.Python['controls_repeatUntil'] = function(block) {
   var argument0 = Blockly.Python.valueToCode(block, 'BOOL',Blockly.Python.ORDER_NONE);
   var branch = Blockly.Python.statementToCode(block, 'DO');
-  var lastline = branch.trim().split(/\n/).pop();
-  var indentIndex = lastline.search(/[^\s]/);
-  var indent = lastline.slice(0,indentIndex);
+  var firstline = branch.split(/\n/).shift();
+  console.log(firstline);
+  var indentIndex = firstline.search(/[^\s]/);
+  var indent = firstline.slice(0,indentIndex);
   return 'while True:\n' + branch +indent+ "if "+argument0+":\n"+indent+"  break\n";
 }
 

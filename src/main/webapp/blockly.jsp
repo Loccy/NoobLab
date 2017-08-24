@@ -57,7 +57,8 @@
             }
             #blocklyCodePreview {
              padding: 3px; 
-             font-family: Tahoma, Arial, sans-serif; 
+             /*font-family: Tahoma, Arial, sans-serif; */
+             font-family: monospace; 
              font-size: 11px; 
              color : #666666;
              position: absolute;

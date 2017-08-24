@@ -1705,6 +1705,7 @@ noobdata = {\n\
                
                codeInEditor = "try:\n"+codeInEditor+"\nexcept Exception as e:\n";
                codeInEditor += "  noobtest.feedback('Your code caused an error during the test. If you do not get an error when you run your code, your code probably does something completely unexpected for this particular exercise.')\n";
+               codeInEditor += "  noobtest.debug(str(e))\n";
                codeInEditor += "  noobdata['errorsDuringTest'].append(e)\n\n";
               
 	       oneCheck += codeInEditor+"\n";
