@@ -25,13 +25,48 @@ Sk.hold = function(waittime) {
 
 // Sk.halt(msg), throws an error with msg
 Sk.halt = function(msg) {
-    Sk.paulspanner = msg;
+    Sk.paulspanner = msg;    
 }
 
-// override Sk...readline
-// needed to make input evaluate numeric only input and not always return
+// extend the behaviour of integer division function - enable
+// python 3 conventions so that we don't accidentally lose any
+// decimal places in our calculations
+Sk.builtin.int_.prototype.nb$divide = (function(_super) {
+    return function() {
+        var oldp3 = Sk.python3;
+        Sk.python3 = true;
+        var result = _super.apply(this,arguments);
+        Sk.python3 = oldp3;
+        return result;
+    };
+})(Sk.builtin.int_.prototype.nb$divide);
+
+// extend Sk...readline
+// make input evaluate numbers and not always return
 // strings
-Sk.existingReadline = Sk.builtin.file.prototype.readline.func_code;
+Sk.builtin.file.prototype.readline.func_code = (function(_super) {
+    return function() {        
+        var result = _super.apply(this,arguments);
+        if (result instanceof Sk.misceval.Suspension)
+        {
+            result.resume = (function(_innerSuper) {
+                return function() {
+                    var d = _innerSuper.apply(this,arguments);
+                    if (lastLine.match(/\binput\s*\(/g))
+                    {
+                        if (d.v.match(/^\d+$/)) return new Sk.builtin.int_(parseInt(d.v)); // no decimal point
+                        if (d.v.match(/^\d+\.\d+$/)) return new Sk.builtin.float_(parseFloat(d.v)); // decimal point
+                    }
+                    return d;
+                }
+            })(result.resume);
+        }
+        return result;
+    };
+})(Sk.builtin.file.prototype.readline.func_code);
+
+// LEGACY -- probably easier to understand than the above...
+/*Sk.existingReadline = Sk.builtin.file.prototype.readline.func_code;
 Sk.builtin.file.prototype.readline = new Sk.builtin.func(function(a, b) { 
     var result = Sk.existingReadline(a,b);
     if (result instanceof Sk.misceval.Suspension)
@@ -50,46 +85,7 @@ Sk.builtin.file.prototype.readline = new Sk.builtin.func(function(a, b) {
         }
     }
     return result;
-});
-
-/*
- * Code below is de-minified from skulpt-min.js - for reference when writing above
-Sk.builtin.file.prototype.readlinex = new Sk.builtin.func(function(a, b) {
-        if (0 === a.fileno) {
-            var c, d, e;
-            c = c ? c.v : "";
-            c = Sk.inputfun(c);
-            return c instanceof Promise ? (e = new Sk.misceval.Suspension,
-            e.resume = function() {
-                alert(d);
-                console.log(typeof d);
-                console.log("Trying");
-                console.log(new Sk.builtin.int_(parseInt(d)));
-                console.log("Success");
-                console.log("e.resume");
-                if (d.match(/^[\d|\.]+$/)) return new Sk.builtin.int_(parseInt(d));
-                return new Sk.builtin.str(d);                
-            }
-            ,
-            e.data = {
-                type: "Sk.promise",
-                promise: c.then(function(a) {
-                    return d = a
-                }, function(a) {
-                    d = "";
-                    return a
-                })
-            },
-            e) : new Sk.builtin.str(c)
-        }
-        c = "";
-        a.currentLine < a.lineList.length && (c = a.lineList[a.currentLine],
-        a.currentLine++);
-        console.log("through bottom");
-        if (c.match(/^[\d|\.]+$/)) return Sk.builtin.int_(parseInt(c));
-        return new Sk.builtin.str(c)
-    }
- ); */
+}); */
 
 function cls()
 {
@@ -164,7 +160,14 @@ function inputfunky()
             }
         }
         else
-        {        
+        {   
+            var monitorbreak = setInterval(function(){
+                if (Sk.paulspanner)
+                {
+                    clearInterval(monitorbreak);
+                    reject();
+                }
+            },500);
             //$("span#input").text("");
             $('#input').text("");
             focusInput();
@@ -261,7 +264,11 @@ function internalRunPython()
     }
     var myPromise = Sk.misceval.callsimAsync(handlers, function(){
         // handle
-        console.log(prog);
+        var p = ""
+        $.each(prog.split(/\n/g),function(index){
+            p += (index+1)+":"+this+"\n";
+        });
+        console.log(p);
         return Sk.importMainWithBody("<stdin>", false, prog, true);
     }).then(function(mod) {
        outf('Program completed without errors.',"green");
