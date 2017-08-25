@@ -2446,8 +2446,15 @@ function saveState(s)
 }
 
 function getBlocklyXml()
-{
-    return Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace));
+{   
+    // substitute any return symbols in <field name="CODE"> elements
+    var xmldoc = $.parseXML(Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)));
+    $(xmldoc).find("field[name=CODE]").each(function(){ 
+        var t = $(this).text();
+        t = t.replace(/ ⏎ /g,"\n");
+        $(this).text(t);
+    });
+    return (new XMLSerializer()).serializeToString(xmldoc);
 }
 
 function contentNav(sectionNo,delay,nosave)
@@ -3542,8 +3549,18 @@ function blocklyCodeUpdate() {
 
 function restoreBlockly(oldBlockly)
 {   
+    console.log(oldBlockly);
     if (Blockly == null) Blockly = $("iframe#code-blockly").get(0).contentWindow.Blockly;
     Blockly.mainWorkspace.clear();
+    
+    var xmldoc = $.parseXML(oldBlockly);    
+    $(xmldoc).find("field[name=CODE]").each(function(){ 
+        var t = $(this).text();
+        t = t.replace(/\n/g," ⏎ ");
+        $(this).text(t);
+    });
+    oldBlockly =  (new XMLSerializer()).serializeToString(xmldoc);    
+    
     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, Blockly.Xml.textToDom(oldBlockly));
     blocklyCodeUpdate();
 }

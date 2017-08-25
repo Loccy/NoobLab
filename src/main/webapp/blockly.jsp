@@ -18,6 +18,7 @@
         <script type="text/javascript" src="blockly/blocks/procedures.js"></script>  
         <script type="text/javascript" src="blockly/blocks/variables.js"></script>
         <script type="text/javascript" src="blockly/blocks/carol.js"></script>  
+        <script type="text/javascript" src="blockly/blocks/code.js"></script>  
 
         <script type="text/javascript" src="blockly/generators/${param.language}.js"></script>
         <script type="text/javascript" src="blockly/generators/${param.language}/colour.js"></script>  
@@ -28,6 +29,9 @@
         <script type="text/javascript" src="blockly/generators/${param.language}/procedures.js"></script>  
         <script type="text/javascript" src="blockly/generators/${param.language}/variables.js"></script>  
         <script type="text/javascript" src="blockly/generators/${param.language}/carol.js"></script>
+        
+        <script type="text/javascript" src="blockly/generators/general/code.js"></script>
+        
         <script type="text/javascript" src="blockly/msg/js/en.js"></script>
         <style>
             html, body {
@@ -119,9 +123,12 @@
         <category name="Display">
             <block type="text_print"></block>
         </category>
-        <category name="Text">
+        <category name="Text, numbers and maths">            
             <block type="text"></block>
-        </category>    
+            <block type="math_number"></block>
+            <block type="math_arithmetic"></block>
+            <block type="math_single"></block>
+        </category>        
         <category name="Variables">
             <block type="variables_set">
                 <field name="VAR">p</field>
@@ -166,11 +173,9 @@
             <block type="logic_operation"></block>
             <block type="logic_negate"></block>
             <block type="logic_boolean"></block>
-        </category>
-        <category name="Numbers and maths       ">
-            <block type="math_number"></block>
-            <block type="math_arithmetic"></block>
-            <block type="math_single"></block>
+        </category>        
+        <category name="Inline code">
+            <block type="code_code"></block>
         </category>
         <category name="Functions" custom="PROCEDURE"></category>
         <category name="Carol">
