@@ -252,7 +252,14 @@ function internalRunPython()
             // this stops the browser from locking and lets the DOM catch up.
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
-                    resolve(susp.resume());
+                    try
+                    {
+                        resolve(susp.resume());
+                    }
+                    catch (e)
+                    {
+                        reject(e);
+                    }
                     },0);
             });
         }
