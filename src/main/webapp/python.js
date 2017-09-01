@@ -92,7 +92,8 @@ function cls()
     $("div#output-py").contents().filter(function(){ return this.nodeType == 3; }).remove();
 }
 
-function outf(text,status) {        
+function outf(text,status) {
+  setTimeout(function(){
     if (status == "error")
     {
         status = "red";
@@ -138,6 +139,7 @@ function outf(text,status) {
     }
     //mypre.innerHTML = mypre.innerHTML + text;
     window.scrollTo(0,document.body.scrollHeight);
+  },1)
 }
  
 function focusInput()
@@ -209,14 +211,12 @@ function internalRunPython()
     var handlers = {};
     handlers["Sk.debug"] = function(susp) {
       try {                          
-        //outf("Suspended! Now resuming...");
+        //outf("Suspended! Now resuming...");                
         proccount++;
         lastLineNo = susp.child.lineno;
         lastLine = proglines[lastLineNo-1];
         if (proccount > pythonmaxcycles)
-        {
-            // force a DOM redraw on chrome
-            //$('pre#python-code').hide().show(0);
+        {          
             var cont = confirm("Your program seems to be stuck in a loop, or is otherwise really busy! Click OK to continue running or select Cancel to abort. Maybe you have an infinite loop somewhere...");
             if (!cont) throw "Program aborted during possible infinite loop.";
         }
@@ -247,10 +247,19 @@ function internalRunPython()
             });
         }
         else
+        {
+            // introduce a 5ms delay to give the browser thread time to catch up
+            return new Promise(function(resolve, reject){
+                setTimeout(function(){
+                    resolve(susp.resume());
+                    },0);
+            });
+        }
+        /*else
         {      
             // Return an already-resolved promise in this case
             return Promise.resolve(susp.resume());
-        }
+        }*/
       } catch(e) {
         return Promise.reject(e);
       }
