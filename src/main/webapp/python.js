@@ -248,7 +248,8 @@ function internalRunPython()
         }
         else
         {
-            // introduce a 5ms delay to give the browser thread time to catch up
+            // put the resolution of the promise to only happen when the current JS stack is cleared...
+            // this stops the browser from locking and lets the DOM catch up.
             return new Promise(function(resolve, reject){
                 setTimeout(function(){
                     resolve(susp.resume());
