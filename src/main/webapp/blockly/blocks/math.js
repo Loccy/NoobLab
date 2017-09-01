@@ -77,8 +77,8 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "options": [
           ["%{BKY_MATH_ADDITION_SYMBOL}", "ADD"],
           ["%{BKY_MATH_SUBTRACTION_SYMBOL}", "MINUS"],
-          ["%{BKY_MATH_MULTIPLICATION_SYMBOL}", "MULTIPLY"],
-          ["%{BKY_MATH_DIVISION_SYMBOL}", "DIVIDE"],
+          ["*", "MULTIPLY"],
+          ["/", "DIVIDE"],
           ["%{BKY_MATH_POWER_SYMBOL}", "POWER"]
         ]
       },

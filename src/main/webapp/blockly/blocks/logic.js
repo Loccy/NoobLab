@@ -134,12 +134,12 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "type": "field_dropdown",
         "name": "OP",
         "options": [
-          ["=", "EQ"],
-          ["\u2260", "NEQ"],
+          ["==", "EQ"],
+          ["!=", "NEQ"],
           ["<", "LT"],
-          ["\u2264", "LTE"],
+          ["<=", "LTE"],
           [">", "GT"],
-          ["\u2265", "GTE"]
+          [">=", "GTE"]
         ]
       },
       {
