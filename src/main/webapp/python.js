@@ -54,8 +54,8 @@ Sk.builtin.file.prototype.readline.func_code = (function(_super) {
                     var d = _innerSuper.apply(this,arguments);
                     if (lastLine.match(/\binput\s*\(/g))
                     {
-                        if (d.v.match(/^\d+$/)) return new Sk.builtin.int_(parseInt(d.v)); // no decimal point
-                        if (d.v.match(/^\d+\.\d+$/)) return new Sk.builtin.float_(parseFloat(d.v)); // decimal point
+                        if (d.v.match(/^(-{1})?\d+$/)) return new Sk.builtin.int_(parseInt(d.v)); // no decimal point
+                        if (d.v.match(/^(-{1})?\d+\.\d+$/)) return new Sk.builtin.float_(parseFloat(d.v)); // decimal point
                     }
                     return d;
                 }
