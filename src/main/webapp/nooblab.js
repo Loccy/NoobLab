@@ -3548,8 +3548,7 @@ function blocklyCodeUpdate() {
 }
 
 function restoreBlockly(oldBlockly)
-{   
-    console.log(oldBlockly);
+{       
     if (Blockly == null) Blockly = $("iframe#code-blockly").get(0).contentWindow.Blockly;
     Blockly.mainWorkspace.clear();
     

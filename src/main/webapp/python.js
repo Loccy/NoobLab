@@ -128,13 +128,14 @@ function outf(text,status) {
             text = "Your program caused an error as NoobLab was testing it. This means it is not a full solution to the exercise! Make sure you have tested your code against all of the possible scenarios of the exercise.<p>The error was: "+text;
         }
     }
-    if (status)
+    if (status && status != "input")
     {
         text = '<br/><span style="color: '+status+'">'+text+"</span>";
         $("div#output-py").append(text);
     }
     else
     {
+        if (status == "input") text = '<span class="input">'+text+'</span>';
         $("div#output-py span#input").before(text);
     }
     //mypre.innerHTML = mypre.innerHTML + text;
@@ -180,7 +181,7 @@ function inputfunky()
                     result = result.replace(/[\n\r]+/g, ''); // remove trailing return
                     $("#input").text("");
                     $("#input").off("keyup");
-                    outf(result+"<br/>");
+                    outf(result+"<br/>","input");
                     resolve(result);
                 }
             });
