@@ -89,6 +89,13 @@ Blockly.Pseudocode['procedures_callnoreturn'] = function(block) {
   return code+"\n";
 };
 
+Blockly.Pseudocode['procedures_ifreturn'] = function(block) {
+      // Print statement.
+  var msg = Blockly.Pseudocode.valueToCode(block, 'VALUE',
+      Blockly.Pseudocode.ORDER_NONE) || '0';
+  return 'return ' + msg + '\n';
+};
+
 /*
 Blockly.Pseudocode['procedures_ifreturn'] = function(block) {
   // Conditionally return value from a procedure.

@@ -107,6 +107,7 @@ Blockly.Python['procedures_callnoreturn'] = function(block) {
   return code;
 };
 
+/*
 Blockly.Python['procedures_ifreturn'] = function(block) {
   // Conditionally return value from a procedure.
   var condition = Blockly.Python.valueToCode(block, 'CONDITION',
@@ -120,4 +121,12 @@ Blockly.Python['procedures_ifreturn'] = function(block) {
     code += '  return\n';
   }
   return code;
+}; */
+
+Blockly.Python['procedures_ifreturn'] = function(block) {
+      // Print statement.
+  var msg = Blockly.Python.valueToCode(block, 'VALUE',
+      Blockly.Python.ORDER_NONE) || 'None';
+  return 'return ' + msg + '\n';
 };
+
