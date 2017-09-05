@@ -24,7 +24,12 @@ var $builtinmodule = function(name)
     });
     
     mod.getOutputLines = new Sk.builtin.func(function(){
-       return Sk.builtin.list($("div#output-py").clone().children().remove().end().text().trim().split(/\n/g)); 
+       var result = $("div#output-py").clone().children().remove().end().text().trim().split(/\n/g);
+       for (var i = 0; i < result.length; i++)
+       {
+           result[i] = Sk.builtin.str(result[i]);
+       }
+       return Sk.builtin.list(result); 
     });
     
     mod.initialiseCarol = new Sk.builtin.func(function(){        
