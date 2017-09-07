@@ -54,8 +54,8 @@ Sk.builtin.file.prototype.readline.func_code = (function(_super) {
                     var d = _innerSuper.apply(this,arguments);
                     if (lastLine.match(/\binput\s*\(/g))
                     {
-                        if (d.v.match(/^(-{1})?\d+$/)) return new Sk.builtin.int_(parseInt(d.v)); // no decimal point
-                        if (d.v.match(/^(-{1})?\d+\.\d+$/)) return new Sk.builtin.float_(parseFloat(d.v)); // decimal point
+                        if (d.v.trim().match(/^(-{1})?\d+$/)) return new Sk.builtin.int_(parseInt(d.v.trim())); // no decimal point
+                        if (d.v.trim().match(/^(-{1})?\d+\.\d+$/)) return new Sk.builtin.float_(parseFloat(d.v.trim())); // decimal point
                     }
                     return d;
                 }
@@ -135,7 +135,7 @@ function outf(text,status) {
     }
     else
     {
-        if (status == "input") text = '<span class="input">'+text+'</span>';
+        if (status == "input") text = '<span class="input">'+text+'</span>'+"\n";
         $("div#output-py span#input").before(text);
     }
     //mypre.innerHTML = mypre.innerHTML + text;
@@ -158,8 +158,10 @@ function inputfunky()
                 resolve("");
             }
             else
-            {                
-                resolve(inputbuffer.shift());
+            {
+                var result = inputbuffer.shift();
+                outf(result,"input");
+                resolve(result+"\n");
             }
         }
         else
@@ -181,7 +183,7 @@ function inputfunky()
                     result = result.replace(/[\n\r]+/g, ''); // remove trailing return
                     $("#input").text("");
                     $("#input").off("keyup");
-                    outf(result+"<br/>","input");
+                    outf(result,"input");
                     resolve(result);
                 }
             });
