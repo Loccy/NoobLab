@@ -3953,13 +3953,23 @@ window.onload = function()
        }
     });
     
-    // remap tabs to spaces
-    editor.setOption("extraKeys", {
-        Tab: function(cm) {
-          var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
-          cm.replaceSelection(spaces);
+    // remap tabs to spaces and
+    // tweak CodeMirror so that tab and shift tab behave sensibly
+    // According to the author of CodeMirror, this is not a "mistake" - go figure    
+    editor.options.extraKeys = { 
+        "Tab": function(cm) { 
+          if (cm.getSelection().length) // nothing selected
+          {
+              CodeMirror.commands["indentMore"](cm)
+          }
+          else
+          {
+            var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+            cm.replaceSelection(spaces);
+          }
+        }, 
+        "Shift-Tab": "indentLess" 
         }
-      });
       
     editor.setOption("indentUnit",2);
     
@@ -4028,7 +4038,7 @@ window.onload = function()
     {
 	$("div#toolbar i.fa").hide();
     }
-    
+     
     // check for testCases with 5 attempts and update
     /*
     setInterval(function(){
