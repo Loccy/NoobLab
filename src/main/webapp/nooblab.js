@@ -1717,12 +1717,12 @@ noobdata = {\n\
                {
                    if (finalOutput.charAt(0) != "!")
                    {
-                        oneCheck += "\n"+'if "'+finalOutput+'" in noobtest.getCode():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
+                        oneCheck += "\n"+'if "'+finalOutput+'" in noobtest.getOutput():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
                    }
                    else
                    {
                        finalOutput = finalOutput.substr(1);
-                       oneCheck += "\n"+'if "'+finalOutput+'" not in noobtest.getCode():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
+                       oneCheck += "\n"+'if "'+finalOutput+'" not in noobtest.getOutput():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
                    }
                }
                else if (finalOutputCode != "")
