@@ -90,6 +90,7 @@ Sk.builtin.file.prototype.readline = new Sk.builtin.func(function(a, b) {
 function cls()
 {
     $("div#output-py").contents().filter(function(){ return this.nodeType == 3; }).remove();
+    $("div#output-py span.input").remove();
 }
 
 function outf(text,status) {
