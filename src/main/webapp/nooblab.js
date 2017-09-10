@@ -4011,6 +4011,11 @@ window.onload = function()
   			$("div#content").css("background-color","#FFCCCC");
   		}
 	});
+        
+     // set editor theme if needed
+     var editortheme = $.cookie("editortheme");
+     if (editor == "") editor = "default";
+     selectTheme(editortheme);
 
     if ($("div.parameter#blockly").text().trim() == "true" && $.cookie("disableblocks") == "true")
     {
@@ -4033,6 +4038,8 @@ window.onload = function()
         // and enable the "disable blocks" option
         $("div#usermenu div#toggleblocks").removeClass("disabled");
         $("div#code-titlebar").html('[ Code <i onclick="toggleBlocks()" class="fa fa-cube" style="cursor: pointer; color: green;" aria-hidden="true"></i> ]');
+        // disable the theme chooser
+        $("div#openthemechooser").addClass("disabled");
     }
     else // hide blockly's zoom in/out buttons
     {
@@ -4195,6 +4202,38 @@ function zoomOut()
         $("iframe#code-blockly").height((100*1/zoom)+"%");
         $("iframe#code-blockly").width((100*1/zoom)+"%");
 	$("iframe#code-blockly").attr("data-zoom",zoom);
+}
+
+function selectTheme(theme)
+{
+    if (theme == "(default)") theme = "default";
+    editor.setOption("theme",theme);
+    highlightSelectedTheme();
+    $.cookie("editortheme",theme, {expires: 365, path: '/'});
+}
+
+function highlightSelectedTheme()
+{
+    $("div.themes div.theme").removeClass("selected");
+    var currenttheme = editor.getOption("theme");
+    $("div#theme-"+currenttheme).addClass("selected");
+}
+
+function closeThemeChooser()
+{
+    if ($(event.target).hasClass("theme")) return;
+    $("div#themechooser").animate({right: -200},700);
+    $("body").unbind("click");
+    $("iframe#outputframe").contents().find("body").unbind("click");
+}
+
+function openThemeChooser()
+{
+    if ($("div#openthemechooser").hasClass("disabled")) return;
+    toggleOptions();
+    $("div#themechooser").animate({right: 10},700);
+    setTimeout(function() { $("body").bind("click",function() { closeThemeChooser(event) }) },100)
+    setTimeout(function() { $("iframe#outputframe").contents().find("body").bind("click",function() { closeThemeChooser(event) }) },100)
 }
 
 $(window).resize(function() {

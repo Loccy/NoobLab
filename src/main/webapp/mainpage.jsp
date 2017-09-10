@@ -22,6 +22,9 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/innerxhtml.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css"/>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/lib/codemirror.css"/>
+        <c:forEach items="${cmthemes}" var="cmtheme">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/theme/${cmtheme}.css"/>
+        </c:forEach>
 
         <%-- codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/lib/codemirror.js"></script>
@@ -306,9 +309,20 @@
             <div><a class="medallink" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>            
             <!--<div onclick="setName()">Set my name</div>-->
             <div class="disabled" id="toggleblocks" onclick="toggleBlocks()">Disable blocks</div>
+            <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>
             <div id="reallogout" onclick="logout()">Logout</div>
         </div>
         <div id="logoutitem" onclick="toggleOptions()">Options</div>
-        <div id="horizontaldrag"></div>        
+        <div id="horizontaldrag"></div>
+
+        <div id="themechooser">
+            <div class="tbar theme"><div class="close">X</div>Theme Chooser</div>
+            <div class="themes">
+                <div id="theme-default" class="theme" onclick="selectTheme($(this).text().trim())">(default)</div>
+                <c:forEach items="${cmthemes}" var="cmtheme">
+                <div id="theme-${cmtheme}" class="theme" onclick="selectTheme($(this).text().trim())">${cmtheme}</div>
+                </c:forEach>
+            </div>
+        </div>
     </body>
 </html>

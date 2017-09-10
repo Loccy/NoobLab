@@ -13,8 +13,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -467,6 +469,15 @@ public class Main extends HttpServlet
             rd.forward(request, response);
             return;
         }
+        
+        /* get themes from codemirror */
+        Set cmthemesSet = request.getServletContext().getResourcePaths("/codemirror/theme/");
+        String[] cmthemes = (String[]) cmthemesSet.toArray(new String[0]);
+        for (int i = 0; i < cmthemes.length; i++)
+        {
+            cmthemes[i] = cmthemes[i].replace("/codemirror/theme/","").replace(".css","");
+        }
+        request.setAttribute("cmthemes",cmthemes);
         
         RequestDispatcher rd = request.getRequestDispatcher("/mainpage.jsp");
         rd.forward(request, response);

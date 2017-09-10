@@ -133,6 +133,57 @@ div.tab:before {
     user-select: none;    
 }
 
+#themechooser {
+    font-family : Verdana;
+    position : fixed;
+    top : 10px;
+    right : -200px;
+    bottom : 10px;
+    width : 200px;
+    overflow : auto;
+    overflow-x : hidden;
+    background-color : white;
+    border : 1px solid black;
+}
+
+#themechooser .theme {
+    cursor : pointer;
+    padding-left : 0.5em;
+}
+
+#themechooser .tbar {
+    top : 0px;
+    right : 0px;
+    background-color : black;
+    color : white;
+    width : 100%;
+    height : 1.3em;
+    line-height : 1.3em;
+    padding-left : 0.5em;
+    padding-right : 0.5em;
+    box-sizing: border-box;
+    cursor : pointer;
+}
+
+#themechooser .tbar .close {
+    float : right;
+}
+
+#themechooser .themes {
+    position : absolute;
+    bottom : 0px;
+    top : 1.3em;
+    overflow : auto;
+}
+
+#themechooser .theme:not(.tbar):hover {
+    background-color: gray;
+    color : white;
+}
+
+#themechooser .theme.selected {
+    font-weight : bolder;
+}
 
 pre.javastatic {
     box-sizing: border-box;
