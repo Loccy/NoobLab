@@ -36,6 +36,13 @@ function runjava()
     outputframe.controller.reset();    
     outputframe.controller.reset();    
     
+    if (editorfontsize)
+    {
+        setTimeout(function (){
+            $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")        
+        },500);
+    }
+    
     var codeMess = getTabBundleCode();
     if (codeMess.match(/import\s*java.awt/) || codeMess.match(/import\s*javax.swing/))
     {

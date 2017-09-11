@@ -35,7 +35,7 @@ approach to DOM manipulation. --%>
         <style type="text/css">
             body { font-family: monospace;}
             input {
-                font-family: monospace;
+                font-family: monospace; font-size: inherit;
                 font-weight: bolder;
             }
         </style>

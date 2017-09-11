@@ -6,6 +6,8 @@ var emolevel = 5;
 
 var carolImage = "carol";
 
+var editorfontsize = undefined;
+
 ///// de-crap IE
 String.prototype.trim = function() {
     return $.trim(this)
@@ -2505,6 +2507,12 @@ function runPython(code,istest,input)
         $(form).append('<textarea style="width:0px;height:0px;visibility:hidden" name="inputbuffer">'+JSON.stringify(input)+'</textarea>');
     }
     document.forms[0].submit();
+    if (editorfontsize)
+    {
+        setTimeout(function (){
+            $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")        
+        },500);
+    }
 }
 
 function hiddenRun(code,test,codefortest)
@@ -2561,6 +2569,12 @@ function hiddenRun(code,test,codefortest)
     document.forms[0].action = contextPath+"/RunPage";
     document.forms[0].submit();
     disableRun();
+    if (editorfontsize)
+    {
+        setTimeout(function (){
+            $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")        
+        },500);
+    }
 }
 
 function whiteSpaceify(code)
@@ -3011,6 +3025,7 @@ function resize()
 {
     var wrapperHeight = $("#output-inner").css("height");
     $("#outputframe").css("height",wrapperHeight);
+    resizeFakeDocs();
     return;
     // old
    var posOfOutput = $("#output-outer").offset().top;
@@ -3023,7 +3038,6 @@ function resize()
    $("#outputframe").css("height",newBigHeight+"px");
    $("#output-main").css("height",newBigHeight+"px");
    $("#content").css("width",posOfEditorX+"px");
-   resizeFakeDocs();
 }
 
 function handlePrettyPrintPlus()
@@ -3665,7 +3679,7 @@ originalTexts = {};
 
 //$(document).load(function()
 window.onload = function()
-{           
+{              
    var title = $("div.parameter#lessonName").text().trim();
    if (title.length == 0) title = "NoobLab";
    window.document.title = title;
@@ -3814,7 +3828,8 @@ window.onload = function()
                             });
    
    handlePrettyPrintPlus();
-   createFakeDocs();   
+   createFakeDocs();      
+   setTimeout(resizeFakeDocs,2000);
    var courseNo = $("#courseNo.parameter").text().trim();
    var lessonNo = $("#lessonNo.parameter").text().trim();
    var lastSectionNo = $.cookie('nlpp-'+courseNo+"-"+lessonNo+"-lastnav");
@@ -3886,14 +3901,15 @@ window.onload = function()
                  // reset check every 60 econds to see if state needs saving
                  saveInterval = setInterval(function() {saveState();},60000);
                }
-
-               // kludge. Have no idea why this is needed.
-               // Otherwise, the resize seems to get lost somewhere
-               // in the bazillion callbacks that are going on.
-               setTimeout(function() {resize()},100);
             });
         }
    }
+   
+    // kludge. Have no idea why this is needed.
+    // Otherwise, the resize seems to get lost somewhere
+    // in the bazillion callbacks that are going on.
+    setTimeout(function() {resize()},100);
+
    // if IE, shrink all pres and codes by .1 em
    // GRRRRRRR.
    /*if ($.browser.msie)
@@ -4014,8 +4030,15 @@ window.onload = function()
         
      // set editor theme if needed
      var editortheme = $.cookie("editortheme");
-     if (editor == "") editor = "default";
+     if (editortheme == "") editortheme = "default";
      selectTheme(editortheme);
+     // and font size
+     var cookieeditorfontsize = $.cookie("editorfontsize");
+     if (cookieeditorfontsize)
+     {         
+         editorfontsize = parseInt(cookieeditorfontsize);
+         $(".CodeMirror").css("font-size",(editorfontsize)+"px");
+     }
 
     if ($("div.parameter#blockly").text().trim() == "true" && $.cookie("disableblocks") == "true")
     {
@@ -4041,10 +4064,10 @@ window.onload = function()
         // disable the theme chooser
         $("div#openthemechooser").addClass("disabled");
     }
-    else // hide blockly's zoom in/out buttons
-    {
-	$("div#toolbar i.fa").hide();
-    }
+    //else // hide blockly's zoom in/out buttons
+    //{
+    //	$("div#toolbar i.fa").hide();
+    //}
      
     // check for testCases with 5 attempts and update
     /*
@@ -4103,7 +4126,9 @@ window.onload = function()
          $("body").append('<div id="resizeoverlay" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 20000;"></div>');
          //$("body").children().last().css("background","rgba(123,245,76,0.7)");
          $("div#output-titlebar").css("z-index",20001);
-         dragY = setInterval(function(){            
+         dragY = setInterval(function(){                         
+            if (window.innerHeight-globalMouseY < 60) return;
+            if (globalMouseY < 60) return;
             $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
        	    $("div#editor-wrapper").css("bottom",window.innerHeight-globalMouseY+"px");
             $("#outputframe").css("height",window.innerHeight-globalMouseY+"px");
@@ -4118,7 +4143,7 @@ window.onload = function()
          $("div#horizontaldrag").addClass("changed");
          dragX = setInterval(function(){
             var width = window.innerWidth-globalMouseX;
-            if (width < 450 || globalMouseX < 450) return;
+            if (width < 430 || globalMouseX < 300) return;
             if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed"))
             {                
                 $("div#horizontaldrag").css("right",width+"px");
@@ -4176,6 +4201,8 @@ function getKNo()
 
 function zoomIn()
 {
+    if ($("div.parameter#blockly").text().trim() == "true")
+    {
 	if ($("iframe#code-blockly").attr("data-zoom") == undefined)
 	{
 		$("iframe#code-blockly").attr("data-zoom","1");
@@ -4187,10 +4214,23 @@ function zoomIn()
 	$("iframe#code-blockly").height((100*1/zoom)+"%");
 	$("iframe#code-blockly").width((100*1/zoom)+"%");
 	$("iframe#code-blockly").attr("data-zoom",zoom);
+    }
+    else
+    {
+        current = $(".CodeMirror").css("font-size");        
+        if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
+        current = parseInt(current);
+        $(".CodeMirror").css("font-size",(current+1)+"px");
+        $("iframe#outputframe").contents().find("body").css("font-size",(current+1)+"px")
+        $.cookie("editorfontsize",current+1, {expires: 365, path: '/'});
+        editorfontsize = current+1;
+    }
 }
 
 function zoomOut()
 {
+    if ($("div.parameter#blockly").text().trim() == "true")
+    {
         if ($("iframe#code-blockly").attr("data-zoom") == undefined)
         {
                 $("iframe#code-blockly").attr("data-zoom","1");
@@ -4201,7 +4241,18 @@ function zoomOut()
 	$("iframe#code-blockly").css("transform-origin","0 0");
         $("iframe#code-blockly").height((100*1/zoom)+"%");
         $("iframe#code-blockly").width((100*1/zoom)+"%");
-	$("iframe#code-blockly").attr("data-zoom",zoom);
+	$("iframe#code-blockly").attr("data-zoom",zoom);        
+    }
+    else
+    {
+        current = $(".CodeMirror").css("font-size");
+        if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
+        current = parseInt(current);
+        $(".CodeMirror").css("font-size",(current-1)+"px");
+        $("iframe#outputframe").contents().find("body").css("font-size",(current-1)+"px")
+        $.cookie("editorfontsize",current-1, {expires: 365, path: '/'});
+        editorfontsize = current-1;
+    }
 }
 
 function selectTheme(theme)
