@@ -23,4 +23,7 @@
     <body>
         <pre id="python-code" style="display: none">${pythoncode}</pre><div id="output-py" onclick="focusInput()" style="font-family: monospace; white-space: pre-wrap; width: 100%; height: 100%; overflow: auto"><span id="input" style="outline:none" contenteditable></span></div>
     </body>
+    <script type="text/javascript">
+        $("body").css("font-size",parent.editorfontsize+"px")        
+    </script>
 </html>

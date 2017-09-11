@@ -2506,13 +2506,7 @@ function runPython(code,istest,input)
     {                        
         $(form).append('<textarea style="width:0px;height:0px;visibility:hidden" name="inputbuffer">'+JSON.stringify(input)+'</textarea>');
     }
-    document.forms[0].submit();
-    if (editorfontsize)
-    {
-        setTimeout(function (){
-            $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")        
-        },500);
-    }
+    document.forms[0].submit();    
 }
 
 function hiddenRun(code,test,codefortest)
@@ -2569,12 +2563,6 @@ function hiddenRun(code,test,codefortest)
     document.forms[0].action = contextPath+"/RunPage";
     document.forms[0].submit();
     disableRun();
-    if (editorfontsize)
-    {
-        setTimeout(function (){
-            $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")        
-        },500);
-    }
 }
 
 function whiteSpaceify(code)
@@ -3722,7 +3710,7 @@ window.onload = function()
    else handleTestCases(); 
   
    if ($("div.parameter#language").text().trim() == "java")
-   {
+   {       
        $("iframe#outputframe").attr("src",contextPath+"/doppio");
        if ($.browser.msie)
        {
@@ -4034,10 +4022,10 @@ window.onload = function()
      selectTheme(editortheme);
      // and font size
      var cookieeditorfontsize = $.cookie("editorfontsize");
-     if (cookieeditorfontsize)
+     if (cookieeditorfontsize != "")
      {         
          editorfontsize = parseInt(cookieeditorfontsize);
-         $(".CodeMirror").css("font-size",(editorfontsize)+"px");
+         $(".CodeMirror").css("font-size",(editorfontsize)+"px");                  
      }
 
     if ($("div.parameter#blockly").text().trim() == "true" && $.cookie("disableblocks") == "true")

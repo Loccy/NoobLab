@@ -27,21 +27,17 @@ function runjava()
     }
     
     // reset and show console
-    $("div#console pre",outputframe.document).show();
-    // give console focus
+    $("div#console pre",outputframe.document).show();    
+    if (editorfontsize)
+    {
+        $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")
+    }
     
     // JQuery console is as glitchy as hell. If at first you don't succeed...
     //$("div#main pre",outputframe.document).text("");
     outputframe.controller.reset();    
     outputframe.controller.reset();    
     outputframe.controller.reset();    
-    
-    if (editorfontsize)
-    {
-        setTimeout(function (){
-            $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")        
-        },500);
-    }
     
     var codeMess = getTabBundleCode();
     if (codeMess.match(/import\s*java.awt/) || codeMess.match(/import\s*javax.swing/))

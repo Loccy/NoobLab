@@ -357,5 +357,8 @@ approach to DOM manipulation. --%>
                 return result;
             }
         </script>
+        <script type="text/javascript">
+            $("body").css("font-size",parent.editorfontsize+"px")        
+        </script>
     </body>
 </html>
