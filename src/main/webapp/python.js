@@ -162,7 +162,7 @@ function inputfunky()
             {
                 var result = inputbuffer.shift();
                 outf(result,"input");
-                resolve(result+"\n");
+                resolve(result);
             }
         }
         else
