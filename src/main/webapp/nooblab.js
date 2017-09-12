@@ -4120,7 +4120,9 @@ window.onload = function()
             if (globalMouseY < 60) return;
             $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
        	    $("div#editor-wrapper").css("bottom",window.innerHeight-globalMouseY+"px");
-            $("#outputframe").css("height",window.innerHeight-globalMouseY+"px");
+            //$("#outputframe").css("height",window.innerHeight-globalMouseY+"px");
+            var wrapperHeight = $("#output-inner").css("height");
+            $("#outputframe").css("height",wrapperHeight);
             editor.refresh();
          },10);
      });
