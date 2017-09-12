@@ -1729,7 +1729,7 @@ noobdata = {\n\
                }
                else if (finalOutputCode != "")
                {
-                   finalOutputCode = "try:\n"+indent(finalOutputCode)+"\nexcept Exception as e:\n"+indent("pass");                   
+                   finalOutputCode = "try:\n"+indent(finalOutputCode)+"\nexcept Exception as e:\n"+indent("noobtest.debug('Runtime error during test run: '+str(e))");                   
                    oneCheck +="\n"+'def noobTestRun():\n'+indent(finalOutputCode)+'\n\n';
                    oneCheck += "\n"+'if noobTestRun():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
                }
