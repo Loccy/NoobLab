@@ -4025,7 +4025,8 @@ window.onload = function()
      if (cookieeditorfontsize != "")
      {         
          editorfontsize = parseInt(cookieeditorfontsize);
-         $(".CodeMirror").css("font-size",(editorfontsize)+"px");                  
+         $(".CodeMirror").css("font-size",(editorfontsize)+"px");
+         editor.refresh();
      }
 
     if ($("div.parameter#blockly").text().trim() == "true" && $.cookie("disableblocks") == "true")
@@ -4209,6 +4210,7 @@ function zoomIn()
         if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
         current = parseInt(current);
         $(".CodeMirror").css("font-size",(current+1)+"px");
+        editor.refresh();
         $("iframe#outputframe").contents().find("body").css("font-size",(current+1)+"px")
         $.cookie("editorfontsize",current+1, {expires: 365, path: '/'});
         editorfontsize = current+1;
@@ -4237,6 +4239,7 @@ function zoomOut()
         if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
         current = parseInt(current);
         $(".CodeMirror").css("font-size",(current-1)+"px");
+        editor.refresh();
         $("iframe#outputframe").contents().find("body").css("font-size",(current-1)+"px")
         $.cookie("editorfontsize",current-1, {expires: 365, path: '/'});
         editorfontsize = current-1;
