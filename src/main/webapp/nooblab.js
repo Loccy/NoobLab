@@ -4306,9 +4306,16 @@ function scale(s)
         else return;
     }
     window.SCALE = s;
+    $.cookie("contentzoom", window.SCALE, {expires: 365, path: '/'});
     $("div#content-inner").css("width","");    
     $("div#content-inner").css("height","");
-    if ($.browser.mozilla)
+    if ($.browser.webkit)
+    {
+        $("div#content-inner").css("zoom","");
+        if (s == 1) return;
+        $("div#content-inner").css("zoom",s);        
+    }
+    else
     {    
         $("div#content-inner").css("transform","");
         if (s == 1) return;
@@ -4317,13 +4324,6 @@ function scale(s)
         $("div#content-inner").css("width",s+"%");
         $("div#content-inner").css("height",s+"%");
     }
-    else
-    {
-        $("div#content-inner").css("zoom","");
-        if (s == 1) return;
-        $("div#content-inner").css("zoom",s);        
-    }
-    $.cookie("contentzoom", window.SCALE, {expires: 365, path: '/'});
 }
 
 $(window).resize(function() {
