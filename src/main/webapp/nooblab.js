@@ -3018,6 +3018,7 @@ function resize()
     var wrapperHeight = $("#output-inner").css("height");
     $("#outputframe").css("height",wrapperHeight);
     resizeFakeDocs();
+    resizeCarols();
     return;
     // old
    var posOfOutput = $("#output-outer").offset().top;
@@ -4150,7 +4151,7 @@ window.onload = function()
             {                
                 $("div#horizontaldrag").css("right",width+"px");
                 $("div#editor-wrapper").css("width",globalMouseX+"px");
-                $("div#output-outer").css("width",width+"px");               
+                $("div#output-outer").css("width",width+"px");                
             }
             else
             {
@@ -4166,6 +4167,7 @@ window.onload = function()
                     var w = parseInt($("div#logoutitem").css("width"));
                     $("div#navlecture").css("right",(width+window.SCROLLBAR_WIDTH+20+w)+"px");
                 }
+                resizeCarols();
             }
          },10);
      })
@@ -4289,6 +4291,15 @@ function openThemeChooser()
     $("div#themechooser").animate({right: 10},700);
     setTimeout(function() { $("body").bind("click",function() { closeThemeChooser(event) }) },100)
     setTimeout(function() { $("iframe#outputframe").contents().find("body").bind("click",function() { closeThemeChooser(event) }) },100)
+}
+
+function resizeCarols()
+{
+    var carolwidth = $(window).height() * 0.6;
+    if (carolwidth > $("div#content").width()) carolwidth = $("div#content").width()*0.8;
+    carolwidth = parseInt(carolwidth);
+    $("div.carolwrapper").css("height",carolwidth+"px");
+    $("div.carolwrapper").css("width",carolwidth+"px");
 }
 
 function scale(s)
