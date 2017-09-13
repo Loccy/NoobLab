@@ -119,6 +119,7 @@
 
     </head>
     <body><div id="content">
+            <div id="content-zoom"><i onclick="scale('zoomin')" class="fa fa-search-plus"></i><i onclick="scale('zoomout')" class="fa fa-search-minus"></i></div>
             <audio id="winsound">
                     <source src="${pageContext.request.contextPath}/images/win.ogg" type="audio/ogg"/>
                     <source src="${pageContext.request.contextPath}/images/win.mp3" type="audio/mpeg"/>
@@ -135,8 +136,8 @@
                 var varTransferredFromServerSide = ${transfervar};
             </script>
             </c:if>
-            <img id="nooblabemo" src="${pageContext.request.contextPath}/images/emo5.png"/>
         </div>
+        <img id="nooblabemo" src="${pageContext.request.contextPath}/images/emo5.png"/>
         <div id="toolbar">
             <form id="runform" action="RunPage" method="post" target="outputframe" style="display: none">
                 <textarea style="width: 0px; height: 0px; visibility: hidden;" cols="10" rows="10" id="codeinput" name="codeinput"></textarea>
@@ -324,5 +325,6 @@
                 </c:forEach>
             </div>
         </div>
+        ${navbar}
     </body>
 </html>

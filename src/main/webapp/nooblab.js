@@ -8,19 +8,23 @@ var carolImage = "carol";
 
 var editorfontsize = undefined;
 
+window.SCALE = $.cookie("contentzoom");
+if (window.SCALE == "") window.SCALE = 1;
+window.SCALE = parseFloat(window.SCALE);
+
 ///// de-crap IE
 String.prototype.trim = function() {
     return $.trim(this)
 }
 
-///// taken from https://stackoverflow.com/questions/10983066/use-full-width-excluding-overflow-scrollbar-with-position-absolute
 // Adds scrollbar width to window
-
-$(function() {
-  var $container = $("<div>").css({ height: 1, overflow: "scroll" }).appendTo("body");
-  var $child = $("<div>").css({ height: 2 }).appendTo($container);
-  window.SCROLLBAR_WIDTH = $container.width() - $child.width();
-  $container.remove();
+// alternate version - works on Firefox
+// https://stackoverflow.com/questions/986937/how-can-i-get-the-browsers-scrollbar-sizes
+$(function() {  
+    var $outer = $('<div>').css({visibility: 'hidden', width: 100, overflow: 'scroll'}).appendTo('body'),
+        widthWithScroll = $('<div>').css({width: '100%'}).appendTo($outer).outerWidth();
+    $outer.remove();
+    window.SCROLLBAR_WIDTH = 100 - widthWithScroll;
 });
 
 var editor;
@@ -3667,7 +3671,12 @@ originalTexts = {};
 
 //$(document).load(function()
 window.onload = function()
-{              
+{
+   // hoik the navbar out of the content div as it will break if we scale content
+   // easier to do it here rather than fix/place it "properly" over in Main.java given
+   // how Main.java constructs the page...
+   $("body").append($("div#navbar"))
+    
    var title = $("div.parameter#lessonName").text().trim();
    if (title.length == 0) title = "NoobLab";
    window.document.title = title;
@@ -4028,6 +4037,8 @@ window.onload = function()
          $(".CodeMirror").css("font-size",(editorfontsize)+"px");
          editor.refresh();
      }
+     // set main content scaling factor
+     scale(window.SCALE);
 
     if ($("div.parameter#blockly").text().trim() == "true" && $.cookie("disableblocks") == "true")
     {
@@ -4097,7 +4108,7 @@ window.onload = function()
         
      // correct position of options box and navlecture to accommodate scrollbar
      var r = parseInt($("div#logoutitem").css("right"));
-     $("div#usermenu,div#logoutitem").css("right",(r+window.SCROLLBAR_WIDTH+10)+"px");
+     $("div#usermenu,div#logoutitem,div#content-zoom").css("right",(r+window.SCROLLBAR_WIDTH+10)+"px");
      if ($("div.parameter#lectureSlideUrl").length != 0)
      {
          var w = parseInt($("div#logoutitem").css("width"));
@@ -4149,7 +4160,7 @@ window.onload = function()
                 $("div#output-outer").css("width",width+"px");
                 $("div#content").css("right",(width+5)+"px");
                 $("div#lectureslides").css("right",(width+5)+"px");                
-                $("div#usermenu,div#logoutitem").css("right",(width+window.SCROLLBAR_WIDTH+10)+"px");
+                $("div#usermenu,div#logoutitem,div#content-zoom").css("right",(width+window.SCROLLBAR_WIDTH+10)+"px");
                 if ($("div.parameter#lectureSlideUrl").length != 0)
                 {
                     var w = parseInt($("div#logoutitem").css("width"));
@@ -4278,6 +4289,32 @@ function openThemeChooser()
     $("div#themechooser").animate({right: 10},700);
     setTimeout(function() { $("body").bind("click",function() { closeThemeChooser(event) }) },100)
     setTimeout(function() { $("iframe#outputframe").contents().find("body").bind("click",function() { closeThemeChooser(event) }) },100)
+}
+
+function scale(s)
+{
+    if (typeof s == "string")
+    {
+        if (s == "zoomin" && window.SCALE < 2)
+        {
+            s = window.SCALE + 0.1;
+        }
+        else if (s == "zoomout" && window.SCALE > 0.5)
+        {           
+            s = window.SCALE - 0.1;
+        }
+        else return;
+    }
+    window.SCALE = s;    
+    $("div#content-inner").css("width","");    
+    $("div#content-inner").css("height","");
+    $("div#content-inner").css("transform","");
+    if (s == 1) return;
+    $("div#content-inner").css("transform","scale("+s+")");
+    s = 100 / s;
+    $("div#content-inner").css("width",s+"%");
+    $("div#content-inner").css("height",s+"%");
+    $.cookie("contentzoom", window.SCALE, {expires: 365, path: '/'});
 }
 
 $(window).resize(function() {

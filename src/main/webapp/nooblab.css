@@ -309,15 +309,8 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     font-family : monospace;
 }
 
-
-#content {
-    /* border: 2px solid black; */
-    z-index: -100;
-}
-
-
 #content-inner {
-    margin: 10px;
+    transform-origin : top left;
 }
 
 
@@ -327,7 +320,7 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     left: 0;
     right : 582px;
     background-color: #CFE5E8;
-    margin: 0px;
+    padding: 10px;
     font-family: Verdana, sans-serif;
     font-size: 90%;
     /* min-height: 100%; */
@@ -335,6 +328,18 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     overflow : auto;
     overflow-y : auto;
     overflow-x : hidden;
+    z-index: -100;
+}
+
+#content-zoom {
+    position : fixed;
+    top : 5px;
+    right : 582px;
+    font-size : 1.7em;
+}
+
+#content-zoom i {
+    cursor : pointer;
 }
 
 /*
@@ -348,7 +353,7 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
 }
 
 
-#content #navbar {
+#navbar {
     position: fixed;
     bottom : 7px;
     left : 20px;
@@ -357,10 +362,11 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     background-color : white;
     padding : 3px;
     padding-left : 35px;
+    font-family: Verdana, sans-serif;
 }
 
 
-#content #navbar .navitem {
+#navbar .navitem {
     float: left;
     padding: 2px;
     font-size: 11px;    
@@ -377,13 +383,13 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
 }
 
 
-#content #navbar .navitems {
+#navbar .navitems {
     float : left;
     position : relative;    
 }
 
 
-#content #navbar .navline {
+#navbar .navline {
     position : absolute;
     box-sizing : border-box;
     width : 100%;
@@ -393,7 +399,7 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
 }
 
 
-#content #navbar .navitem[id] {
+#navbar .navitem[id] {
     width : 25px;
     height : 25px;
     border-radius : 12.5px;
@@ -472,19 +478,19 @@ img#nooblabemo {
 }
 
 
-#content #navbar .navitem.selected {    
+#navbar .navitem.selected {    
     background-color : black;
     color : white;
 }
 
 
-#content #navbar .navitem a, #logoutitem a, #usermenu a {
+#navbar .navitem a, #logoutitem a, #usermenu a {
     text-decoration : none;
     color: black;
 }
 
 
-#content #navbar .navitem.selected a {
+#navbar .navitem.selected a {
     text-decoration : none;
     color: white;
 }
