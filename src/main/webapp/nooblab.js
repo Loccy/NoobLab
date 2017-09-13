@@ -4305,15 +4305,24 @@ function scale(s)
         }
         else return;
     }
-    window.SCALE = s;    
+    window.SCALE = s;
     $("div#content-inner").css("width","");    
     $("div#content-inner").css("height","");
-    $("div#content-inner").css("transform","");
-    if (s == 1) return;
-    $("div#content-inner").css("transform","scale("+s+")");
-    s = 100 / s;
-    $("div#content-inner").css("width",s+"%");
-    $("div#content-inner").css("height",s+"%");
+    if ($.browser.mozilla)
+    {    
+        $("div#content-inner").css("transform","");
+        if (s == 1) return;
+        $("div#content-inner").css("transform","scale("+s+")");
+        s = 100 / s;
+        $("div#content-inner").css("width",s+"%");
+        $("div#content-inner").css("height",s+"%");
+    }
+    else
+    {
+        $("div#content-inner").css("zoom","");
+        if (s == 1) return;
+        $("div#content-inner").css("zoom",s);        
+    }
     $.cookie("contentzoom", window.SCALE, {expires: 365, path: '/'});
 }
 
