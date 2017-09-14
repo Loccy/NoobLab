@@ -119,7 +119,7 @@
 
     </head>
     <body><div id="content">
-            <div id="content-zoom"><i onclick="scale('zoomin')" class="fa fa-search-plus"></i><i onclick="scale('zoomout')" class="fa fa-search-minus"></i></div>
+            <div id="content-zoom"><span onclick="scale('zoomin')">&#128474;</span>&nbsp;<span onclick="scale('zoomout')">&#128475;</span></div>
             <audio id="winsound">
                     <source src="${pageContext.request.contextPath}/images/win.ogg" type="audio/ogg"/>
                     <source src="${pageContext.request.contextPath}/images/win.mp3" type="audio/mpeg"/>
@@ -153,7 +153,7 @@
             <div style="float: left"><input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/></div>
             <div style="float: left"><input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/></div>
             <div style="float: left"><input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/></div>
-            <div style="float: right"><i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>
+            <div style="float: right"><%-- <i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i>--%><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>            
             <div style="clear: both"></div>
         </div>
         <script type="text/javascript">
@@ -315,7 +315,7 @@
         </div>
         <div id="logoutitem" onclick="toggleOptions()">Options</div>
         <div id="horizontaldrag"></div>
-
+        <div id="editor-zoom"><span onclick="zoomIn()">&#128474;</span>&nbsp;<span onclick="zoomOut()">&#128475;</span></div>
         <div id="themechooser">
             <div class="tbar theme"><div class="close">X</div>Theme Chooser</div>
             <div class="themes">
@@ -326,5 +326,6 @@
             </div>
         </div>
         ${navbar}
+        
     </body>
 </html>

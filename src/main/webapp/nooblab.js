@@ -4261,12 +4261,39 @@ function zoomOut()
     }
 }
 
+function brightness(r,g,b)
+{
+   return Math.sqrt(
+      r * r * .241 + 
+      g * g * .691 + 
+      b * b * .068);
+}
+
 function selectTheme(theme)
 {
     if (theme == "(default)") theme = "default";
     editor.setOption("theme",theme);
     highlightSelectedTheme();
     $.cookie("editortheme",theme, {expires: 365, path: '/'});
+    var rgb = $(".CodeMirror").css("background-color").replace("rgb","").replace("(","").replace(")","").replace(/ /g,"").split(",");
+    if (brightness(rgb[0],rgb[1],rgb[2]) < 130)
+    {
+        $("div#editor-zoom").css({
+            backgroundColor : "black",
+            color : "white",
+            border : "1px solid white"
+        })
+        $('head').append('<style id="zoomhoverfudge">#editor-zoom span:hover {color: cyan;}</style>');
+    }
+    else
+    {
+        $("div#editor-zoom").css({
+            backgroundColor : "white",
+            color : "black",
+            border : "1px solid black"
+        })
+        $("head style#zoomhoverfudge").remove();
+    }
 }
 
 function highlightSelectedTheme()
@@ -4279,7 +4306,7 @@ function highlightSelectedTheme()
 function closeThemeChooser()
 {
     if ($(event.target).hasClass("theme")) return;
-    $("div#themechooser").animate({right: -200},700);
+    $("div#themechooser").animate({right: -250},700);
     $("body").unbind("click");
     $("iframe#outputframe").contents().find("body").unbind("click");
 }

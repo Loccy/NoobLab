@@ -137,7 +137,7 @@ div.tab:before {
     font-family : Verdana;
     position : fixed;
     top : 10px;
-    right : -200px;
+    right : -250px;
     bottom : 10px;
     width : 200px;
     overflow : auto;
@@ -335,11 +335,43 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     position : fixed;
     top : 5px;
     right : 582px;
-    font-size : 1.7em;
+    font-size : 1.5em;
+    border : 1px solid black;
+    background-color : white;
+    padding-left : 3px;
+    padding-right : 3px;
 }
 
-#content-zoom i {
+#content-zoom span {
     cursor : pointer;
+}
+
+#content-zoom span:hover {
+    color: blue;
+}
+
+#editor-zoom {
+    position : fixed;
+    top : 45px;
+    right : 5px;
+    font-size : 1.1em;
+    border : 1px solid black;
+    background-color : white;
+    padding-left : 3px;
+    padding-right : 3px;
+  -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;        
+}
+
+#editor-zoom span {
+    cursor : pointer;
+}
+
+#editor-zoom span:hover {
+    color: blue;
 }
 
 /*
