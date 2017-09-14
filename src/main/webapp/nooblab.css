@@ -227,7 +227,7 @@ pre.javastatic {
     cursor : move;
 }
 
-div#lectureslides {
+div#lectureslides,div#video {
     position : fixed;
     top : 0px;
     bottom : 0px;
@@ -238,7 +238,7 @@ div#lectureslides {
     visibility : hidden;
 }
 
-div#lectureslides iframe {
+div#lectureslides iframe,div#video iframe {
     height : 100%;
     width : 100%;
     border : 0px;
@@ -466,7 +466,7 @@ img#nooblabemo {
 }
 
 
-#navlecture {
+#navlecture,#navvideo {
     font-family: Verdana, sans-serif;
     font-size: 0.85em;
     padding : 2px;
@@ -478,10 +478,16 @@ img#nooblabemo {
     position : fixed; bottom : 0; right : 650px; border: 1px solid black;
 }
 
+#navvideo {
+    right : 680px;
+}
 
-#navlecture a {
-    color : black;
-    text-decoration : none;
+#navlecture.selected,#navvideo.selected {
+    background-color : #666;
+}
+
+#navlecture.selected i,#navvideo.selected i {
+    color : white;
 }
 
 

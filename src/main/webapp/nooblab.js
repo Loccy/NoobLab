@@ -3782,8 +3782,24 @@ window.onload = function()
         // add a link for the lecture slides
         $("body").append('<div id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
         $("body").append('<div id="lectureslides"><iframe src="'+$("div.parameter#lectureSlideUrl").text().trim()+'"></iframe></div>');
-        $("div#navlecture").click(function(){            
+        $("div#navlecture").click(function(){
+            $("div#video").css("visibility","hidden");
+            $("div#navvideo").removeClass("selected");
             $("div#lectureslides").visibilityToggle();
+            $("div#navlecture").toggleClass("selected");
+        });
+    }
+    
+    if ($("div.parameter#videoUrl").length != 0)
+    {
+        // add a link for the video
+        $("body").append('<div id="navvideo"><i class="fa fa-video-camera"></i></div>');
+        $("body").append('<div id="video"><iframe src="'+$("div.parameter#videoUrl").text().trim()+'"></iframe></div>');
+        $("div#navvideo").click(function(){            
+            $("div#lectureslides").css("visibility","hidden");
+            $("div#navlecture").removeClass("selected");
+            $("div#video").visibilityToggle();
+            $("div#navvideo").toggleClass("selected");
         });
     }
     
@@ -4110,10 +4126,16 @@ window.onload = function()
      // correct position of options box and navlecture to accommodate scrollbar
      var r = parseInt($("div#logoutitem").css("right"));
      $("div#usermenu,div#logoutitem,div#content-zoom").css("right",(r+window.SCROLLBAR_WIDTH+10)+"px");
+     var extra = parseInt($("div#logoutitem").css("width"));
      if ($("div.parameter#lectureSlideUrl").length != 0)
+     {         
+         $("div#navlecture").css("right",(r+window.SCROLLBAR_WIDTH+20+extra)+"px");
+         extra = extra + parseInt($("div#navlecture").css("width"))+10;
+     }
+     if ($("div.parameter#videoUrl").length != 0)
      {
          var w = parseInt($("div#logoutitem").css("width"));
-         $("div#navlecture").css("right",(r+window.SCROLLBAR_WIDTH+20+w)+"px");
+         $("div#navvideo").css("right",(r+window.SCROLLBAR_WIDTH+20+extra)+"px");
      }
         
      // hook mouse events for window resize/drag
