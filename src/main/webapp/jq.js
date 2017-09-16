@@ -1029,7 +1029,8 @@ jQuery.cookie = function (keyX, valueX) {
             target: "iframe" + id
         }).css({
             margin: 0,
-            padding: 0
+            padding: 0,
+            display: "none"
         });
 
         /** File Input */
@@ -1037,41 +1038,47 @@ jQuery.cookie = function (keyX, valueX) {
             name: options.name,
             "type": "file"
         }).css({
-            position: 'relative',
-            display: 'block',
-            marginLeft: -175 + 'px',
-            opacity: 0
+           display : "none"
         });
+        
+        var inputId = "a"+(Math.random().toString(36)+'00000000000000000').slice(2, 12+2);
+        input.attr("id",inputId);
+        
+        var label = $('<label for="'+inputId+'"></label>');
+        //element.wrap(label);
 
         /** Put everything together */
 
-        element.wrap("<div></div>");
+        //element.wrap("<div style='border: 1px solid red'></div>");
+        form.append(label);
         form.append(input);
         element.after(form);
         element.after(iframe);
+        element.click(function(){ $("label[for="+inputId+"]").click(); });
 
         /** Find the container and make it nice and snug */
-        var container = element.parent().css({
-            position: 'relative',
-            height: element.outerHeight() + 'px',
-            width: element.outerWidth() + 'px',
-            overflow: 'hidden',
-            cursor: 'pointer',
-            margin: 0,
-            padding: 0
-        });
+//        var container = element.parent().css({
+//            position: 'relative',
+//            height: element.outerHeight() + 'px',
+//            width: element.outerWidth() + 'px',
+//            overflow: 'hidden',
+//           cursor: 'pointer',
+//            margin: 0,
+//            padding: 0
+//        });
 
         /** Put our file input in the right place */
 
-        input.css('marginTop', -container.height() - 10 + 'px');
+//        input.css('marginTop', -container.height() - 10 + 'px');
 
         /** Move the input with the mouse to make sure it get clicked! */
-        container.mousemove(function(e) {
-            input.css({
-                top: e.pageY - container.offset().top + 'px',
-                left: e.pageX - container.offset().left + 'px'
-            });
-        });
+//        container.mousemove(function(e) {
+//            input.css({
+//                top: e.pageY - container.offset().top + 'px',
+//                left: e.pageX - container.offset().left + 'px',
+//                border : "1px solid red"
+//            });
+//        });
 
         /** Watch for file selection */
         input.change(function() {

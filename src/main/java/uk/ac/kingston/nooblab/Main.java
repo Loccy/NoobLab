@@ -418,7 +418,8 @@ public class Main extends HttpServlet
 
             // build the "floating" navigation bar at the bottom of the screen.
             // derived from class .title in .section
-            String html = "<br/><br/><br/><div id=\"navbar\">";
+            // edit 15/09/2017 - we actually grab this out with Javascript and relocate it out of the content client-side
+            String html = "<div id=\"navbar\">";
             html += "<div class=\"navitem\" style=\"color: #666666\">Lesson Navigation:</div><div class=\"navitems\"><div class=\"navline\"></div>";
             Elements titles = doc.select("div.section h2.title");
             int i = 0;

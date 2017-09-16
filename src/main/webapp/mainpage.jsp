@@ -7,6 +7,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>NoobLab</title>
+        
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
         <%-- put current ${pageContext.request.contextPath} into Javascript land --%>
         <script type="text/javascript">
@@ -118,8 +120,39 @@
         
 
     </head>
-    <body><div id="content">
-            <div id="content-zoom"><span onclick="scale('zoomin')">&#128474;</span>&nbsp;<span onclick="scale('zoomout')">&#128475;</span></div>
+    <body class="main">
+         <div id="topnav">
+            <div class="row1">
+                <div title="Logout" id="logout" onclick="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
+                <div title="Options" id="optionscog" onclick="toggleOptions()"><i class="fa fa-bars"></i></div>
+                <div title="Change zoom settings" id="newzoom" onclick="mainZoom()">Aa</div>                    
+<!--                    <div id="content-zoom"><span onclick="scale('zoomin')">&#128474;</span>&nbsp;<span onclick="scale('zoomout')">&#128475;</span></div>                    -->
+            </div>
+            <div style="clear:both"></div>
+            <div class="row2">
+                <div id="usermenu">
+                    <div class="extramenu" id="extramenulecture" onclick="$('div#navlecture').click()">Show/hide lecture slides</div>
+                    <div class="extramenu" id="extramenuvideo" onclick="$('div#navvideo').click()">Show/hide lecture video</div>
+                    <div class="extramenu" id="extramenuzoon" onclick="mainZoom()">Change zoom level</div>
+                    <div class="extramenu" id="extramenlogout" onclcik="logout()">Logout</div>                                        
+                    <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=mymedals">View my medals</a></div>
+                    <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>            
+                    <!--<div onclick="setName()">Set my name</div>-->
+                    <div class="disabled" id="toggleblocks" onclick="toggleOptions(); toggleBlocks()">Disable blocks</div>
+                    <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>                                                                
+                </div>            
+                <div id="mainZoomControls">
+                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                    <span onclick="scale('zoomout')"><i class="fa fa-search-minus" aria-hidden="true"></i></span>
+                    <span onclick="scale('zoomin')"><i class="fa fa-search-plus" aria-hidden="true"></i></span>
+                    <br/>
+                    <i class="fa fa-file-code-o" aria-hidden="true"></i>
+                    <span onclick="zoomOut()"><i class="fa fa-search-minus" aria-hidden="true"></i></span>
+                    <span onclick="zoomIn()"><i class="fa fa-search-plus" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>        
+        <div id="content">                        
             <audio id="winsound">
                     <source src="${pageContext.request.contextPath}/images/win.ogg" type="audio/ogg"/>
                     <source src="${pageContext.request.contextPath}/images/win.mp3" type="audio/mpeg"/>
@@ -137,7 +170,7 @@
             </script>
             </c:if>
         </div>
-        <img id="nooblabemo" src="${pageContext.request.contextPath}/images/emo5.png"/>
+        <%--<img id="nooblabemo" src="${pageContext.request.contextPath}/images/emo5.png"/>--%>
         <div id="toolbar">
             <form id="runform" action="RunPage" method="post" target="outputframe" style="display: none">
                 <textarea style="width: 0px; height: 0px; visibility: hidden;" cols="10" rows="10" id="codeinput" name="codeinput"></textarea>
@@ -146,14 +179,15 @@
                 <input name="filename" id="filename"/>
                 <input name="tabs" id="tabs"/>                
             </form>
-            <div style="float: left"><input id="runbutton" type="button" value="Run" onclick="run();"/></div>
-            <div style="float: left"><input id="stopbutton" type="button" value="Stop" onclick="stop();" disabled="true"/></div>
-            <div style="float: left"><input id="loadbutton" type="button" value="Load file"/></div>
-            <div style="float: left"><input id="savebutton" type="button" value="Save file" onclick ="save()"/></div>
-            <div style="float: left"><input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/></div>
-            <div style="float: left"><input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/></div>
-            <div style="float: left"><input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/></div>
-            <div style="float: right"><%-- <i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i>--%><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>            
+            <div style="float: right"><%-- <i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i>--%><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>
+            &nbsp;<input id="runbutton" type="button" value="Run" onclick="run();"/>
+            <input id="stopbutton" type="button" value="Stop" onclick="stop();" disabled="true"/>
+            <input id="loadbutton" type="button" value="Load file"/>
+            <input id="savebutton" type="button" value="Save file" onclick ="save()"/>
+            <input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/>
+            <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>
+            <input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/></div>
+                        
             <div style="clear: both"></div>
         </div>
         <script type="text/javascript">
@@ -305,17 +339,7 @@
             </div>
         </div>
         <div style="clear: both"></div>
-        <div id="usermenu">
-            <div><a class="medallink" href="${pageContext.request.contextPath}/ScoreTable?type=mymedals">View my medals</a></div>
-            <div><a class="medallink" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>            
-            <!--<div onclick="setName()">Set my name</div>-->
-            <div class="disabled" id="toggleblocks" onclick="toggleBlocks()">Disable blocks</div>
-            <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>
-            <div id="reallogout" onclick="logout()">Logout</div>
-        </div>
-        <div id="logoutitem" onclick="toggleOptions()">Options</div>
-        <div id="horizontaldrag"></div>
-        <div id="editor-zoom"><span onclick="zoomIn()">&#128474;</span>&nbsp;<span onclick="zoomOut()">&#128475;</span></div>
+        <div id="horizontaldrag"></div>        
         <div id="themechooser">
             <div class="tbar theme"><div class="close">X</div>Theme Chooser</div>
             <div class="themes">

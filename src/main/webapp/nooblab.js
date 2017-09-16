@@ -198,7 +198,7 @@ function buildCarolDiv(caroldiv)
     {  
 	$(caroldiv).click(function(){ buildCarolDiv(this)});
     }
-    var st = $(window).scrollTop();
+    var st = $("#content").scrollTop();
 
     var carolsize = $(caroldiv).find("div.size").css("display","none")
                         .text().trim();
@@ -388,9 +388,9 @@ function buildCarolDiv(caroldiv)
         $(caroldiv).append('<div style="clear: both"></div>');
     }
     
-    $(caroldiv).attr("data-size",carolwidth);
+    $(caroldiv).attr("data-size",carolwidth);        
 
-    $(window).scrollTop(st);
+    $("#content").scrollTop(st);
 
 }
 
@@ -539,10 +539,13 @@ function maxMinCodeWeb(outputheight,force)
 		outputpane.css("height","calc(100% - "+outputtop+"px)");
 		outputpane.css("width","50%");
                 $("div#horizontaldrag").css("right","calc(50%)");                
-		$("div#toolbar").css("width","100%");
-		$("div#logoutitem").hide();
-	        $("div#navbar").hide();
-        	$("div#logoutitem").hide();
+		$("div#toolbar").css("width","100%");			        
+                $("div#navbar").hide();
+                $("div#lectureslides").hide();
+                $("div#topnav").hide();
+                $("div#navlecture").removeClass("selected");
+                $("div#video").hide();
+                $("div#navvideo").removeClass("selected");
         	$("body").css("overflow","hidden");
                 $("span.maximisebutton").removeClass("fa-window-maximize");
                 $("span.maximisebutton").addClass("fa-window-restore");
@@ -563,11 +566,10 @@ function maxMinCodeWeb(outputheight,force)
                 outputpane.css("top","");
                 outputpane.css("height","");
                 outputpane.css("width","");
-                $("div#toolbar").css("width","");
-                $("div#logoutitem").show();
-                $("div#navbar").show();
-                $("div#logoutitem").show();
+                $("div#toolbar").css("width","");                                
                 $("body").css("overflow","");
+                $("div#navbar").show();
+                $("div#topnav").show();
                 //$("span.maximisebutton").html("&#8743;");
                 $("span.maximisebutton").removeClass("fa-window-restore");
                 $("span.maximisebutton").addClass("fa-window-maximize");
@@ -582,9 +584,8 @@ function maxMinCodeWeb(outputheight,force)
                      $("div#editor-wrapper").css("width",width+"px");
                      $("div#toolbar").css("width",width+"px");
                      $("div#output-outer").css("width",width+"px");                     
-                     $("div#horizontaldrag").css("right",width+"px");
+                     $("div#horizontaldrag").css("right",width+"px");                     
                 }
-                
                 resize();
                 editor.refresh();
 		editorpane.removeClass("maxed");
@@ -601,8 +602,6 @@ function maxMinCode(outputheight,force)
      }
 
     // otherwise....
-
-
     if (outputheight == undefined) outputheight = "120px";
     var el = $("#editor-wrapper");
     // maximise
@@ -613,11 +612,14 @@ function maxMinCode(outputheight,force)
         el.css("bottom",outputheight);
         $("div#output-outer").css("height",outputheight);
         $("div#output-outer").css("width","100%");
-        $("div#toolbar").css("width","100%");
-        $("div#logoutitem").hide();
-        $("div#navbar").hide();
-        $("div#logoutitem").hide();
+        $("div#toolbar").css("width","100%");        
         $("body").css("overflow","hidden");
+        $("div#navbar").hide();
+        $("div#lectureslides").hide();
+        $("div#topnav").hide();
+        $("div#navlecture").removeClass("selected");
+        $("div#video").hide();
+        $("div#navvideo").removeClass("selected");
        // $("span.maximisebutton").html("&#8744;");
        $("span.maximisebutton").removeClass("fa-window-maximize");
        $("span.maximisebutton").addClass("fa-window-restore");
@@ -634,11 +636,10 @@ function maxMinCode(outputheight,force)
         el.css("bottom",bottom);
         $("div#output-outer").css("height",bottom);
         $("body").css("overflow","");
-        $("div#logoutitem").show();
-        $("div#navbar").show();
-        $("div#logoutitem").show();
         el.removeAttr("data-origBottom");
         $("body").css("overflow","");   
+        $("div#navbar").show();
+        $("div#topnav").show();
        // $("span.maximisebutton").html("&#8743;");
        $("span.maximisebutton").removeClass("fa-window-restore");
        $("span.maximisebutton").addClass("fa-window-maximize");    
@@ -649,9 +650,8 @@ function maxMinCode(outputheight,force)
             $("div#editor-wrapper").css("width",width+"px");
             $("div#toolbar").css("width",width+"px");
             $("div#output-outer").css("width",width+"px");
-            $("div#content").css("right",width+"px");
-       }
-       
+            $("div#content").css("right",width+"px");                                                    
+       }       
        $("div#horizontaldrag").show();       
         resize();
         editor.refresh();
@@ -2637,8 +2637,8 @@ function run()
         editor.removeLineClass(i,"background");
         //editor.setLineClass(i,null);
     }
-    
-    editor.scrollTo(editorScrollpos.left,editorScrollpos.top);
+        
+    //editor.scrollTo(editorScrollpos.left,editorScrollpos.top);
     
     if ($("div.parameter#blockly").text().trim() == "true")
     {
@@ -3018,19 +3018,16 @@ function resize()
     var wrapperHeight = $("#output-inner").css("height");
     $("#outputframe").css("height",wrapperHeight);
     resizeFakeDocs();
-    resizeCarols();
+    resizeCarols();    
+    if ($("#content").width() < 480)
+    {
+         $("div#topnav").addClass("compressed");
+    }
+    else
+    {
+         $("div#topnav").removeClass("compressed");
+    }
     return;
-    // old
-   var posOfOutput = $("#output-outer").offset().top;
-   var posOfEditor = $("#editor-wrapper").offset().top;
-   var posOfEditorX = $("#editor-wrapper").offset().left;
-   var heightOfTitleBar = $("#code-titlebar").height();
-   var newHeight = posOfOutput - posOfEditor - heightOfTitleBar;
-   var newBigHeight = posOfOutput - posOfEditor + heightOfTitleBar;
-   $("#editor-wrapper").css("height",newHeight+"px");
-   $("#outputframe").css("height",newBigHeight+"px");
-   $("#output-main").css("height",newBigHeight+"px");
-   $("#content").css("width",posOfEditorX+"px");
 }
 
 function handlePrettyPrintPlus()
@@ -3365,30 +3362,6 @@ function validXHTML()
     },2000);
 }
 
-function toggleOptions()
-{    
-    $(document).unbind("mouseup");
-    if ($("div#usermenu").is(":hidden"))
-    {
-        $("div#usermenu").show();
-        $(document).mouseup(function (e)
-        {
-            var container = $("div#usermenu");
-
-            if (container.has(e.target).length === 0 && e.target.id != "logoutitem")
-            {                
-                toggleOptions();
-            }
-        });
-    }
-    else
-    {
-        $("div#usermenu").hide();
-        return false;
-    }
-    
-}
-
 function tidyCode()
 {
     code = js_beautify(editor.getValue());
@@ -3400,7 +3373,12 @@ function tidyCode()
 function logout()
 {
     LOGloggedOut();
-    $("div#reallogout").html('<span style="color: gray">Logging out...</span>');    
+    $("div#lectureslides iframe").attr("src",contextPath+'/holding.html');
+    $("div#lectureslides").css("right","0px");
+    $("div#lectureslides").css("top","0px");
+    $("div#topnav").hide();
+    $("div#navbar").hide();
+    $("div#lectureslides").show();    
     setInterval(function() { window.location = contextPath+"/Login?logout=true"; },2000);
 }
 
@@ -3672,7 +3650,7 @@ originalTexts = {};
 
 //$(document).load(function()
 window.onload = function()
-{
+{   
    // hoik the navbar out of the content div as it will break if we scale content
    // easier to do it here rather than fix/place it "properly" over in Main.java given
    // how Main.java constructs the page...
@@ -3780,27 +3758,45 @@ window.onload = function()
     if ($("div.parameter#lectureSlideUrl").length != 0)
     {
         // add a link for the lecture slides
-        $("body").append('<div id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
-        $("body").append('<div id="lectureslides"><iframe src="'+$("div.parameter#lectureSlideUrl").text().trim()+'"></iframe></div>');
+        $("div#topnav div.row1").append('<div title="Show lecture slides" id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
+        $("body").append('<div id="lectureslides"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navlecture").click(function(){
-            $("div#video").css("visibility","hidden");
+            $("div#video").hide();
             $("div#navvideo").removeClass("selected");
-            $("div#lectureslides").visibilityToggle();
+            $("div#lectureslides").toggle();
+            if ($("div#lectureslides iframe").attr("data-loaded") == "false")
+            {
+                $("div#lectureslides iframe").attr("src",$("div.parameter#lectureSlideUrl").text().trim());
+                $("div#lectureslides iframe").attr("data-loaded","true");
+            }
             $("div#navlecture").toggleClass("selected");
         });
+    }
+    else
+    {
+        $("div#extramenulecture").remove();
     }
     
     if ($("div.parameter#videoUrl").length != 0)
     {
         // add a link for the video
-        $("body").append('<div id="navvideo"><i class="fa fa-video-camera"></i></div>');
-        $("body").append('<div id="video"><iframe src="'+$("div.parameter#videoUrl").text().trim()+'"></iframe></div>');
+        $("div#topnav div.row1").append('<div title="Show lecture video" id="navvideo"><i class="fa fa-video-camera"></i></div>');
+        $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
         $("div#navvideo").click(function(){            
-            $("div#lectureslides").css("visibility","hidden");
+            $("div#lectureslides").hide();
             $("div#navlecture").removeClass("selected");
-            $("div#video").visibilityToggle();
+            $("div#video").toggle();
+            if ($("div#video iframe").attr("data-loaded") == "false")
+            {
+                $("div#video iframe").attr("src",$("div.parameter#videoUrl").text().trim());
+                $("div#video iframe").attr("data-loaded","true");
+            }
             $("div#navvideo").toggleClass("selected");
         });
+    }
+    else
+    {
+        $("div#extramenuvideo").remove();
     }
     
     if ($("div.parameter#kinder").text().trim() == "true")
@@ -3816,7 +3812,7 @@ window.onload = function()
         $("#output-outer").hide();
         // streetch content to fit whole browser window
         $("#content").css("right","0px");
-        $("#logoutitem").css("right","3px");
+        $("#optionscog").css("right","3px");
         // carol becomes a bee
         carolImage = "bee";
         // goal gets a beehive background
@@ -4121,22 +4117,16 @@ window.onload = function()
                 }                
             });   
            });
-        });    
+        });          
         
-     // correct position of options box and navlecture to accommodate scrollbar
-     var r = parseInt($("div#logoutitem").css("right"));
-     $("div#usermenu,div#logoutitem,div#content-zoom").css("right",(r+window.SCROLLBAR_WIDTH+10)+"px");
-     var extra = parseInt($("div#logoutitem").css("width"));
-     if ($("div.parameter#lectureSlideUrl").length != 0)
-     {         
-         $("div#navlecture").css("right",(r+window.SCROLLBAR_WIDTH+20+extra)+"px");
-         extra = extra + parseInt($("div#navlecture").css("width"))+10;
-     }
-     if ($("div.parameter#videoUrl").length != 0)
-     {
-         var w = parseInt($("div#logoutitem").css("width"));
-         $("div#navvideo").css("right",(r+window.SCROLLBAR_WIDTH+20+extra)+"px");
-     }
+      // add next/previous controls at bottom of each section...      
+      $("div.section").each(function(index) {
+          $(this).append('<br/><div class="internalsectionnav"><a href="javascript:void(0)" class="next" style="float: right">Next Section &gt;&gt;</a><a href="javascript:void(0)" class="prev">&lt;&lt; Previous Section</a></div><br/><br/>')
+          $(this).find("a.next").click(function() { contentNav(index+1) });
+          $(this).find("a.prev").click(function() { contentNav(index-1) });
+      });
+      $("div.section").eq(0).find("div.internalsectionnav a.prev").remove();
+      $("div.section").last().find("div.internalsectionnav a.next").remove();
         
      // hook mouse events for window resize/drag
      var dragY = null;
@@ -4166,32 +4156,7 @@ window.onload = function()
          //$("body").children().last().css("background","rgba(123,245,76,0.7)");
          $("div#horizontaldrag").css("z-index",20001);
          $("div#horizontaldrag").addClass("changed");
-         dragX = setInterval(function(){
-            var width = window.innerWidth-globalMouseX;
-            if (width < 430 || globalMouseX < 300) return;
-            if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed"))
-            {                
-                $("div#horizontaldrag").css("right",width+"px");
-                $("div#editor-wrapper").css("width",globalMouseX+"px");
-                $("div#output-outer").css("width",width+"px");                
-            }
-            else
-            {
-                $("div#horizontaldrag").css("right",width+"px");
-                $("div#editor-wrapper").css("width",width+"px");
-                $("div#toolbar").css("width",width+"px");
-                $("div#output-outer").css("width",width+"px");
-                $("div#content").css("right",(width+5)+"px");
-                $("div#lectureslides").css("right",(width+5)+"px");                
-                $("div#usermenu,div#logoutitem,div#content-zoom").css("right",(width+window.SCROLLBAR_WIDTH+10)+"px");
-                if ($("div.parameter#lectureSlideUrl").length != 0)
-                {
-                    var w = parseInt($("div#logoutitem").css("width"));
-                    $("div#navlecture").css("right",(width+window.SCROLLBAR_WIDTH+20+w)+"px");
-                }
-                resizeCarols();
-            }
-         },10);
+         dragX = setInterval(resizeSplit,10);
      })
      onmouseup = function()
      {
@@ -4209,14 +4174,56 @@ window.onload = function()
          }
      }         
      
-     var globalMouseX;
-     var globalMouseY;
-     onmousemove = function(e){
+}
+//});
+
+var globalMouseX;
+var globalMouseY;
+onmousemove = function(e){
          globalMouseX = e.clientX;
          globalMouseY = e.clientY;
      }
-}
-//});
+
+function resizeSplit(width)
+{
+    var xpos = globalMouseX;
+    if (width == undefined)
+    {
+        width = window.innerWidth-xpos;
+    }
+    else
+    {
+        xpos = width;
+        width = window.innerWidth-width;        
+    }    
+    if (width < 330 || xpos < 330) return;
+    if (xpos < 480)
+    {
+        $("div#topnav").addClass("compressed");
+    }
+    else
+    {
+        $("div#topnav").removeClass("compressed");
+    }
+    if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed"))
+    {                
+        $("div#horizontaldrag").css("right",width+"px");
+        $("div#editor-wrapper").css("width",xpos+"px");
+        $("div#output-outer").css("width",width+"px");                
+    }
+    else
+    {
+        $("div#horizontaldrag").css("right",width+"px");
+        $("div#editor-wrapper").css("width",width+1+"px");
+        $("div#toolbar").css("width",width+"px");
+        $("div#output-outer").css("width",width+"px");
+        $("div#content").css("right",(width+5)+"px");                                                           
+        $("div#topnav").css("right",(width+5)+"px");   
+        $("div#lectureslides").css("right",(width+5)+"px");
+        $("div#video").css("right",(width+5)+"px");
+        resizeCarols();
+    }
+ }
 
 function getKNo()
 {
@@ -4283,6 +4290,63 @@ function zoomOut()
     }
 }
 
+function mainZoom()
+{
+   $("div#usermenu").hide();
+   $("div#optionscog").removeClass("selected");
+   //$("div#mainZoomControls").toggle();
+   $("div#newzoom").toggleClass("selected");
+   $(document).unbind("mouseup");
+    if ($("div#mainZoomControls").is(":hidden"))
+    {
+        console.log("hello");
+        $("div#mainZoomControls").show();
+        $(document).mouseup(function (e)
+        {
+            // doesn't need parentElement as we're not using a font-awesome icon
+            if (e.target.id != "newzoom" && $(e.target).parents("div#topnav").length == 0)
+            {
+                $("div#mainZoomControls").hide();
+                $("div#newzoom").removeClass("selected");
+                $(document).unbind("mouseup");
+            }
+        });
+    }
+    else
+    {
+        $("div#mainZoomControls").hide();
+        return false;
+    }
+}
+
+function toggleOptions()
+{ 
+    $("div#mainZoomControls").hide();
+    $("div#newzoom").removeClass("selected");
+    //$("div#usermenu").toggle();
+    $("div#optionscog").toggleClass("selected");    
+    $(document).unbind("mouseup");
+    if ($("div#usermenu").is(":hidden"))
+    {
+        $("div#usermenu").show();
+        $(document).mouseup(function (e)
+        {
+            if (e.target.parentElement.id != "optionscog")
+            {
+                $("div#usermenu").hide();
+                $("div#optionscog").removeClass("selected");
+                $(document).unbind("mouseup");
+            }
+        });
+    }
+    else
+    {
+        $("div#usermenu").hide();
+        return false;
+    }
+}
+
+/* 130 is about the threshold for switching to white... */
 function brightness(r,g,b)
 {
    return Math.sqrt(
@@ -4297,7 +4361,7 @@ function selectTheme(theme)
     editor.setOption("theme",theme);
     highlightSelectedTheme();
     $.cookie("editortheme",theme, {expires: 365, path: '/'});
-    var rgb = $(".CodeMirror").css("background-color").replace("rgb","").replace("(","").replace(")","").replace(/ /g,"").split(",");
+    /* var rgb = $(".CodeMirror").css("background-color").replace("rgb","").replace("(","").replace(")","").replace(/ /g,"").split(",");
     if (brightness(rgb[0],rgb[1],rgb[2]) < 130)
     {
         $("div#editor-zoom").css({
@@ -4315,7 +4379,7 @@ function selectTheme(theme)
             border : "1px solid black"
         })
         $("head style#zoomhoverfudge").remove();
-    }
+    } */
 }
 
 function highlightSelectedTheme()
@@ -4396,5 +4460,10 @@ $(window).resize(function() {
 
             //call my function
             resize();
+            
+            if ($("#content").width() < 300)
+            {
+                resizeSplit(350);
+            }
         }
 });

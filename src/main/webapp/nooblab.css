@@ -1,3 +1,9 @@
+body {
+    font-family : 'Roboto',sans-serif;
+    background-color : white;
+    min-width : 1000px;
+}
+
 #toolbar {
     margin: 0px;
     background-color: #ECE9D8; border: 1px solid #888;
@@ -9,6 +15,28 @@
     right: 0px;
 }
 
+#toolbar input[type=button] {
+    background: none;
+    color: inherit;
+    padding: 0px 3px 0px 8px !important;
+    font: inherit;
+    font-size : 80%;
+    height : 21px;
+    line-height : 13px;
+    position : relative;
+    border : 0 !important;
+    top : 2px;
+    cursor: pointer;
+    outline: inherit !important;    
+}
+
+#toolbar input[type=button]:not([disabled]):hover {
+    text-decoration : underline;
+}
+
+#toolbar input[type=button][disabled] {
+    color: gray;
+}
 
 #editor-wrapper {
     margin: 0px;
@@ -41,7 +69,11 @@
     background-color: #ECE9D8; border-bottom: 1px solid #888;
     height : 13px;
     cursor : move;      
-    user-select : none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none; 
 }
 
 
@@ -126,15 +158,14 @@ div.tab:before {
     cursor : hand;
     cursor : pointer;
     display : none;
-  -moz-user-select: -moz-none;
+    -moz-user-select: -moz-none;
     -khtml-user-select: none;
     -webkit-user-select: none;
     -o-user-select: none;
     user-select: none;    
 }
 
-#themechooser {
-    font-family : Verdana;
+#themechooser {    
     position : fixed;
     top : 10px;
     right : -250px;
@@ -185,6 +216,52 @@ div.tab:before {
     font-weight : bolder;
 }
 
+#topnav {
+    position : fixed;
+    top : 0px;
+    right : 582px;
+    left : 0px;
+    height : 35px;    
+    border-bottom: 1px solid black;
+    background-color : white;
+    padding-right : 10px;
+    padding-left : 10px;
+    font-size : 120%;
+    z-index : 1;
+}
+
+#topnav .row1 {
+    line-height : 35px;
+}
+
+#topnav .row1 div {
+    padding-left : 3px;
+    padding-right : 3px;
+}
+
+#topnav .row1 div.selected {
+    background-color : black;
+    color : white;
+}
+
+#topnav .row2 {    
+    position : relative;
+    top : 3px;
+    right : -10px;
+}
+
+#topnav .extramenu {
+    display : none;
+}
+
+#topnav.compressed .extramenu {
+    display : block;
+}
+
+#topnav.compressed .row1 div:not(#optionscog) {
+    display : none;
+}
+
 pre.javastatic {
     box-sizing: border-box;
   -moz-box-sizing : border-box;
@@ -197,7 +274,6 @@ pre.javastatic {
     padding : 3px !important;
     position : relative;
 }
-
 
 #output-main {
     margin: 0px;
@@ -229,13 +305,13 @@ pre.javastatic {
 
 div#lectureslides,div#video {
     position : fixed;
-    top : 0px;
+    top : 36px;
     bottom : 0px;
     left : 0px;
     right : 582px;    
-    padding : 0px;
-    z-index : -1;
-    visibility : hidden;
+    padding : 0px;    
+    display : none;
+    background-color : white;
 }
 
 div#lectureslides iframe,div#video iframe {
@@ -313,16 +389,13 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     transform-origin : top left;
 }
 
-
 #content {
     position: fixed;
     top: 0;
     left: 0;
     right : 582px;
     background-color: #CFE5E8;
-    padding: 10px;
-    font-family: Verdana, sans-serif;
-    font-size: 90%;
+    padding: 10px;      
     /* min-height: 100%; */
     bottom : 0px;
     overflow : auto;
@@ -331,15 +404,8 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     z-index: -100;
 }
 
-#content-zoom {
-    position : fixed;
-    top : 5px;
-    right : 582px;
-    font-size : 1.5em;
-    border : 1px solid black;
-    background-color : white;
-    padding-left : 3px;
-    padding-right : 3px;
+body.main #content {
+    top : 36px;
 }
 
 #content-zoom span {
@@ -348,6 +414,24 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
 
 #content-zoom span:hover {
     color: blue;
+}
+
+#mainZoomControls {
+    float : right;
+    background-color : white;
+    border : 1px solid black;
+    padding-left : 5px;
+    font-size : 120%;
+    display : none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none; 
+}
+
+#mainZoomControls span {
+    cursor : pointer;
 }
 
 #editor-zoom {
@@ -359,7 +443,7 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     background-color : white;
     padding-left : 3px;
     padding-right : 3px;
-  -moz-user-select: -moz-none;
+    -moz-user-select: -moz-none;
     -khtml-user-select: none;
     -webkit-user-select: none;
     -o-user-select: none;
@@ -387,14 +471,16 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
 
 #navbar {
     position: fixed;
-    bottom : 7px;
-    left : 20px;
-    z-index: 50000;
-    border : 1px solid black;
-    background-color : white;
+    top : 3px;
+    left : 3px;    
     padding : 3px;
-    padding-left : 35px;
-    font-family: Verdana, sans-serif;
+    padding-left : 5px;    
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none; 
+    z-index : 2;
 }
 
 
@@ -435,7 +521,7 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     width : 25px;
     height : 25px;
     border-radius : 12.5px;
-    font-size: 15px;   
+    font-size: 16px;   
     line-height : 17px;
     border : 2px solid black;
     box-sizing : border-box;
@@ -449,37 +535,50 @@ img#nooblabemo {
     left : 3px;
     height : 50px;
     width : 50px;
-    z-index : 50001;
+    z-index : 5;
 }
 
 
-#logoutitem, #usermenu {
-    font-family: Verdana, sans-serif;
-    font-size: 0.85em;
-    padding : 2px;
-    margin : 3px;
-    background-color : white;
+#optionscog, #usermenu,#logout {        
     cursor : pointer;
     cursor : hand;
-    font-weight : bold;
-    position : fixed; bottom : 0; right : 580px; border: 1px solid black;
+    font-weight : bold;    
+    /*position : fixed; bottom : 0; right : 580px; border: 1px solid black; 
+    z-index : 2; */
+}
+
+#newzoom {
+    float : right;
+    font-family : "Times New Roman",serif;
+    cursor : pointer;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;  
+}
+
+#optionscog,#logout {
+    float : right;
+}
+
+#usermenu {    
+    border : 1px solid black;
+    background-color : white;
+    float : right;
+    font-size : 80%;
+}
+
+#usermenu div {
+    padding-left : 5px;
+    padding-right : 5px;
 }
 
 
 #navlecture,#navvideo {
-    font-family: Verdana, sans-serif;
-    font-size: 0.85em;
-    padding : 2px;
-    margin : 3px;
-    background-color : white;
     cursor : pointer;
     cursor : hand;
-    font-weight : bold;
-    position : fixed; bottom : 0; right : 650px; border: 1px solid black;
-}
-
-#navvideo {
-    right : 680px;
+    float : right;
 }
 
 #navlecture.selected,#navvideo.selected {
@@ -522,7 +621,7 @@ img#nooblabemo {
 }
 
 
-#navbar .navitem a, #logoutitem a, #usermenu a {
+#navbar .navitem a, #optionscog a, #usermenu a {
     text-decoration : none;
     color: black;
 }
@@ -743,6 +842,10 @@ div#output-outer { display : none }
 /* Apprise */
 .appriseOuter {
     max-width : 50% !important;
+}
+
+.appriseOverlay {
+    z-index : 5;
 }
 
 /* Colourbox CSS */
