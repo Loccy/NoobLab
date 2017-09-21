@@ -1695,8 +1695,7 @@ noobdata = {\n\
                if (initcond) code += initcond+"\n";
                               
                var inputTests = $(this).find(".inputTest");
-               inputTests.each(function(){
-                   console.log($(this).text().trim());
+               inputTests.each(function(){                   
                 inputTestList.push($(this).text().trim());
                });               
                
@@ -3755,14 +3754,36 @@ window.onload = function()
         $("div.tab").eq(0).contents().eq(0).replaceWith('index.html');
     }
     
+    if ($("div.parameter#videoUrl").length != 0)
+    {
+        // add a link for the video
+        $("div#topnav div.row1").append('<div title="Show lecture video" id="navvideo"><i class="fa fa-video-camera"></i></div>');
+        $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
+        $("div#navvideo").click(function(){            
+            $("div#lectureslides,div#coursenavpage").hide();
+            $("div#navlecture,div#navcourse").removeClass("selected");
+            $("div#video").toggle();
+            if ($("div#video iframe").attr("data-loaded") == "false")
+            {
+                $("div#video iframe").attr("src",$("div.parameter#videoUrl").text().trim());
+                $("div#video iframe").attr("data-loaded","true");
+            }
+            $("div#navvideo").toggleClass("selected");
+        });
+    }
+    else
+    {
+        $("div#extramenuvideo").remove();
+    }
+    
     if ($("div.parameter#lectureSlideUrl").length != 0)
     {
         // add a link for the lecture slides
         $("div#topnav div.row1").append('<div title="Show lecture slides" id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
         $("body").append('<div id="lectureslides"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navlecture").click(function(){
-            $("div#video").hide();
-            $("div#navvideo").removeClass("selected");
+            $("div#video,div#coursenavpage").hide();
+            $("div#navvideo,div#navcourse").removeClass("selected");
             $("div#lectureslides").toggle();
             if ($("div#lectureslides iframe").attr("data-loaded") == "false")
             {
@@ -3777,27 +3798,28 @@ window.onload = function()
         $("div#extramenulecture").remove();
     }
     
-    if ($("div.parameter#videoUrl").length != 0)
+    if ($("div.parameter#courseNavUrl").length != 0)
     {
-        // add a link for the video
-        $("div#topnav div.row1").append('<div title="Show lecture video" id="navvideo"><i class="fa fa-video-camera"></i></div>');
-        $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
-        $("div#navvideo").click(function(){            
-            $("div#lectureslides").hide();
-            $("div#navlecture").removeClass("selected");
-            $("div#video").toggle();
-            if ($("div#video iframe").attr("data-loaded") == "false")
+        // add a link for the course nav
+        $("div#topnav div.row1").append('<div title="Show course navigation" id="navcourse"><i class="fa fa-globe"></i></div>');
+        $("body").append('<div id="coursenavpage"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
+        $("div#navcourse").click(function(){
+            $("div#video,div#lectureslides").hide();            
+            $("div#navvideo,div#navlecture").removeClass("selected");
+            $("div#coursenavpage").toggle();
+            if ($("div#coursenavpage iframe").attr("data-loaded") == "false")
             {
-                $("div#video iframe").attr("src",$("div.parameter#videoUrl").text().trim());
-                $("div#video iframe").attr("data-loaded","true");
+                $("div#coursenavpage iframe").attr("src",$("div.parameter#courseNavUrl").text().trim());
+                $("div#coursenavpage iframe").attr("data-loaded","true");
             }
-            $("div#navvideo").toggleClass("selected");
+            $("div#navcourse").toggleClass("selected");
         });
     }
     else
     {
-        $("div#extramenuvideo").remove();
+        $("div#extramenucoursenav").remove();
     }
+    
     
     if ($("div.parameter#kinder").text().trim() == "true")
     {
@@ -4221,6 +4243,7 @@ function resizeSplit(width)
         $("div#topnav").css("right",(width+5)+"px");   
         $("div#lectureslides").css("right",(width+5)+"px");
         $("div#video").css("right",(width+5)+"px");
+        $("div#coursenavpage").css("right",(width+5)+"px");
         resizeCarols();
     }
  }

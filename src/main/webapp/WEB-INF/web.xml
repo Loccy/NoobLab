@@ -175,7 +175,11 @@
     <!-- config-specific parameters -->
     <context-param>
         <description>Authentication type</description>
-        <!-- three types: ldap, ad or pretend -->
+        <!-- four types: ldap, ad, remote or pretend -->
+        <!-- remote will pipe the username and password into the URL supplied -->
+        <!-- Login should be in the POST parameter x1, password in x2. The remote
+             web service should then send back one of two words (without the
+             quotes) - "good" or "bad". -->
         <param-name>authType</param-name>
         <param-value>remote:https://kunet.kingston.ac.uk/ku46587/pnnl.php</param-value>
     </context-param>
@@ -235,5 +239,13 @@
         <description>Set this to determine whether image requests are forced HTTPS</description>
         <param-name>httpsOnImages</param-name>
         <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <description>Admin exceptions for IP restrictions and time/day/place unlocking</description>
+        <!-- a regex match is done on the param-value supplied against the user name -->
+        <!-- leave empty if you don't want any admin exceptions -->
+        <!-- Do NOT remove the entry -->
+        <param-name>adminExceptions</param-name>
+        <param-value>ku.*</param-value>
     </context-param>
 </web-app>

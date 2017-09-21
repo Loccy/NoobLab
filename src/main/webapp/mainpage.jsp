@@ -131,8 +131,9 @@
             <div style="clear:both"></div>
             <div class="row2">
                 <div id="usermenu">
+                    <div class="extramenu" id="extramenucoursenav" onclick="$('div#navcourse').click()">Show/hide course navigation</div>
                     <div class="extramenu" id="extramenulecture" onclick="$('div#navlecture').click()">Show/hide lecture slides</div>
-                    <div class="extramenu" id="extramenuvideo" onclick="$('div#navvideo').click()">Show/hide lecture video</div>
+                    <div class="extramenu" id="extramenuvideo" onclick="$('div#navvideo').click()">Show/hide lecture video</div>                    
                     <div class="extramenu" id="extramenuzoon" onclick="mainZoom()">Change zoom level</div>
                     <div class="extramenu" id="extramenlogout" onclcik="logout()">Logout</div>                                        
                     <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=mymedals">View my medals</a></div>

@@ -129,14 +129,18 @@ public class Main extends HttpServlet
                 LogActivity.logActivity(username, date, "login",module,"","", request);
             }
             
+            String adminExceptions = getServletContext().getInitParameter("adminExceptions");
+            if (adminExceptions.equals("")) adminExceptions = "noOneWillEverHaveThisUserNameSoTheMatchWillNeverActuallyHappen:-D";
+            
             // is this a restricted piece of content?
-            String ipRestricts = doc.select("div.parameter[id=ipRestrict]").text().trim();
-            if (!ipRestricts.equals(""))
-            {
+            String ipRestricts = doc.select("div.parameter[id=ipRestrict]").text().trim();                        
+            if (!ipRestricts.equals("") && !username.matches(adminExceptions))
+            {                
                 boolean valid = false;
                 for (String ipRestrict : ipRestricts.split(","))
                 {
                     if (!request.getRemoteAddr().contains(ipRestrict)) valid = true;
+                    if (request.getRemoteAddr().contains("127.0.0.1")) valid = true; // if from localhost
                 }
                 if (!valid)
                 {
@@ -172,8 +176,9 @@ public class Main extends HttpServlet
              // is this a restricted piece of content that needs to be unlocked at
             // a particular place and/or time?
             ipRestricts = doc.select("div.parameter[id=lockPlace]").text().trim();            
-            if (!ipRestricts.equals(""))
+            if (!ipRestricts.equals("") && !username.matches(adminExceptions))
             {
+                System.out.println(adminExceptions);
                 // get their current unlock file
                 String unlockstr = "";
                 try {
@@ -213,6 +218,7 @@ public class Main extends HttpServlet
                     for (String ipRestrict : ipRestricts.split(","))
                     {
                         if (!request.getRemoteAddr().contains(ipRestrict)) validPlace = true;
+                        if (request.getRemoteAddr().contains("127.0.0.1")) validPlace = true; // if from localhost
                     }
                     if (!validTime || !validPlace)
                     {
