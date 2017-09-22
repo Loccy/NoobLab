@@ -769,6 +769,7 @@ Blockly.Blocks['procedures_callreturn'] = {
    */
   init: function() {
     this.appendDummyInput('TOPROW')
+        .appendField("The value returned by")
         .appendField('', 'NAME');
     this.setOutput(true);
     this.setColour(Blockly.Blocks.procedures.HUE);
