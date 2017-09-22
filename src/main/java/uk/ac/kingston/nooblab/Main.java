@@ -115,7 +115,23 @@ public class Main extends HttpServlet
         request.setAttribute("codetext", data);
         
         if (contentsrc != null)
-        {                                    
+        {
+            // handle alternates            
+            String alt = doc.select("div.parameter[id=defaultAlternate]").text().trim();
+            if (!alt.equals(""))
+            {                
+                // if we have a default alternate...
+                // check which alternate we're after
+                String suppliedalt = request.getParameter("alt");
+                if (suppliedalt != null && !suppliedalt.trim().equals(""))
+                {
+                    alt = suppliedalt.trim();
+                }
+                
+                // remove all divs of class alternate that don't have a data-alt matching
+                doc.select("div.alternate").not("[data-alt="+alt+"]").remove();
+            }
+            
             // have we only just logged in?
             // if so, log time and module
             if ("true".equals(freshlogin))
