@@ -4278,6 +4278,7 @@ function resizeSplit(width)
         $("div#topnav").css("right",(width+5)+"px");   
         $("div#lectureslides").css("right",(width+5)+"px");
         $("div#video").css("right",(width+5)+"px");
+        $("div#chat").css("right",(width+5)+"px");
         $("div#coursenavpage").css("right",(width+5)+"px");
         resizeCarols();
     }
