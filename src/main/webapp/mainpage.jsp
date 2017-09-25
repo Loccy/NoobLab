@@ -131,6 +131,7 @@
             <div style="clear:both"></div>
             <div class="row2">
                 <div id="usermenu">
+                    <div class="extramenu" id="extramenuchat" onclick="$('div#navchat').click()">Show/hide chat pane</div>
                     <div class="extramenu" id="extramenucoursenav" onclick="$('div#navcourse').click()">Show/hide course navigation</div>
                     <div class="extramenu" id="extramenulecture" onclick="$('div#navlecture').click()">Show/hide lecture slides</div>
                     <div class="extramenu" id="extramenuvideo" onclick="$('div#navvideo').click()">Show/hide lecture video</div>                    

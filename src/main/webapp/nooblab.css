@@ -303,7 +303,7 @@ pre.javastatic {
     cursor : move;
 }
 
-div#lectureslides,div#video,div#coursenavpage {
+div#lectureslides,div#video,div#coursenavpage,div#chat {
     position : fixed;
     top : 36px;
     bottom : 0px;
@@ -314,7 +314,7 @@ div#lectureslides,div#video,div#coursenavpage {
     background-color : white;
 }
 
-div#lectureslides iframe,div#video iframe,div#coursenavpage iframe {
+div#lectureslides iframe,div#video iframe,div#coursenavpage iframe,div#chat iframe {
     height : 100%;
     width : 100%;
     border : 0px;
@@ -575,17 +575,17 @@ img#nooblabemo {
 }
 
 
-#navlecture,#navvideo,#navcourse {
+#navlecture,#navvideo,#navcourse,#navchat {
     cursor : pointer;
     cursor : hand;
     float : right;
 }
 
-#navlecture.selected,#navvideo.selected,#navcourse.selected {
+#navlecture.selected,#navvideo.selected,#navcourse.selected,#navchat.selected {
     background-color : #666;
 }
 
-#navlecture.selected i,#navvideo.selected i,#navcourse.selected i {
+#navlecture.selected i,#navvideo.selected i,#navcourse.selected i,#navchat.selected i {
     color : white;
 }
 

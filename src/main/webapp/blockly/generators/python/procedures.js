@@ -102,8 +102,7 @@ Blockly.Python['procedures_callnoreturn'] = function(block) {
     args[i] = Blockly.Python.valueToCode(block, 'ARG' + i,
         Blockly.Python.ORDER_NONE) || 'None';
   }
-  var code = funcName + '(' + args.join(', ') + ')\n';
-  console.log(code);
+  var code = funcName + '(' + args.join(', ') + ')\n';  
   return code;
 };
 

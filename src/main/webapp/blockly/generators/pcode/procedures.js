@@ -53,7 +53,7 @@ Blockly.Pseudocode['procedures_defreturn'] = function(block) {
   code += '\n' + branch + returnValue + 'endfunction';
   code = Blockly.Pseudocode.scrub_(block, code);
   Blockly.Pseudocode.definitions_[funcName] = code;
-  return null;
+  return code; // return null?!
 };
 
 // Defining a procedure without a return value uses the same generator as

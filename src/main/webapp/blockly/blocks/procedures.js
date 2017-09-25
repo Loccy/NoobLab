@@ -248,7 +248,10 @@ Blockly.Blocks['procedures_defnoreturn'] = {
    * @this Blockly.Block
    */
   getProcedureDef: function() {
-    return [this.getFieldValue('NAME'), this.arguments_, false];
+    var lang = Blockly.Python ? Blockly.Python : Blockly.Pseudocode;
+    var blockCode = lang.blockToCode(this);
+    var hasret = blockCode.toLowerCase().indexOf(/\breturn\b/) != -1;    
+    return [this.getFieldValue('NAME'), this.arguments_, hasret];
   },
   /**
    * Return all variables referenced by this block.
@@ -322,7 +325,7 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         option.callback = Blockly.ContextMenu.callbackFactory(this, xmlBlock);
         options.push(option);
       }
-    }
+    }    
   },
   callType_: 'procedures_callnoreturn'
 };
@@ -453,7 +456,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
    * Block for calling a procedure with no return value.
    * @this Blockly.Block
    */
-  init: function() {
+  init: function() {      
     this.appendDummyInput('TOPROW')
         .appendField(this.id, 'NAME');
     this.setPreviousStatement(true);
@@ -795,7 +798,9 @@ Blockly.Blocks['procedures_callreturn'] = {
 
 Blockly.Blocks['procedures_ifreturn'] = {
   /**
-   * Block for conditionally returning a value from a procedure.
+   * Actually hacked to be retooled as a simple return statement
+   * Couldn't see a way to easily relabel it though, and keep the auto
+   * generation of the Functions menu optio.
    * @this Blockly.Block
    */
   init: function() {

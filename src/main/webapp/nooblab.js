@@ -3760,8 +3760,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show lecture video" id="navvideo"><i class="fa fa-video-camera"></i></div>');
         $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
         $("div#navvideo").click(function(){            
-            $("div#lectureslides,div#coursenavpage").hide();
-            $("div#navlecture,div#navcourse").removeClass("selected");
+            $("div#lectureslides,div#coursenavpage,div#chat").hide();
+            $("div#navlecture,div#navcourse,div#navchat").removeClass("selected");
             $("div#video").toggle();
             if ($("div#video iframe").attr("data-loaded") == "false")
             {
@@ -3782,8 +3782,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show lecture slides" id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
         $("body").append('<div id="lectureslides"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navlecture").click(function(){
-            $("div#video,div#coursenavpage").hide();
-            $("div#navvideo,div#navcourse").removeClass("selected");
+            $("div#video,div#coursenavpage,div#chat").hide();
+            $("div#navvideo,div#navcourse,div#navchat").removeClass("selected");
             $("div#lectureslides").toggle();
             if ($("div#lectureslides iframe").attr("data-loaded") == "false")
             {
@@ -3804,8 +3804,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show course navigation" id="navcourse"><i class="fa fa-globe"></i></div>');
         $("body").append('<div id="coursenavpage"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navcourse").click(function(){
-            $("div#video,div#lectureslides").hide();            
-            $("div#navvideo,div#navlecture").removeClass("selected");
+            $("div#video,div#lectureslides,div#chat").hide();            
+            $("div#navvideo,div#navlecture,div#navchat").removeClass("selected");
             $("div#coursenavpage").toggle();
             if ($("div#coursenavpage iframe").attr("data-loaded") == "false")
             {
@@ -3818,6 +3818,41 @@ window.onload = function()
     else
     {
         $("div#extramenucoursenav").remove();
+    }
+    
+    if ($("div.parameter#chatUrl").length != 0)
+    {
+        // add a link for the chat
+        $("div#topnav div.row1").append('<div title="Show chat pane" id="navchat"><i class="fa fa-commenting-o"></i></div>');
+        $("body").append('<div id="chat"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
+        $("div#navchat").click(function(){            
+            $("div#lectureslides,div#coursenavpage,div#video").hide();
+            $("div#navlecture,div#navcourse,div#navvideo").removeClass("selected");
+            $("div#chat").toggle();
+            if ($("div#chat iframe").attr("data-loaded") == "false")
+            {
+                var chaturl = $("div.parameter#chatUrl").text().trim();
+                if (chaturl.indexOf("{course}") != -1)
+                {
+                    chaturl = chaturl.replace("{course}",$("div.parameter#courseNo").text().trim());
+                }
+                if (chaturl.indexOf("{user}") != -1)
+                {                    
+                    chaturl = chaturl.replace("{user}",getKNo());                
+                }
+                if (chaturl.indexOf("{lessonno}") != -1)
+                {
+                    chaturl = chaturl.replace("{lessonno}",$("div.parameter#lessonNo").text().trim());
+                }
+                $("div#chat iframe").attr("src",chaturl);
+                $("div#chat iframe").attr("data-loaded","true");
+            }
+            $("div#navchat").toggleClass("selected");
+        });
+    }
+    else
+    {
+        $("div#extramenuchat").remove();
     }
     
     
