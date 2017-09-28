@@ -168,11 +168,7 @@
     <servlet-mapping>
         <servlet-name>RunPython</servlet-name>
         <url-pattern>/RunPython</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>XMLValidate</servlet-name>
-        <url-pattern>/XMLValidate</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
     <session-config>
         <session-timeout>240</session-timeout>
     </session-config>
