@@ -173,6 +173,8 @@ public class Main extends HttpServlet
             }
             
             String originalCNo = doc.select("div.parameter[id=courseNo]").text();
+            String originalLNo = doc.select("div.parameter[id=lessonNo]").text();
+            
             if (originalCNo != null)
             {
                 request.getSession().setAttribute("module", originalCNo);                
@@ -193,15 +195,14 @@ public class Main extends HttpServlet
             // a particular place and/or time?
             ipRestricts = doc.select("div.parameter[id=lockPlace]").text().trim();            
             if (!ipRestricts.equals("") && !username.matches(adminExceptions))
-            {
-                System.out.println(adminExceptions);
+            {                
                 // get their current unlock file
                 String unlockstr = "";
                 try {
                     unlockstr = FileUtils.readFileToString(new File(basedir+"/unlocked.txt"));
                 } catch (Exception e) {};
                 // if not already unlcoked
-                if (!unlockstr.contains(originalCNo))
+                if (!unlockstr.contains(originalCNo+"-"+originalLNo))
                 {
                     boolean validTime = false;
                     boolean validPlace = false;
@@ -253,7 +254,7 @@ public class Main extends HttpServlet
                     {
                         // need to update the unlock file
                         if (!unlockstr.equals("")) unlockstr += ",";
-                        unlockstr += originalCNo;
+                        unlockstr += originalCNo+"-"+originalLNo;
                         FileUtils.writeStringToFile(new File(basedir+"/unlocked.txt"),unlockstr);
                     }
                 }

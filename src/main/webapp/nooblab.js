@@ -2792,7 +2792,7 @@ function runFullWeb(code,logcode)
 	{
 	   var codefile = codefiles[i];
            var name = names[i];
-	   var error = validateXML(codefile);
+	   var error = validateXML(codefile);           
 	   if (name.slice(-5) != ".html" && name.slice(-4) != ".htm" && name.slice(4) != ".php") error = false;
            if (error)
            {
