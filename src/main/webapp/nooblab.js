@@ -2212,6 +2212,9 @@ function updateTestCases()
                                 {
                                     $(this).contents().eq(0).replaceWith('<span style="color: gray">You have exceeded the maximum number of attempts. You can now only win the '+maxdowngrade+' medal for this exercise.</span>');
                                     $(this).unbind('click');
+                                    $(this).click(function(e){
+                                        if (e.shiftKey) $(this).find("button,br,input").show(); 
+                                    });                                 
                                 }                                
                             }
                             else if (maxattempts > 0)
