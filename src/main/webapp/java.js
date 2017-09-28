@@ -523,19 +523,22 @@ function handleTestCasesJava()
         }        
         
         $(this).text(linkText);
-        $(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
+        $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
+        //$(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
         $(this).find("input").click(function(e){
            e.stopPropagation(); 
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
-           var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
+           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];           
             var inp = $(this).parent().find("input").val();
-            if (inp == pw)
-            {
-                LOGtestStart(id,"",true,medal);
-                javaSuccessfulTest("1/1", medal);
-            } 
+            $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
+                if (res == "good")
+                {
+                    LOGtestStart(id,"",true,medal);
+                    javaSuccessfulTest("1/1", medal);
+                } 
+            });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();

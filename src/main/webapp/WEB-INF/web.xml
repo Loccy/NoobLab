@@ -32,6 +32,10 @@
         <servlet-name>RunPython</servlet-name>
         <servlet-class>uk.ac.kingston.nooblab.RunPython</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>OverrideCheck</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.OverrideCheck</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RunPage</servlet-name>
         <url-pattern>/RunPage</url-pattern>
@@ -168,7 +172,11 @@
     <servlet-mapping>
         <servlet-name>RunPython</servlet-name>
         <url-pattern>/RunPython</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OverrideCheck</servlet-name>
+        <url-pattern>/OverrideCheck</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>240</session-timeout>
     </session-config>
@@ -247,5 +255,10 @@
         <!-- Do NOT remove the entry -->
         <param-name>adminExceptions</param-name>
         <param-value>ku.*</param-value>
+    </context-param>
+    <context-param>
+        <description>Override password to manually award medals</description>
+        <param-name>override</param-name>
+        <param-value>80085</param-value>
     </context-param>
 </web-app>

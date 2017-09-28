@@ -1518,22 +1518,25 @@ function handleTestCasesHtml()
         }
         
         $(this).text(linkText);
-        $(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
+        $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
+        //$(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
         $(this).find("input").click(function(e){
            e.stopPropagation(); 
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
-           var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
+           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];           
             var inp = $(this).parent().find("input").val();
-            if (inp == pw)
-            {
-                LOGtestStart(id,editor.getValue(),undefined,medal09876);
-                hiddenRun("");
-                setTimeout(function(){
-                    outputframe.greatSuccess(medal09876);
-                },1000);                
-            } 
+            $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
+                if (res == "good")
+                {
+                    LOGtestStart(id,editor.getValue(),undefined,medal09876);
+                    hiddenRun("");
+                    setTimeout(function(){
+                        outputframe.greatSuccess(medal09876);
+                    },1000);                
+                } 
+            });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
@@ -1557,7 +1560,7 @@ function indent(code)
     return "  "+(code.replace(/\n/g,"\n  ").trim())
 }
 
-function genericHandleTestCases(func)
+function genericHandleTestCases(func,override)
 {
      $(".testCase").each(function(){         
         //$(this).children().hide();
@@ -1595,21 +1598,24 @@ function genericHandleTestCases(func)
         }
         
         $(this).text(linkText);
-        $(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
+        $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
+        //$(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
         $(this).find("input").click(function(e){
            e.stopPropagation(); 
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
-           var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
+           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
             var inp = $(this).parent().find("input").val();
-            if (inp == pw)
-            {
-                LOGtestStart(id,editor.getValue(),undefined,medal09876);                
-                setTimeout(function(){
-                    alert("test passed");
-                },1000);                
-            } 
+            $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
+                if (res == "good")
+                {
+                    LOGtestStart(id,editor.getValue(),undefined,medal09876);                
+                    setTimeout(function(){                    
+                        override(pea);
+                    },1000);                
+                } 
+            });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
@@ -1664,7 +1670,7 @@ function handleTestCases()
 }
 
 function handleTestCasesPython()
-{    
+{        
     genericHandleTestCases(function(source){        
        var code = 
 'import noobtest\n\
@@ -1790,6 +1796,14 @@ noobdata = {\n\
             carol.initialiseCarol();            
         }
         setTimeout(function() { runPython("::istest::"+code,true,inputTestList); },1);        
+    },
+    function(source) // override functionality
+    {                
+        var medaldata = $(source).attr("data-medal");        
+        var id = $(source).attr("data-id");        
+        if (medaldata) medaldata = medaldata.replace(/"/g,"''");
+        var code =  'import noobtest\nnoobtest.greatSuccess("'+id+'","'+medaldata+'")';
+        setTimeout(function() { runPython(code,true) });        
     });
 }
 
@@ -2008,22 +2022,24 @@ function handleTestCasesJS()
         }
         
         $(this).text(linkText);
-        $(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
+        $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
         $(this).find("input").click(function(e){
            e.stopPropagation(); 
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
-           var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
+           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
             var inp = $(this).parent().find("input").val();
-            if (inp == pw)
-            {
-                LOGtestStart(id,editor.getValue(),undefined,medal09876);
-                hiddenRun("");
-                setTimeout(function(){
-                    outputframe.greatSuccess(medal09876);
-                },1000);                
-            } 
+            $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
+                if (res == "good")
+                {
+                    LOGtestStart(id,editor.getValue(),undefined,medal09876);
+                    hiddenRun("");
+                    setTimeout(function(){
+                        outputframe.greatSuccess(medal09876);
+                    },1000);                
+                } 
+            });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
@@ -2126,7 +2142,7 @@ function updateTestCases()
                         {
                             html = '&gt;&gt;&gt You\'ve passed this already - click to repeat the test &lt;&lt;&lt';
                         }
-                        $(this).contents().not("div.emotionselection").remove();
+                        $(this).contents().not("div.emotionselection,span.override").remove();
                         $(this).prepend(html);                        
                     }
                     else if (medal != "")
@@ -2141,7 +2157,7 @@ function updateTestCases()
 						if (greater) html = '<img src="'+contextPath+'/images/medal'+targetMedal+'.png" style="float: left">'+html;
 						html += '<br/>&nbsp;<br/>&gt;&gt;&gt Click here to test for the '+targetMedal+' medal &lt;&lt;&lt</p><div style="clear: both"></div>';
 						html = html.replace("ribbon medal","ribbon"); // shouldn't ever happen, but hey
-                        $(this).contents().not("div.emotionselection").remove();
+                        $(this).contents().not("div.emotionselection,span.override").remove();
                         $(this).prepend(html);
 			if (greater) $(this).addClass("medalwon");
                     }
@@ -2919,9 +2935,10 @@ function clearEditor()
                 {
                     editor.setValue("");
                     javaPidjinCodeWrapper(true);
+                    if ($("div.parameter#blockly").text().trim() == "true") Blockly.mainWorkspace.clear();
+                    LOGcodeClear();
                 }
-                if ($("div.parameter#blockly").text().trim() == "true") Blockly.mainWorkspace.clear();
-                LOGcodeClear();
+                
             });
 }
 
