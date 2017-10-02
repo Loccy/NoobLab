@@ -2811,24 +2811,19 @@ function runFullWeb(code,logcode)
 	{
 	   var codefile = codefiles[i];
            var name = names[i];
-	   var error = validateXML(codefile);           
+           codefile = codefile.replace(/\<(\?xml|(\!doctype[^\>\[]+(\[[^\]]+)?))+[^>]+\>/gi, '').trim();
+	   var error = validateXML(codefile);                      
 	   if (name.slice(-5) != ".html" && name.slice(-4) != ".htm" && name.slice(4) != ".php") error = false;
-           if (error)
-           {
-		error = error.replace("XML Parsing Error: ","");
-		error = error.replace(/Location.*/,"");
-		error = error.replace(/:\n[\s\S]*\^/,"");
-		// error = error.replace(/Location[\s\S]*/,"");
-		// error = error.replace(/error on line [0-9]* at column [0-9]*:/,"");
-		// error = error.replace(/line [0-9]* and .*/,"");
+           if (error && $("div.parameter#disableValidation") != "true")
+           {                              	
 		$("body",outputframe.document).html("");
 		$("body",outputframe.document).append('<code style="display: block; padding: 0.5em; background: white; border: 2px solid black; color: red"></code>');
-		$("body code",outputframe.document).text("Invalid HTML - "+error);
+		$("body code",outputframe.document).text("Invalid HTML on line "+error.lineo+", column "+error.colno+" - "+error.msg);
 		if (!$("#code-titlebar div.tab").eq(i).hasClass("selected")) $("#code-titlebar div.tab").eq(i).click();
+                editor.addLineClass(error.lineno-1,"background","error");
 		//$("div.tab").eq(i).click();
 		return;
 	   }
-
 	}
         document.getElementById("codeinput").value = code;
         document.forms[0].action = contextPath+"/RunFullWeb";

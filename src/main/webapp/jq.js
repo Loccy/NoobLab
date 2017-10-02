@@ -41,50 +41,24 @@ function checkXML(n)
  
 function validateXML(txt)
 {
-    return false;
-    // strip any PHP code
-    txt = txt.replace(/\<\?php[\s\S]*?\?\>/g,"").trim();
-    txt = txt.replace(/\<\?=[\s\S]*?\?\>/g,"").trim();
-
-    // code for IE
-    if (window.ActiveXObject)
-    {
-        var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-        xmlDoc.async="false";
-        xmlDoc.loadXML(txt);
-
-        if(xmlDoc.parseError.errorCode!=0)
-        {
-            txt="Error Reason: " + xmlDoc.parseError.reason;
-            txt=txt+"Error Line: " + xmlDoc.parseError.line;
-            return(txt);
-        }
-        else
-        {
-            return false;
-        }
-    }
-    // code for Mozilla, Firefox, Opera, etc.
-    else if (document.implementation.createDocument)
-    {
-        var parser=new DOMParser();
-        var text=txt;
-        var xmlDoc=parser.parseFromString(text,"text/xml");
-
-        if (xmlDoc.getElementsByTagName("parsererror").length>0)
-        {
-            checkErrorXML(xmlDoc.getElementsByTagName("parsererror")[0]);
-            return(txt)
-        }
-        else
-        {
-            return false;
-        }
-  }
-  else
-  {
-  	return false;
-  }
+    var result = false;
+    $.ajax({
+       url : contextPath+"/XMLCheck",
+       type : "post",
+       data : {
+           xml : txt
+       },
+       async : false,
+       success : function(data)
+       {
+           if (data != "ok")
+           {
+               result = data;               
+           }
+       }
+    });
+    
+    return result;    
 }
 
 ;;;;;;;;;;;;;
