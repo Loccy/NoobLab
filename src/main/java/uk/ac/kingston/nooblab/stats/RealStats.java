@@ -6,11 +6,16 @@ package uk.ac.kingston.nooblab.stats;
 
 import au.com.bytecode.opencsv.CSVReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -98,4 +103,38 @@ public class RealStats
         } catch (Exception e) { e.printStackTrace(); return "fail"; }
     }
     
+    public static HashMap<String,LinkedHashSet> getUsageDates(String basedirstr,boolean roundhour,String ip)
+    {
+        try
+        {            
+            String[] studentlist = getStudentList(basedirstr);
+            HashMap<String,LinkedHashSet> usages = new HashMap();
+            for (String student : studentlist)
+            {                
+                usages.put(student,new LinkedHashSet<String>());
+                CSVReader reader = new CSVReader(new FileReader(basedirstr+"/"+student+"/nocode.csv"));
+                ArrayList<String[]> lines = new ArrayList(reader.readAll());
+                for (String[] line : lines)
+                {
+                    if (ip == null || line[1].matches(ip))
+                    {
+                        String textdate = line[0];
+                        if (roundhour)
+                        {
+                            // reset time to XX:00:00
+                            textdate = textdate.replaceAll(":[0-9][0-9]:[0-9][0-9] ",":00:00 ");
+                        }                
+                        usages.get(student).add(textdate);
+                    }
+                }
+                if (usages.get(student).isEmpty()) usages.remove(student);
+            }
+            return usages;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

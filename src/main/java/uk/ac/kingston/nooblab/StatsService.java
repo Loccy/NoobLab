@@ -74,6 +74,14 @@ public class StatsService extends HttpServlet
                 json = json.replace(",\n}","\n}");
                 out.print(json);*/
             }
+            if ("loginTimes".equals(statsType))
+            {                                
+                response.setContentType("application/json");
+                Gson gson = new Gson();
+                String course = request.getParameter("course");
+                String ipmatch = request.getServletContext().getInitParameter("homeip");
+                out.println(gson.toJson(RealStats.getUsageDates(basedir, true,ipmatch)));
+            }
             if ("testAssists".equals(statsType))
             {
                 response.setContentType("application/json");

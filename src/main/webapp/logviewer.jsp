@@ -30,6 +30,9 @@
         </style>
     </head>
     <body>
+        <c:if test="${nothome}">
+            <a href="?mode=showAttendance&currentdir=${param.currentdir}">Show attendance</a>
+        </c:if>
         <table>
             <c:forEach var="direntry" items="${dirlisting}">
                 <tr>

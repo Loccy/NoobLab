@@ -130,20 +130,7 @@ public class Main extends HttpServlet
                 
                 // remove all divs of class alternate that don't have a data-alt matching
                 doc.select("div.alternate").not("[data-alt="+alt+"]").remove();
-            }
-            
-            // have we only just logged in?
-            // if so, log time and module
-            if ("true".equals(freshlogin))
-            {
-                request.getSession().setAttribute("freshlogin",null);
-                String DATE_FORMAT = "HH:mm:ss yyyy/MM/dd";
-                SimpleDateFormat sdf =
-                    new SimpleDateFormat(DATE_FORMAT);
-                String date = sdf.format(new Date());
-                String module = doc.select("div.parameter#courseNo").text().trim();
-                LogActivity.logActivity(username, date, "login",module,"","", request);
-            }
+            }                        
             
             String adminExceptions = getServletContext().getInitParameter("adminExceptions");
             if (adminExceptions.equals("")) adminExceptions = "noOneWillEverHaveThisUserNameSoTheMatchWillNeverActuallyHappen:-D";
@@ -309,6 +296,19 @@ public class Main extends HttpServlet
                     }
                     doc.body().append("<p>Contact your tutor for further information, or if you have received this message in error.</p></div>");
                 }                
+            }
+            
+            // have we only just logged in?
+            // if so, log time and module
+            if ("true".equals(freshlogin))
+            {
+                request.getSession().setAttribute("freshlogin",null);
+                String DATE_FORMAT = "HH:mm:ss yyyy/MM/dd";
+                SimpleDateFormat sdf =
+                    new SimpleDateFormat(DATE_FORMAT);
+                String date = sdf.format(new Date());
+                String module = doc.select("div.parameter#courseNo").text().trim();
+                LogActivity.logActivity(username, date, "login",module,"","", request);
             }
             
             // make all the IMG elements have explicit/absolute URLs

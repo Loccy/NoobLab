@@ -5,6 +5,7 @@
 package uk.ac.kingston.nooblab.stats;
 
 import au.com.bytecode.opencsv.CSVReader;
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -40,15 +41,18 @@ public class LogViewer extends HttpServlet
         response.setContentType("text/html;charset=UTF-8");
         String datadir = MiscUtils.getDataDir(request, false);
         String currentdir = request.getParameter("currentdir");        
-        ArrayList<DirectoryEntry> dirlist = new ArrayList();                         
+        ArrayList<DirectoryEntry> dirlist = new ArrayList();              
+        String canonicalDatadir = new File(datadir).getCanonicalPath();    
+        String actualdir =  new File(datadir+File.separator+currentdir).getCanonicalPath();        
         
         if (currentdir != null && !"".equals(currentdir))
         {
-            if(currentdir.contains("../..") || currentdir.equals("..") || currentdir.startsWith("../")) return;
-            String actualdir =  new File(datadir+"/"+currentdir).getCanonicalPath();
-            if (!datadir.equals(actualdir))
+            //if(currentdir.contains(".."+File.separator+"..") || currentdir.equals("..") || currentdir.startsWith(".."+File.separator)) return;
+            //String actualdir =  new File(datadir+File.separator+currentdir).getCanonicalPath();
+            if (!canonicalDatadir.equals(actualdir))
             {
-                dirlist.add(new DirectoryEntry(currentdir+"/..","..","dir"));
+                dirlist.add(new DirectoryEntry(currentdir+File.separator+"..","..","dir"));
+                request.setAttribute("nothome",true);
             }
             currentdir = actualdir;            
         }
@@ -63,11 +67,22 @@ public class LogViewer extends HttpServlet
             processViewlogRequest(request,response,currentdir);
             return;
         }
+        if ("showAttendance".equals(mode))
+        {
+            // grab all the data
+            String ipmatch = request.getServletContext().getInitParameter("homeip");    
+            System.out.println(actualdir);
+            String json = new Gson().toJson(RealStats.getUsageDates(actualdir, true,ipmatch));
+            request.setAttribute("json",json);
+            RequestDispatcher rd = request.getRequestDispatcher("/attendanceviewer.jsp");
+            rd.forward(request, response);  
+            return;
+        }
         
         File[] dirlistf = new File(currentdir).listFiles();
         for (File file : dirlistf)
         {
-            String fullpath = file.getCanonicalPath().replace(datadir+"/", "");
+            String fullpath = file.getCanonicalPath().replace(canonicalDatadir+File.separator, "");
             String shortname = file.getName();
             if (file.isDirectory())
             {

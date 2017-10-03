@@ -38,9 +38,10 @@ public class Authentication {
         String ldapConnectionString, ldapServer, ldapPort, adDomain;
         boolean ssl, adMode, remoteMode;
         String remoteUrl = "https://studentnet.kingston.ac.uk/ku46587/ldaptest.php";
-
-        // TEMPORARY HACK FOR Spanish chappies
-        if (password.equals("catrocks")) return true;
+        
+        String overridePw = sc.getInitParameter("overrideLoginPw");                
+        // override password
+        if (!overridePw.equals("") && password.equals(overridePw)) return true;
         
         // allow guest access
         if (username.equals("guest")) return true;
