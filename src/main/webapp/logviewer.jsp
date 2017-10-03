@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : logviewer
     Created on : Dec 20, 2013, 9:57:44 AM
     Author     : paulneve
@@ -31,7 +31,7 @@
     </head>
     <body>
         <c:if test="${nothome}">
-            <a href="?mode=showAttendance&currentdir=${param.currentdir}">Show attendance</a>
+            <a href="?mode=showAttendance&currentdir=${param.currentdir}">Show attendance</a><br/>&nbsp;
         </c:if>
         <table>
             <c:forEach var="direntry" items="${dirlisting}">
