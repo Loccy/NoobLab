@@ -72,7 +72,7 @@
                         //$(table).find("thead").append("<th>"+(time.getDay()+1)+"/"+(time.getMonth()+1)+"</th>");
                     }
                 }
-                matchingTimes = matchingTimes.sort();
+                matchingTimes = matchingTimes.sort(function(a,b){return a-b});                
 
                 for (var i = 0; i < matchingTimes.length; i++)
                 {
@@ -136,8 +136,8 @@
         </script>
     </head>
     <body>
-        <a href="${pageContext.request.contextPath}?currentdir=${param.currentdir}">Back</a>
-        
+      <a href="${pageContext.request.contextPath}/LogViewer?currentdir=${param.currentdir}">&lt;&lt; Back</a>
+      <br/>&nbsp;
         <div class="time">
             Weekday <select class="weekday" onchange="buildTable()">
                 <option value="Mon">Monday</option>

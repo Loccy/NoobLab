@@ -1378,8 +1378,8 @@ function handleTestCasesHtml()
             }
             
             // JQuery CDN
-            var code = '<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>'+"\n";
-            code += '<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>'+"\n";
+            var code = '<script src="//code.jquery.com/jquery-1.10.1.min.js"></script>'+"\n";
+            code += '<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>'+"\n";
             
             // our own test code
             code += '<script type="text/javascript">'+"\n";
