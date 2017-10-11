@@ -20,7 +20,7 @@ String.prototype.trim = function() {
 // Adds scrollbar width to window
 // alternate version - works on Firefox
 // https://stackoverflow.com/questions/986937/how-can-i-get-the-browsers-scrollbar-sizes
-$(function() {  
+$(function() {
     var $outer = $('<div>').css({visibility: 'hidden', width: 100, overflow: 'scroll'}).appendTo('body'),
         widthWithScroll = $('<div>').css({width: '100%'}).appendTo($outer).outerWidth();
     $outer.remove();
@@ -69,7 +69,7 @@ function getCode(e)
     {
         return originalTexts[$(e).attr("data-preid")];
     }
-    
+
         var realElement = $(e)[0];
 	var x;
         if (realElement.innerText)
@@ -195,7 +195,7 @@ function getCarolDiv()
 function buildCarolDiv(caroldiv)
 {
     if ($("div.parameter#kinder").text().trim() != "true")
-    {  
+    {
 	$(caroldiv).click(function(){ buildCarolDiv(this)});
     }
     var st = $("#content").scrollTop();
@@ -204,7 +204,7 @@ function buildCarolDiv(caroldiv)
                         .text().trim();
     if (carolsize == "") carolsize = "16";
     carolsize = parseInt(carolsize);
-    var carolpercent = 1/carolsize*100;       
+    var carolpercent = 1/carolsize*100;
 
     // kill any existing carol DOM... just in case
     $(caroldiv).find(".carolwrapper").remove();
@@ -362,7 +362,7 @@ function buildCarolDiv(caroldiv)
                                "cursor" : "pointer"
                             });
         bar.find("img").not(".go").click(function(){
-                           kinderCarolCode(this); 
+                           kinderCarolCode(this);
                         });
         bar.find("img.go").css("padding","3%");
         bar.find("img.go").click(function(){
@@ -381,14 +381,14 @@ function buildCarolDiv(caroldiv)
 
         var programbar = $('<div style="position: relative" class="programbar">');
         programbar.css({
-                               "width":arrowWidth+"px"                             
+                               "width":arrowWidth+"px"
                        });
 
         $(caroldiv).prepend(programbar);
         $(caroldiv).append('<div style="clear: both"></div>');
     }
-    
-    $(caroldiv).attr("data-size",carolwidth);        
+
+    $(caroldiv).attr("data-size",carolwidth);
 
     $("#content").scrollTop(st);
 
@@ -426,7 +426,7 @@ function kinderCarolCode(source)
         var code = "setDelay(200);";
         code += "try { DIRECTION(); } catch (e) { parent.unhappyBilly(); hold(1000); carol.updateCarol(true); parent.$('.programbar').empty(); }\n";
         code += kinderGloriousWinTestCode();
-        
+
         var code = code.replace("DIRECTION",direction);
         editor.setValue(code);
         $("input#runbutton").click();
@@ -475,12 +475,12 @@ function unhappyBilly()
 function updateCarolProgramBar(direction)
 {
     var currentCarol = getCarolDiv();
-    
+
     // get lastEntry
-    
+
     var lastEntry = $(currentCarol).find(".programline").last();
     var lastDir = $(lastEntry).find("img").attr("data-direction");
-    
+
     if (lastDir == direction)
     {
         // only need to increase the previous number
@@ -538,8 +538,8 @@ function maxMinCodeWeb(outputheight,force)
 		outputpane.css("top",outputtop+"px");
 		outputpane.css("height","calc(100% - "+outputtop+"px)");
 		outputpane.css("width","50%");
-                $("div#horizontaldrag").css("right","calc(50%)");                
-		$("div#toolbar").css("width","100%");			        
+                $("div#horizontaldrag").css("right","calc(50%)");
+		$("div#toolbar").css("width","100%");
                 $("div#navbar").hide();
                 $("div#lectureslides").hide();
                 $("div#topnav").hide();
@@ -566,25 +566,25 @@ function maxMinCodeWeb(outputheight,force)
                 outputpane.css("top","");
                 outputpane.css("height","");
                 outputpane.css("width","");
-                $("div#toolbar").css("width","");                                
+                $("div#toolbar").css("width","");
                 $("body").css("overflow","");
                 $("div#navbar").show();
                 $("div#topnav").show();
                 //$("span.maximisebutton").html("&#8743;");
                 $("span.maximisebutton").removeClass("fa-window-restore");
                 $("span.maximisebutton").addClass("fa-window-maximize");
-                var tbwidth = parseInt($("div#toolbar").css("width"));                
+                var tbwidth = parseInt($("div#toolbar").css("width"));
                 //$("div#horizontaldrag").css("left",window.innerWidth-tbwidth);
-                //$("div#horizontaldrag").show();                
-                
+                //$("div#horizontaldrag").show();
+
                 if ($("div#horizontaldrag").hasClass("changed"))
-                {                    
-                     var width = parseInt($("div#content").css("width")); 
+                {
+                     var width = parseInt($("div#content").css("width"));
                      width = window.innerWidth - width - 5;
                      $("div#editor-wrapper").css("width",width+"px");
                      $("div#toolbar").css("width",width+"px");
-                     $("div#output-outer").css("width",width+"px");                     
-                     $("div#horizontaldrag").css("right",width+"px");                     
+                     $("div#output-outer").css("width",width+"px");
+                     $("div#horizontaldrag").css("right",width+"px");
                 }
                 resize();
                 editor.refresh();
@@ -594,7 +594,7 @@ function maxMinCodeWeb(outputheight,force)
 }
 
 function maxMinCode(outputheight,force)
-{    
+{
      if ($("div.parameter#language").text().trim() == "fullweb")
      {
         maxMinCodeWeb(outputheight,force);
@@ -612,7 +612,7 @@ function maxMinCode(outputheight,force)
         el.css("bottom",outputheight);
         $("div#output-outer").css("height",outputheight);
         $("div#output-outer").css("width","100%");
-        $("div#toolbar").css("width","100%");        
+        $("div#toolbar").css("width","100%");
         $("body").css("overflow","hidden");
         $("div#navbar").hide();
         $("div#lectureslides").hide();
@@ -637,22 +637,22 @@ function maxMinCode(outputheight,force)
         $("div#output-outer").css("height",bottom);
         $("body").css("overflow","");
         el.removeAttr("data-origBottom");
-        $("body").css("overflow","");   
+        $("body").css("overflow","");
         $("div#navbar").show();
         $("div#topnav").show();
        // $("span.maximisebutton").html("&#8743;");
        $("span.maximisebutton").removeClass("fa-window-restore");
-       $("span.maximisebutton").addClass("fa-window-maximize");    
-       
+       $("span.maximisebutton").addClass("fa-window-maximize");
+
        if ($("div#horizontaldrag").hasClass("changed"))
        {
-            var width = parseInt($("div#horizontaldrag").css("right")); 
+            var width = parseInt($("div#horizontaldrag").css("right"));
             $("div#editor-wrapper").css("width",width+"px");
             $("div#toolbar").css("width",width+"px");
             $("div#output-outer").css("width",width+"px");
-            $("div#content").css("right",width+"px");                                                    
-       }       
-       $("div#horizontaldrag").show();       
+            $("div#content").css("right",width+"px");
+       }
+       $("div#horizontaldrag").show();
         resize();
         editor.refresh();
     }
@@ -670,7 +670,7 @@ function createEmos()
            "padding-left" : "0.5em",
            "padding-right" : "0.5em",
            "box-sizing" : "border-box"
-           
+
        });
        var emodesc = $(this).text().trim();
        $(this).text("");
@@ -716,7 +716,7 @@ function createFakeDocs() // and carols :-)
 
         setTimeout(function(){
             $(iframe).height(1);
-            $(iframe.contentWindow.document).find("body").html(html).css("background","transparent");            
+            $(iframe.contentWindow.document).find("body").html(html).css("background","transparent");
             var height = $(iframe.contentWindow.document).height();
             $(iframe).css("height",height+"px");
         },1000);
@@ -728,7 +728,7 @@ function createFakeDocs() // and carols :-)
         var editor = CodeMirror.fromTextArea($(this).parent().find("textarea")[0], {
             mode: 'text/html',
             tabMode: 'indent',
-            onCursorActivity: function() {                                
+            onCursorActivity: function() {
                 if (editor) {
                     $(iframe.contentWindow.document).find("body").html(editor.getValue());
                     setTimeout(function(){resizeIframe(iframe)},200);
@@ -747,7 +747,7 @@ function createFakeDocs() // and carols :-)
         $(this).parent().find(".render").click(function(){
             $(this).addClass("selected");
             $(this).parent().find(".source").removeClass("selected");
-            $(this).parent().parent().find("div.htmleditor").hide();            
+            $(this).parent().parent().find("div.htmleditor").hide();
             $(this).parent().parent().find("div.fakedoc").show();
             setTimeout(function(){resizeIframe(iframe)},200);
         });
@@ -768,19 +768,19 @@ function highlightCarols()
     var whatToDo = function()
     {
         $("div.fakedoc.carol").css("border","1px solid black");
-        $(getCarolDiv()).css("border","3px solid black");        
+        $(getCarolDiv()).css("border","3px solid black");
     }
     if ($("div.fakedoc.carol").length != 0)
     {
         whatToDo();
         $("div#content").scroll(function(){
             whatToDo();
-        });        
+        });
     }
 }
 
 function updateVisibleFakeDoc()
-{    
+{
     $("div.fakedocwrapper div.fakedoc").css("border","1px solid black");
     $("div.fakedocwrapper").removeClass("onscreen");
     $("div.fakedocwrapper").each(function(){
@@ -791,7 +791,7 @@ function updateVisibleFakeDoc()
     		$(that).addClass("onscreen");
     		$("div.fakedocwrapper.onscreen").find("div.fakedoc").css("border","4px solid black");
     		visibleFakeDoc = $("div.fakedocwrapper.onscreen").find("iframe")[0].contentWindow.document;
-	        visibleFakeDocWrapper = $("div.fakedocwrapper.onscreen");	
+	        visibleFakeDocWrapper = $("div.fakedocwrapper.onscreen");
     	};
         var docViewTop = $(window).scrollTop();
         var docViewBottom = docViewTop + $(window).height();
@@ -801,11 +801,11 @@ function updateVisibleFakeDoc()
 
         if (/* (elemBottom >= docViewTop)  && */ (elemTop <= docViewBottom)
          /* && (elemBottom <= docViewBottom) */ &&  (elemTop >= docViewTop) && ($(this).is(":visible")))
-        {            
+        {
             $(this).addClass("onscreen");
         }
     });
-    
+
     if ($("div.fakedocwrapper.onscreen").size() == 1)
     {
     	$("div.fakedocwrapper.onscreen").find("div.fakedoc").css("border","4px solid black");
@@ -1098,30 +1098,30 @@ function handleTestCasesBasic()
 function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
 {
     if (message2 == undefined) message2 = "Tell us how you feel about that:";
-    
+
     // if already asked, don't mess around with the how do you feel did...
     if ($(source).find("div.emotionselection div.message").text().trim() == message) return;
-    
+
     // otherwise, blow away any existing how do you feels...
     $("div.emotionselection").not(".fixed").remove();
-    var emotiondiv = $('<div class="emotionselection" style="margin-top: 0.8em"></div>');    
-    
+    var emotiondiv = $('<div class="emotionselection" style="margin-top: 0.8em"></div>');
+
     emotiondiv.append('<div class="message" style="margin-bottom: 0.8em; margin-top: 0.8em">'+message+"</div>");
-    
-    
-    emotiondiv.append('<div class="message2">'+message2+'</div>');        
-    
+
+
+    emotiondiv.append('<div class="message2">'+message2+'</div>');
+
     emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Happy</div><img src="'+contextPath+'/images/happy.jpg"/></div>');
     emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Surprised</div><img src="'+contextPath+'/images/surprise.jpg"/></div>');
     emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Afraid</div><img src="'+contextPath+'/images/fear.jpg"/></div>');
     emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Disgust</div><img src="'+contextPath+'/images/disgust.jpg"/></div>');
     emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Angry</div><img src="'+contextPath+'/images/anger.jpg"/></div>');
-    emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Unhappy</div><img src="'+contextPath+'/images/unhappy.jpg"/></div>');        
+    emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Unhappy</div><img src="'+contextPath+'/images/unhappy.jpg"/></div>');
 
     emotiondiv.append('<div class="imgwrapper" style="display: inline-block; width: 44px; font-size: 60%; color: transparent"><div style="position: relative;">Other</div><img src="'+contextPath+'/images/other.png"/></div>');
-    
+
     emotiondiv.append("<div>Type any extra thoughts below...</div>");
-    emotiondiv.append('<textarea class="emothoughts" style="width: 90%; height: 5em; font-family: sans-serif"></textarea>');   
+    emotiondiv.append('<textarea class="emothoughts" style="width: 90%; height: 5em; font-family: sans-serif"></textarea>');
 
     emotiondiv.find("img").css("border-radius",20);
     emotiondiv.find("img").css("padding","3px");
@@ -1133,7 +1133,7 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
             $(this).closest("div").css("color","black");
         },function(){ // on mouse out
             $(this).css("border-color","transparent");
-            $(this).closest("div").css("color","transparent");        
+            $(this).closest("div").css("color","transparent");
         });
     $(emotiondiv).find("img").click(function(e){
             var emotion = $(this).attr("src").split("/").pop().split(".")[0];
@@ -1142,7 +1142,7 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
             doIt();
 	  }
           else
-          { 
+          {
           	apprise("Please enter a single word to describe how you feel.", {'input':true}, function(r)
     		{
         		if(r)
@@ -1156,24 +1156,24 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
 		});
 		$("div.appriseOuter").css("top","50%");
           }
-	  
+
           function doIt()
           {
             var medalText = "";
             try { medalText = $(that).closest("div.testCase").attr("data-medal").split(":")[0]; } catch (e) {};
             var sourceId = $(that).closest("div.testCase").attr("data-id");
             if (sourceId == undefined) sourceId = ""; else sourceId = ":"+sourceId;
-            if (medalText == "") medalText = "testOnly";                        
+            if (medalText == "") medalText = "testOnly";
             if (recordThoughts)
             {
                 emotion += ":"+$(that).closest("div.emotionselection").find("textarea.emothoughts").val();
                 medalText = "endOfSection";
-            }            
+            }
             sourceId = medalText+sourceId;
             logEmotion(shortmsg,emotion,sourceId);
             $(that).closest("div.emotionselection").find("img").not(that).not(".notransparent").css("opacity","0.3");
             $(that).closest("div.emotionselection").find("img").unbind();
-            $(that).closest("div.testCase").attr("data-fails","0");        
+            $(that).closest("div.testCase").attr("data-fails","0");
             // ugly hack to make the message "different"
             $(that).closest("div.emotionselection").find("div.message").html("&nbsp;"+message+"&nbsp;");
             $(that).closest("div.emotionselection").find("div.message2").text("You said you felt");
@@ -1182,7 +1182,7 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
                 $.colorbox.close();
             },1000)
             e.stopPropagation();
-	  }         
+	  }
         });
     if ($(source).hasClass("emo")) {
         $(source).append(emotiondiv);
@@ -1211,7 +1211,7 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
         $.colorbox({inline : true, overlayClose : false, escKey : false,  href : emotiondiv, width: "50%", maxWidth : 600, onComplete : function (){ $(this).colorbox.resize(); $("div#cboxClose").hide(); } });
     }
 
-     emotiondiv.find("textarea.emothoughts").click(function(event){            
+     emotiondiv.find("textarea.emothoughts").click(function(event){
             event.stopPropagation();
         });
     emotiondiv.find("div.imgwrapper").each(function(){
@@ -1229,7 +1229,7 @@ function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
 function greatSuccessHtml(medal,fb)
 {
     // legacy
-    medalGreatSuccess(medal,fb);        
+    medalGreatSuccess(medal,fb);
 }
 
 function medalGreatSuccess(medal,fb)
@@ -1302,7 +1302,7 @@ function medalEpicFail(SUCCESSFULTESTS,NUMBEROFTESTS,fb)
     $("div#testresult",iframeDoc).css("opacity",0.8);
 
     parent.LOGtestFailed(SUCCESSFULTESTS+"/"+NUMBEROFTESTS);
-    
+
     /*
     var attempts = $(lasttestlink).attr("data-fails");
     if (isNaN(attempts)) attempts = 0;
@@ -1333,14 +1333,14 @@ function getStyle(className){
 
 function handleTestCasesHtml()
 {
-    $(".testCase").each(function(){                
+    $(".testCase").each(function(){
         var id = $(this)[0].id;
         if ($(this).find("div.id").length != 0)
         {
             id = $(this).find("div.id").text().trim();
         }
         if (id == undefined) id = "";
-        
+
         // get medal details, if any
         var medal09876 = undefined;
         if ($(this).find("div.medalType").length != 0)
@@ -1356,19 +1356,19 @@ function handleTestCasesHtml()
             }
         }
         if (medal09876 != undefined) $(this).attr("data-medal",medal09876);
-        $(this).attr("data-id",id);        
-        
+        $(this).attr("data-id",id);
+
         var tests = $(this).find(".test");
         //var inputTests = $(this).find(".inputTest");
-        var func = function(e) {            
+        var func = function(e) {
             lasttestlink = this;
-            
+
             var attempts = $(lasttestlink).attr("data-fails");
             if (isNaN(attempts)) attempts = 0;
             attempts++;
             $(lasttestlink).attr("data-fails",attempts);
 
-            
+
             $(this).find("div.emotionselection").remove();
             // hidden override option
             if (e.shiftKey)
@@ -1376,26 +1376,26 @@ function handleTestCasesHtml()
                 $(this).find("button,br,input").show();
                 return;
             }
-            
+
             // JQuery CDN
             var code = '<script src="//code.jquery.com/jquery-1.10.1.min.js"></script>'+"\n";
             code += '<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>'+"\n";
-            
+
             // our own test code
             code += '<script type="text/javascript">'+"\n";
-            
+
             // feedback
-            code += 'var fb = ""; function feedback(newFb) { fb += "<p style=\\"margin-top: 0px\\">"+newFb+"</p>" };'; 
-            
+            code += 'var fb = ""; function feedback(newFb) { fb += "<p style=\\"margin-top: 0px\\">"+newFb+"</p>" };';
+
             // Hacky way of forcing getStyle into the scope of the iframe
             // yes, eval is evil, it burns, it burns
             code += 'eval(parent.getStyle.toString());\n';
-            
+
             code += "NUMBEROFTESTS = 0; ";
             code += "SUCCESSFULTESTS = 0; \n\n";
-            
+
             code += "/* PHPFEEDBACKHERE */\n\n";
-            
+
             if (medal09876)
             {
                 code += "medal09876 = '"+medal09876+"'; \n\n";
@@ -1403,7 +1403,7 @@ function handleTestCasesHtml()
             else
             {
                 code += "medal09876 = undefined; \n\n";
-            }          
+            }
 
             tests.each(function(){
 
@@ -1422,7 +1422,7 @@ function handleTestCasesHtml()
 
                var oneCheck = "{\n";
                oneCheck += "// START OF TEST RUN\n\n";
-               
+
                oneCheck += "NUMBEROFTESTS++;";
 
                if (repeat) // add a for loop on the beginning
@@ -1435,7 +1435,7 @@ function handleTestCasesHtml()
                    oneCheck +="\n"+'var testFunc = function() { '+finalOutputJS+ ' };';
                    oneCheck += "\n"+'if (testFunc()) SUCCESSFULTESTS++;'+"\n";
                }
-               
+
                if (finalOutputPHP)
                {
                    code = code.replace("/* PHPFEEDBACKHERE */",'<?php function feedback($newFb) { echo \'feedback("\'.$newFb.\'");\'; } ?>');
@@ -1487,11 +1487,11 @@ function handleTestCasesHtml()
                    oneCheck += "var finalFunc = function () { "+endTestJS+" };\n";
                    oneCheck += "if (finalFunc()) SUCCESSFULTESTS++;";
                }
-               
+
                if (endTestPHP)
                {
                    oneCheck += "\n\n// FINAL CONDITION\n\n"
-                   oneCheck += "\nNUMBEROFTESTS++;\n";                   
+                   oneCheck += "\nNUMBEROFTESTS++;\n";
                    oneCheck += "\n"+'<?php function finalFunc() { try { '+endTestPHP+ ' } catch (Exception e) {}  };';
                    oneCheck += "\n"+'if (finalFunc()) echo "SUCCESSFULTESTS++; /* passed final PHP test */";';
                    oneCheck += "\n"+"?>";
@@ -1504,28 +1504,28 @@ function handleTestCasesHtml()
 
             code += "\n"+'if (SUCCESSFULTESTS == NUMBEROFTESTS) parent.greatSuccessHtml(medal09876,fb);';
             code += "\n"+'if (SUCCESSFULTESTS != NUMBEROFTESTS) parent.epicFailHtml(SUCCESSFULTESTS,NUMBEROFTESTS,fb);';
-            code += "\n</script>";                                   
+            code += "\n</script>";
 
             LOGtestStart(id,getTabBundleCode(),undefined,medal09876);
             runFullWeb(getTabBundleCode(undefined,code), getTabBundleCode());
         };
-        
+
         var linkText = " >>> Click here to test your code <<<"
         if (medal09876 != undefined)
         {
             linkText = linkText.replace("code","code for a "+medal09876.split(":")[0]+" medal");
             linkText = linkText.replace("ribbon medal","ribbon");
         }
-        
+
         $(this).text(linkText);
         $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
         //$(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
         $(this).find("input").click(function(e){
-           e.stopPropagation(); 
+           e.stopPropagation();
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
-           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];           
+           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
             var inp = $(this).parent().find("input").val();
             $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
                 if (res == "good")
@@ -1534,14 +1534,14 @@ function handleTestCasesHtml()
                     hiddenRun("");
                     setTimeout(function(){
                         outputframe.greatSuccess(medal09876);
-                    },1000);                
-                } 
+                    },1000);
+                }
             });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
             $(this).parent().find("button,br,input").hide();
-        }).click();   
+        }).click();
         $(this).css({
             border : "1px solid black",
             background : "white",
@@ -1562,7 +1562,7 @@ function indent(code)
 
 function genericHandleTestCases(func,override)
 {
-     $(".testCase").each(function(){         
+     $(".testCase").each(function(){
         //$(this).children().hide();
         var id = $(this)[0].id;
         if ($(this).find("div.id").length != 0)
@@ -1570,7 +1570,7 @@ function genericHandleTestCases(func,override)
             id = $(this).find("div.id").text().trim();
         }
         if (id == undefined) id = "";
-        
+
         // get medal details, if any
         var medal09876 = undefined;
         if ($(this).find("div.medalType").length != 0)
@@ -1586,22 +1586,22 @@ function genericHandleTestCases(func,override)
             }
         }
         if (medal09876 != undefined) $(this).attr("data-medal",medal09876);
-        
-        $(this).attr("data-id",id);                
-        var pea = $(this).clone();        
-        
+
+        $(this).attr("data-id",id);
+        var pea = $(this).clone();
+
         var linkText = " >>> Click here to test your code <<<"
         if (medal09876 != undefined)
         {
             linkText = linkText.replace("code","code for a "+medal09876.split(":")[0]+" medal");
             linkText = linkText.replace("ribbon medal","ribbon");
         }
-        
+
         $(this).text(linkText);
         $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
         //$(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
         $(this).find("input").click(function(e){
-           e.stopPropagation(); 
+           e.stopPropagation();
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
@@ -1610,17 +1610,17 @@ function genericHandleTestCases(func,override)
             $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
                 if (res == "good")
                 {
-                    LOGtestStart(id,editor.getValue(),undefined,medal09876);                
-                    setTimeout(function(){                    
+                    LOGtestStart(id,editor.getValue(),undefined,medal09876);
+                    setTimeout(function(){
                         override(pea);
-                    },1000);                
-                } 
+                    },1000);
+                }
             });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
             $(this).parent().find("button,br,input").hide();
-        }).click();   
+        }).click();
         $(this).css({
             border : "1px solid black",
             background : "white",
@@ -1630,14 +1630,14 @@ function genericHandleTestCases(func,override)
             fontWeight : "bold",
             textAlign : "center"
         });
-        $(this).click(function(e){            
+        $(this).click(function(e){
             lasttestlink = this;
-            
+
             var attempts = $(lasttestlink).attr("data-fails");
             if (isNaN(attempts)) attempts = 0;
             attempts++;
             $(lasttestlink).attr("data-fails",attempts);
-            
+
             $(this).find("div.emotionselection").remove();
             // hidden override option
             if (e.shiftKey)
@@ -1646,12 +1646,12 @@ function genericHandleTestCases(func,override)
                 return;
             }
             lasttestlink = this;
-            
+
             var attempts = $(lasttestlink).attr("data-fails");
             if (isNaN(attempts)) attempts = 0;
             attempts++;
             $(lasttestlink).attr("data-fails",attempts);
-            
+
             $(this).find("div.emotionselection").remove();
             // hidden override option
             if (e.shiftKey)
@@ -1661,7 +1661,7 @@ function genericHandleTestCases(func,override)
             }
             func(pea);
         });
-    });        
+    });
 }
 
 function handleTestCases()
@@ -1670,9 +1670,9 @@ function handleTestCases()
 }
 
 function handleTestCasesPython()
-{        
-    genericHandleTestCases(function(source){        
-       var code = 
+{
+    genericHandleTestCases(function(source){
+       var code =
 'import noobtest\n\
 noobdata = {\n\
   "numberOfTests" : 0,\n\
@@ -1680,50 +1680,50 @@ noobdata = {\n\
   "errorsDuringTest" : []\n\
 }\n\
 \n\
-';             
-               
-        var tests = $(source).find(".test");        
-        var medaldata = $(source).attr("data-medal");        
-        var id = $(source).attr("data-id");        
+';
+
+        var tests = $(source).find(".test");
+        var medaldata = $(source).attr("data-medal");
+        var id = $(source).attr("data-id");
         if (medaldata) medaldata = medaldata.replace(/"/g,"''");
-        
+
         var inputTestList = [];
-        
-        tests.each(function(){                
+
+        tests.each(function(){
                var finalOutput = $(this).find(".testFinalOutput").text().trim();
                var finalOutputCode = $(this).find(".testFinalOutputCode").text().trim();
                var codeIncludes = $(this).find(".codeIncludes").text().trim();
-               var repeat = $(this).attr("data-repeat");               
+               var repeat = $(this).attr("data-repeat");
                var initcond = $(this).attr("data-initcond");
-               var endTestCode = $(this).find(".endTestCode").text().trim();                              
-               
+               var endTestCode = $(this).find(".endTestCode").text().trim();
+
                // if we have an initial condition, add it
                if (initcond) code += initcond+"\n";
-                              
+
                var inputTests = $(this).find(".inputTest");
-               inputTests.each(function(){                   
+               inputTests.each(function(){
                 inputTestList.push($(this).text().trim());
-               });               
-               
+               });
+
                 var oneCheck = "# START OF TEST RUN\n\n";
                if ($("div.parameter#language").text().trim() == "pythoncarol")
                {
                    oneCheck += "import carol;carol.initialiseCarol()\n";
                }
                var codeInEditor = editor.getValue();
-               codeInEditor += "\n\n";               
+               codeInEditor += "\n\n";
                codeInEditor = indent(codeInEditor);
-               
+
                codeInEditor = "try:\n"+codeInEditor+"\nexcept Exception as e:\n";
                codeInEditor += "  noobtest.feedback('Your code caused an error during the test. If you do not get an error when you run your code, your code probably does something completely unexpected for this particular exercise.')\n";
                codeInEditor += "  noobtest.debug(str(e))\n";
                codeInEditor += "  noobdata['errorsDuringTest'].append(e)\n\n";
-              
+
 	       oneCheck += codeInEditor+"\n";
-               oneCheck += "noobdata['numberOfTests'] = noobdata['numberOfTests'] + 1\n\n";                              
-               
+               oneCheck += "noobdata['numberOfTests'] = noobdata['numberOfTests'] + 1\n\n";
+
                 // are we dealing with a simple output comparison or Python-based test code?
-                
+
                if (finalOutput != "")
                {
                    if (finalOutput.charAt(0) != "!")
@@ -1738,15 +1738,15 @@ noobdata = {\n\
                }
                else if (finalOutputCode != "")
                {
-                   finalOutputCode = "try:\n"+indent(finalOutputCode)+"\nexcept Exception as e:\n"+indent("noobtest.debug('Runtime error during test run: '+str(e))");                   
+                   finalOutputCode = "try:\n"+indent(finalOutputCode)+"\nexcept Exception as e:\n"+indent("noobtest.debug('Runtime error during test run: '+str(e))");
                    oneCheck +="\n"+'def noobTestRun():\n'+indent(finalOutputCode)+'\n\n';
                    oneCheck += "\n"+'if noobTestRun():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
                }
-               
+
                // if we have a check for the code needing to include a particular
                // aspect
                if (codeIncludes != "")
-               {                   
+               {
                    // this is actually a discrete test so increment
                    oneCheck += "\nnoobdata['numberOfTests'] = noobdata['numberOfTests'] + 1\n";
                    if (codeIncludes.charAt(0) != "!")
@@ -1759,13 +1759,13 @@ noobdata = {\n\
                        oneCheck += "\n"+'if "'+codeIncludes.toLowerCase()+'" not in noobtest.getCode(): noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\n\n";
                    }
                }
-                              
+
                if (repeat)
                {
                    oneCheck = indent(oneCheck);
                    oneCheck = "for noobrepeat in range(0,"+repeat+"):\n"+oneCheck+"\n\n";
                }
-               
+
                // add the check code block to our main code
                code += "\n\n"+oneCheck;
 
@@ -1774,49 +1774,49 @@ noobdata = {\n\
                {
                    code += "\n\n# FINAL CONDITION\n\n"
                    code += "\nnoobdata[['numberOfTests'] = noobdata['numberOfTests'] + 1\n";
-                   
-                   endTestCode = indent(endTestCode);                   
+
+                   endTestCode = indent(endTestCode);
                    code +="\n"+'def noobTestRun():\n'+endTestCode+'\n\n';
                    code += "\n"+'if noobTestRun(): noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\n";
                }
-                                             
+
         });
-        // now, determine whether we've passed all tests               
+        // now, determine whether we've passed all tests
         code += "\n"+'if noobdata["successfulTests"] == noobdata["numberOfTests"]:\n'+
                      '  noobtest.greatSuccess("'+id+'","'+medaldata+'")\n'+
                      'else:\n'+
                      '  noobtest.epicFail(noobdata["successfulTests"],noobdata["numberOfTests"])\n';
-        
+
         // we should be able to run this...!
         LOGtestStart(id,editor.getValue(),false,medaldata)
         if (inputTestList.length == 0) inputTestList = undefined;
-        
-        if ($("div.parameter#language").text().trim() == "pythoncarol") 
+
+        if ($("div.parameter#language").text().trim() == "pythoncarol")
         {
-            carol.initialiseCarol();            
+            carol.initialiseCarol();
         }
-        setTimeout(function() { runPython("::istest::"+code,true,inputTestList); },1);        
+        setTimeout(function() { runPython("::istest::"+code,true,inputTestList); },1);
     },
     function(source) // override functionality
-    {                
-        var medaldata = $(source).attr("data-medal");        
-        var id = $(source).attr("data-id");        
+    {
+        var medaldata = $(source).attr("data-medal");
+        var id = $(source).attr("data-id");
         if (medaldata) medaldata = medaldata.replace(/"/g,"''");
         var code =  'import noobtest\nnoobtest.greatSuccess("'+id+'","'+medaldata+'")';
-        setTimeout(function() { runPython(code,true) });        
+        setTimeout(function() { runPython(code,true) });
     });
 }
 
 function handleTestCasesJS()
 {
-    $(".testCase").each(function(){                
+    $(".testCase").each(function(){
         var id = $(this)[0].id;
         if ($(this).find("div.id").length != 0)
         {
             id = $(this).find("div.id").text().trim();
         }
         if (id == undefined) id = "";
-        
+
         // get medal details, if any
         var medal09876 = undefined;
         if ($(this).find("div.medalType").length != 0)
@@ -1832,18 +1832,18 @@ function handleTestCasesJS()
             }
         }
         if (medal09876 != undefined) $(this).attr("data-medal",medal09876);
-        $(this).attr("data-id",id);        
-        
+        $(this).attr("data-id",id);
+
         var tests = $(this).find(".test");
         //var inputTests = $(this).find(".inputTest");
         var func = function(e) {
             lasttestlink = this;
-            
+
             var attempts = $(lasttestlink).attr("data-fails");
             if (isNaN(attempts)) attempts = 0;
             attempts++;
             $(lasttestlink).attr("data-fails",attempts);
-            
+
             $(this).find("div.emotionselection").remove();
             // hidden override option
             if (e.shiftKey)
@@ -1851,21 +1851,21 @@ function handleTestCasesJS()
                 $(this).find("button,br,input").show();
                 return;
             }
-            
+
             var code = "NUMBEROFTESTS = 0; ";
             code += "SUCCESSFULTESTS = 0; \n\n";
             code += "answerDocument = parent.visibleFakeDoc; \n\n";
             code += "qwerty09876 = \"\";\n\n\n";
 	    code += "errorsDuringTest = [];\n\n";
-            
+
             code += 'function liveOutput() { return (document.getElementById("output-main").innerHTML+"").trim().replace(/<br.*?>/gi,"\\n") }';
-            
+
             code += "\n\n\n\n";
-            
+
             code += 'function getCode() { return parent.editor.getValue(); }';
-            
+
             code += "\n\n\n\n";
-            
+
             if (medal09876)
             {
                 code += "medal09876 = '"+medal09876+"'; \n\n";
@@ -1900,7 +1900,7 @@ function handleTestCasesJS()
                var codeInEditor = editor.getValue();
                codeInEditor += "\n\n";
                codeInEditor = codeInEditor.replace(/document/g,"parent.visibleFakeDoc");
-               
+
                if($("div.parameter#language").text().trim() == "pcode" || $("div.parameter#language").text().trim() == "pcarol")
                {
                    codeInEditor = pcodeToJs(codeInEditor);
@@ -1912,7 +1912,7 @@ function handleTestCasesJS()
 		}
 
 		codeInEditor = 'try { '+codeInEditor+' } catch (e) { feedback("Your code caused an error during the test: "+e.message); errorsDuringTest.push(e.message); }';
-               
+
 		oneCheck += codeInEditor+"\n";
                oneCheck += "NUMBEROFTESTS++;";
 
@@ -2004,7 +2004,7 @@ function handleTestCasesJS()
             code = code.replace(/input/g,"fakeInput");
             code = code.replace(/prompt/g,"fakeInput");
 
-            if($("div.parameter#language").text().trim() != "pcode" && $("div.parameter#language").text().trim() != "pcarol") 
+            if($("div.parameter#language").text().trim() != "pcode" && $("div.parameter#language").text().trim() != "pcarol")
             {
                 hiddenRun(code,"true",editor.getValue());
             }
@@ -2013,18 +2013,18 @@ function handleTestCasesJS()
                 hiddenRun(code,"true");
             }
         };
-                
+
         var linkText = " >>> Click here to test your code <<<"
         if (medal09876 != undefined)
         {
             linkText = linkText.replace("code","code for a "+medal09876.split(":")[0]+" medal");
             linkText = linkText.replace("ribbon medal","ribbon");
         }
-        
+
         $(this).text(linkText);
         $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
         $(this).find("input").click(function(e){
-           e.stopPropagation(); 
+           e.stopPropagation();
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
@@ -2037,14 +2037,14 @@ function handleTestCasesJS()
                     hiddenRun("");
                     setTimeout(function(){
                         outputframe.greatSuccess(medal09876);
-                    },1000);                
-                } 
+                    },1000);
+                }
             });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
             $(this).parent().find("button,br,input").hide();
-        }).click();   
+        }).click();
         $(this).css({
             border : "1px solid black",
             background : "white",
@@ -2053,7 +2053,7 @@ function handleTestCasesJS()
             padding : "5px",
             fontWeight : "bold",
             textAlign : "center"
-        });        
+        });
         $(this).click(func);
     });
 }
@@ -2067,11 +2067,11 @@ function updateTestCases()
     // populate medal object from backend
     $.ajax({
         type : "POST",
-        url : contextPath + "/stats?type=testMedals",    
+        url : contextPath + "/stats?type=testMedals",
         dataType : "json",
-        success : function(r) {       
+        success : function(r) {
             medals = r;
-            $(".testCase").each(function(){        
+            $(".testCase").each(function(){
                 // get any emotional content
                 var testId = $(this).attr("data-id");
                 var targetMedal = $(this).attr("data-medal");
@@ -2083,9 +2083,9 @@ function updateTestCases()
 			$(this).css("border-bottom","1px solid black");
 		}
 
-                // if we've passed a test with this ID before...        
+                // if we've passed a test with this ID before...
                 if (medals[testId] != undefined)
-                {                              
+                {
                     $(this).addClass("completed");
                     var medal = medals[testId];
                     targetMedal = targetMedal.split(":")[0];
@@ -2128,7 +2128,7 @@ function updateTestCases()
                                     .click(function(){
                                         assist(testId,medal);
                                     });
-                                $(this).after(ass); 
+                                $(this).after(ass);
 
                                  // if we've granted an assist
                                  if (assists[testId+":awarded"] != undefined)
@@ -2138,22 +2138,22 @@ function updateTestCases()
                                  }
                             }
                         }
-                        else 
+                        else
                         {
                             html = '&gt;&gt;&gt You\'ve passed this already - click to repeat the test &lt;&lt;&lt';
                         }
                         $(this).contents().not("div.emotionselection,span.override").remove();
-                        $(this).prepend(html);                        
+                        $(this).prepend(html);
                     }
                     else if (medal != "")
-                    {  
+                    {
                     	var greater = false;
                     	if (targetMedal == "bronze" && $.inArray(medal,["silver","gold"]) != -1) greater = true;
-                    	if (targetMedal == "silver" && medal == "gold") greater = true;                              
+                    	if (targetMedal == "silver" && medal == "gold") greater = true;
 						var msg = "You currently have a *MEDAL* medal for this exercise.";
 						if (greater) msg = "You already have a better (*MEDAL*) medal for this exercise.";
 						msg = msg.replace("*MEDAL*",medal);
-                        html = '<p style="margin: 0px; padding: 0px; text-align: center;">'+msg;						
+                        html = '<p style="margin: 0px; padding: 0px; text-align: center;">'+msg;
 						if (greater) html = '<img src="'+contextPath+'/images/medal'+targetMedal+'.png" style="float: left">'+html;
 						html += '<br/>&nbsp;<br/>&gt;&gt;&gt Click here to test for the '+targetMedal+' medal &lt;&lt;&lt</p><div style="clear: both"></div>';
 						html = html.replace("ribbon medal","ribbon"); // shouldn't ever happen, but hey
@@ -2161,27 +2161,27 @@ function updateTestCases()
                         $(this).prepend(html);
 			if (greater) $(this).addClass("medalwon");
                     }
-                }               
+                }
             });
             // update nav points
             $("div.section").each(function(index){
                 var testcases = $(this).find(".testCase[data-medal]").size();
                 if (testcases != 0)
                 {
-                    var completed = $(this).find(".testCase.completed[data-medal]").size();        
-		    var wonmedals = $(this).find(".testCase.completed.medalwon[data-medal]").size();            
+                    var completed = $(this).find(".testCase.completed[data-medal]").size();
+		    var wonmedals = $(this).find(".testCase.completed.medalwon[data-medal]").size();
                     if (completed == 0) $(".navitem[id]").eq(index).find("a i").css("color","#B34947");
                     if (completed != 0) $(".navitem[id]").eq(index).find("a i").css("color","#E68332");
                     if (completed == testcases) $(".navitem[id]").eq(index).find("a").html('<i style="color: #777777" class="fa fa-check-circle"></i>');
 		    if (wonmedals == testcases) $(".navitem[id]").eq(index).find("a").html('<i style="color: #7FA859" class="fa fa-check-circle"></i>');
-                    
+
                 }
             });
-            
+
             // update number of attempts
             $.ajax({
                 type : "POST",
-                url : contextPath + "/stats?type=testAttempts",    
+                url : contextPath + "/stats?type=testAttempts",
                 dataType : "json",
                 success : function(results) {
                     for (var key in results)
@@ -2203,7 +2203,7 @@ function updateTestCases()
                         target.each(function(){
                             var maxattempts = $(this).attr("data-maxattempts");
                             if (isNaN(maxattempts) || result == -1) maxattempts = 0;
-                            var maxdowngrade = $(this).attr("data-maxdowngrade");                            
+                            var maxdowngrade = $(this).attr("data-maxdowngrade");
                             if (result >= maxattempts && maxattempts != 0)
                             {
                                 var medalNums = { "bronze" : 1, "silver" : 2, "gold" : 3};
@@ -2213,9 +2213,9 @@ function updateTestCases()
                                     $(this).contents().eq(0).replaceWith('<span style="color: gray">You have exceeded the maximum number of attempts. You can now only win the '+maxdowngrade+' medal for this exercise.</span>');
                                     $(this).unbind('click');
                                     $(this).click(function(e){
-                                        if (e.shiftKey) $(this).find("button,br,input").show(); 
-                                    });                                 
-                                }                                
+                                        if (e.shiftKey) $(this).find("button,br,input").show();
+                                    });
+                                }
                             }
                             else if (maxattempts > 0)
                             {
@@ -2224,10 +2224,10 @@ function updateTestCases()
                                 origText = origText.replace("<<<"," ("+result+" of "+maxattempts+" attempts) <<<");
                                 $(this).contents().eq(0).replaceWith(origText);
                             }
-                        }); 
+                        });
                     }
                 }
-            });                        
+            });
         }
     });
 
@@ -2239,7 +2239,7 @@ function assist(testId,medal)
     var msg = '<div style="font-family: Verdana, sans-serif; font-size: 90%"><h2 style="margin-top: 0px">Grant an assist</h2>';
     var maxpoints = 1;
     var previouslyawarded = 0;
-    
+
     if (assists[testId+":awarded"] != undefined)
     {
         previouslyawarded = -assists[testId+":awarded"];
@@ -2266,10 +2266,10 @@ function assist(testId,medal)
             msg += "<p>You can award one or two points to the person who<br/>";
             msg += "assisted you. The points will be deducted from<br/>";
             msg += "your total score.</p>"
-            
+
             msg += '<input type="radio" name="assistpoints" value="1" checked> 1 point<br/>';
             msg += '<input type="radio" name="assistpoints" value="2"> 2 points<br/>';
-        }        
+        }
     }
 
     if (medal == "gold")
@@ -2326,7 +2326,7 @@ function assist(testId,medal)
                 return;
             }
             // otherwise
-            LOGassist(testId,kno,assistpoints,medal);            
+            LOGassist(testId,kno,assistpoints,medal);
         }
     });
 }
@@ -2399,7 +2399,7 @@ function getTabBundleCode(asArray,injectIntoIndex)
     $("#code-titlebar div.tab").not("div.newtab").each(function(i,tab){
        newcode += "***TAB***\n";
        var tabcode = editor.getValue();
-       if (!$(tab).hasClass("selected"))          
+       if (!$(tab).hasClass("selected"))
        {
            tabcode = getCode($(tab).find("pre.code")[0]);
        }
@@ -2440,8 +2440,8 @@ function saveState(s)
     var code = editor.getValue();
     // tabs!
     if ($("#code-titlebar div.tab").length != 0) code = getTabBundleCode();
-    
-    
+
+
     var courseNo = $("#courseNo.parameter").text().trim();
     var lessonNo = $("#lessonNo.parameter").text().trim();
 
@@ -2456,7 +2456,7 @@ function saveState(s)
         $.cookie('nlpp-'+courseNo+"-"+lessonNo+"-code",code, {expires: 365, path: '/'});
         lastSaveStateCode = code;
     }
-    
+
     // if blockly, save that too
     if ($("div.parameter#blockly").text().trim() == "true")
     {
@@ -2470,10 +2470,10 @@ function saveState(s)
 }
 
 function getBlocklyXml()
-{   
+{
     // substitute any return symbols in <field name="CODE"> elements
     var xmldoc = $.parseXML(Blockly.Xml.domToPrettyText(Blockly.Xml.workspaceToDom(Blockly.mainWorkspace)));
-    $(xmldoc).find("field[name=CODE]").each(function(){ 
+    $(xmldoc).find("field[name=CODE]").each(function(){
         var t = $(this).text();
         t = t.replace(/ ⏎ /g,"\n");
         $(this).text(t);
@@ -2486,7 +2486,7 @@ function contentNav(sectionNo,delay,nosave)
     var d = delay;
     if (delay == undefined) d = 500;
     $("#navbar div.navitem").removeClass("selected");
-    $("#navbar div#navitem"+sectionNo).addClass("selected");    
+    $("#navbar div#navitem"+sectionNo).addClass("selected");
     //console.log($("#navbar div#navitem"+sectionNo)[0].className);
     $("#content .section.selected").fadeOut(d,function(){
        $(this).removeClass("selected");
@@ -2525,20 +2525,20 @@ function runPython(code,istest,input)
     document.forms[0].action = contextPath+"/RunPython";
     $(form).find("textarea[name=inputbuffer]").remove();
     if (input)
-    {                        
+    {
         $(form).append('<textarea style="width:0px;height:0px;visibility:hidden" name="inputbuffer">'+JSON.stringify(input)+'</textarea>');
     }
-    document.forms[0].submit();    
+    document.forms[0].submit();
 }
 
 function hiddenRun(code,test,codefortest)
-{	
+{
     // fudge console.log to println
     code = code.replace(/console\.log/g,"println");
     // fudge prompt to input
     code = code.replace(/prompt/g,"input");
     if (codefortest != undefined) codefortest = codefortest.replace(/console\.log/g,"println");
-    
+
     if ($("div.parameter#language").text().trim() == "carol" || $("div.parameter#language").text().trim() == "pcarol")
     {
         var carolLanguage = [];
@@ -2593,17 +2593,17 @@ function whiteSpaceify(code)
         var lev = cheatSourceLev(code);
         if (lev[0] == 0) return code; // current user is already on watermark
         if (lev[0] > 2) return code; // current user is already an out and out cheat
-                
+
         // otherwise, if watermark not present or watermark likely to be
         // corrupted but likely still the actual user logged in
     	var firstline = code.split("\n")[0];
         // strip any existing watermark
         var firstlinetrimmed = firstline.replace(/\s+$/g, '');
         code = code.replace(firstline,firstlinetrimmed);
-    
+
 	// add whitespace watermark to first line
 	var num = getKNo().replace(/[^0-9]/g,"");
-	num = num.split("");	
+	num = num.split("");
 	var wswm = "";
 	for (var i = 0; i < num.length; i++)
 	{
@@ -2612,8 +2612,8 @@ function whiteSpaceify(code)
 			wswm += " ";
 		}
 		/* if (i != num.length-1) */ wswm+= "\t";
-	}	
-	code = code.replace(wswm,"");		
+	}
+	code = code.replace(wswm,"");
 	code = code.replace(/\n/,wswm+"\n");
 	return code;
 }
@@ -2622,7 +2622,7 @@ function watermarkEditorCode()
 {
 	// get first line of the editor window
 	var code = editor.getValue();
-	
+
 	// add whitespace watermark to first line of
 	// current tab
 	code = whiteSpaceify(code);
@@ -2644,8 +2644,8 @@ function run()
     // I really regret "upgrading" CodeMirror... I am not sure why this code
     // is causing the scroll position to bounce around... but let's solve the
     // symptom rather than the disease.
-    var editorScrollpos = editor.getScrollInfo(); 
-    
+    var editorScrollpos = editor.getScrollInfo();
+
     watermarkEditorCode();
     var code = editor.getValue();
     saveState();
@@ -2655,14 +2655,14 @@ function run()
         editor.removeLineClass(i,"background");
         //editor.setLineClass(i,null);
     }
-        
+
     //editor.scrollTo(editorScrollpos.left,editorScrollpos.top);
-    
+
     if ($("div.parameter#blockly").text().trim() == "true")
     {
         parent.$("#code-blockly").contents().find(".blocklyToolboxDiv").find("div").removeClass("error");
     }
-    
+
     if ($("div.parameter#language").text().trim() == "basic")
     {
         basic.runbasic(code);
@@ -2670,7 +2670,7 @@ function run()
     }
     // java from server side
     else if ($("div.parameter#language").text().trim() == "javaserver")
-    {        
+    {
         javaserver.runjavaserver(code);
         // TODO: logging
     }
@@ -2684,7 +2684,7 @@ function run()
     	/* Ugly hack to prevent people using move(x) in actual code */
     	code = code.replace(/move\(.+\)/g,"move(!)");
     	/* Should result in a syntax error on whatever line has move(x) */
-    	
+
         $("div#output-outer").css("height","120px");
         $("div#editor-wrapper").css("bottom","120px");
         $("#editor-wrapper").css("height","");
@@ -2695,7 +2695,7 @@ function run()
     }
     // pcode
     else if ($("div.parameter#language").text().trim() == "pcode" || $("div.parameter#language").text().trim() == "pcarol")
-    {                
+    {
         runpcode(code);
     }
     else if ($("div.parameter#language").text().trim() == "fullweb")
@@ -2716,11 +2716,11 @@ function run()
     }
     else if ($("div.parameter#language").text().trim() == "python" || $("div.parameter#language").text().trim() == "pythoncarol")
     {
-        if ($("div.parameter#language").text().trim() == "pythoncarol") 
+        if ($("div.parameter#language").text().trim() == "pythoncarol")
         {
             try
             {
-                if (code.toLowerCase().indexOf("carol.") !=-1 ) carol.initialiseCarol();            
+                if (code.toLowerCase().indexOf("carol.") !=-1 ) carol.initialiseCarol();
             }
             catch (e)
             {
@@ -2743,7 +2743,7 @@ function run()
             $("#editor-wrapper").css("height","");
             editor.refresh();
             resize();
-            
+
             // but we should also check that they have the right fakeDocs on screen
             if ($("div.fakedocwrapper.onscreen").size() == 0 && code.indexOf("document") != -1)
             {
@@ -2755,25 +2755,25 @@ function run()
             	alert("You have two HTML fragments on the screen at once. Select which one you want to run your code against by clicking it before hitting the run button.");
             	return;
             }
-            
+
         }
         var oldcode = code;
         code = code.replace(/document/g,"parent.visibleFakeDoc");
 	// cover jquery
 	code = code.replace(/\$\((.+?)\)/g,"$($1,parent.visibleFakeDoc)");
         // wrap try catches around onclicks to catch errors in event-prompted functions
-        code = code.replace(/\.onclick\s*\=\s*(.*)\s*;/g,".onclick = function() { try { $1.call(this) } catch (e) { logError(e) } };");                
-        
-        hiddenRun(code);        
+        code = code.replace(/\.onclick\s*\=\s*(.*)\s*;/g,".onclick = function() { try { $1.call(this) } catch (e) { logError(e) } };");
+
+        hiddenRun(code);
         LOGrun(oldcode);
-    }    
+    }
 }
 
 function getTabNames()
 {
     var tabnames = [];
-    $(".tab").not(".newtab").each(function(){ 
-        tabnames.push($(this).contents().eq(0).text()); 
+    $(".tab").not(".newtab").each(function(){
+        tabnames.push($(this).contents().eq(0).text());
     });
     return tabnames;
 }
@@ -2802,9 +2802,9 @@ function runFullWeb(code,logcode)
         }
         else goForIt();
     } else goForIt();
-    
+
     function goForIt()
-    {   
+    {
 	var codefiles = getTabBundleCode(true)[0];
 	var names = getTabBundleCode(true)[1];
 	for (var i = 0; i < codefiles.length; i++)
@@ -2812,10 +2812,10 @@ function runFullWeb(code,logcode)
 	   var codefile = codefiles[i];
            var name = names[i];
            codefile = codefile.replace(/\<(\?xml|(\!doctype[^\>\[]+(\[[^\]]+)?))+[^>]+\>/gi, '').trim();
-	   var error = validateXML(codefile);                      
+	   var error = validateXML(codefile);
 	   if (name.slice(-5) != ".html" && name.slice(-4) != ".htm" && name.slice(4) != ".php") error = false;
            if (error && $("div.parameter#disableValidation") != "true")
-           {                              	
+           {
 		$("body",outputframe.document).html("");
 		$("body",outputframe.document).append('<code style="display: block; padding: 0.5em; background: white; border: 2px solid black; color: red"></code>');
 		$("body code",outputframe.document).text("Invalid HTML on line "+error.lineo+", column "+error.colno+" - "+error.msg);
@@ -2841,10 +2841,10 @@ function save(tabs)
     {
         code = getBlocklyXml();
     }
-    
+
     var language = $("div.parameter#language").text().trim();
     document.getElementById("codeinput").value = (tabs) ? getTabBundleCode() : code;
-    
+
     if (language.slice(0,4) == "java" && !tabs)
     {
         saveState();
@@ -2855,7 +2855,7 @@ function save(tabs)
             saveState();
             innerSave(filename);
             return;
-        }        
+        }
     }
     else if (language.slice(0,7) == "fullweb")
     {
@@ -2865,13 +2865,13 @@ function save(tabs)
         innerSave(filename);
         return;
     }
-    
+
     // if not Java, or fullweb, or pigin Java, or can't figure out the class name...
     var msg;
     var extension;
-    if (language.slice(0,4) == "java" && $("div.parameter#multi").text().trim() == "true" && !tabs)  
+    if (language.slice(0,4) == "java" && $("div.parameter#multi").text().trim() == "true" && !tabs)
     {
-        msg =    
+        msg =
         "Unable to determine the class name from your code - please enter filename to save your file as.<br/>&nbsp;<br/>"+
         "Note that in Java, you MUST save the file with the same name as your class name. So, for example, "+
         "if your class is called or is going to be called <b>HelloWorld</b>, then you must save your file "+
@@ -2908,7 +2908,7 @@ function save(tabs)
            innerSave(filename,tabs);
        }
     });
-    
+
     function innerSave(filename,tabs)
     {
         document.getElementById("filename").value = filename;
@@ -2936,7 +2936,7 @@ function clearEditor()
                     if ($("div.parameter#blockly").text().trim() == "true") Blockly.mainWorkspace.clear();
                     LOGcodeClear();
                 }
-                
+
             });
 }
 
@@ -2944,7 +2944,7 @@ function clearEditor()
 function stop()
 {
     if ($("div.parameter#language").text().trim() == "javaserver")
-    {       
+    {
             $.ajax({
                 type : "POST",
                 url : contextPath + "/JavaRunner?mode=sendstop",
@@ -2985,7 +2985,7 @@ function stop()
     {
         outputframe.halt = true;
         enableRun();
-    }    
+    }
 }
 function enableRun()
 {
@@ -3009,10 +3009,10 @@ function disableRun()
 function postRun()
 {
     if ($(".testCase[data-fails=5]").length != 0)
-    {            
+    {
         var $lastfail = $(".testCase[data-fails=5]").eq(0);
         $lastfail.attr("data-fails","0");
-        howDoYouFeelAbout($lastfail,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");    
+        howDoYouFeelAbout($lastfail,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");
     }
     setTimeout(function(){
         updateTestCases();
@@ -3021,7 +3021,7 @@ function postRun()
 
 function highlightLine(lineno)
 {
-    editor.focus(); 
+    editor.focus();
     editor.setCursor(lineno);
     //editor.setLineClass(lineno,"error");
     editor.addLineClass(lineno,"background","error");
@@ -3032,7 +3032,7 @@ function resize()
     var wrapperHeight = $("#output-inner").css("height");
     $("#outputframe").css("height",wrapperHeight);
     resizeFakeDocs();
-    resizeCarols();    
+    resizeCarols();
     if ($("#content").width() < 480)
     {
          $("div#topnav").addClass("compressed");
@@ -3063,8 +3063,8 @@ function handlePrettyPrintPlus()
                     html += (i+1)+"<br/>";
             }
             $(this).parent().prepend("<div class=\"linenos\">"+html+"</div>");
-   });   
-   
+   });
+
    if ($("div.parameter#multi").text().trim() == "true")
     {
         $("div.codebundle").each(function(i,source){
@@ -3085,7 +3085,7 @@ function pasteCodeBundle(source)
         if (r)
         {
             // delete existing tabs
-            $("div.tab").not(".newtab").remove();            
+            $("div.tab").not(".newtab").remove();
             $(source).find("pre.codefile").each(function(){
                 var code = getCode(this);
                 var tabname = $(this).attr("data-filename").trim();
@@ -3108,7 +3108,7 @@ function pasteCodeBundle(source)
 }
 
 function selectEditorTab(source,norename)
-{    
+{
     if (!$(source).hasClass("selected"))
     {
         //otherwise...
@@ -3128,7 +3128,7 @@ function selectEditorTab(source,norename)
             code = getCode($(source).find("pre.code")[0]);
             var spancursor = $(source).find("span.cursor").text().trim().split(",");
             y = spancursor[0];
-            x = spancursor[1];        
+            x = spancursor[1];
         }
         editor.setValue(code);
         javaPidjinCodeWrapper(true);
@@ -3156,7 +3156,7 @@ function selectEditorTab(source,norename)
 		}
 	});
     }
-    function doTheRest(){        
+    function doTheRest(){
     var name = $(source).text().trim();
     if (name.slice(-4) == ".cpp" || $("div.parameter#language").text().trim() == "cpp")
     {
@@ -3175,7 +3175,7 @@ function selectEditorTab(source,norename)
         $("input#tidy").click(function(){validXHTML();});
         $("input#tidy").show();
         $("input#tidy").val("Validate");
-    } 
+    }
     else if (name.slice(-4) == ".php")
     {
         editor.setOption("mode","application/x-httpd-php");
@@ -3201,7 +3201,7 @@ function selectEditorTab(source,norename)
         $("input#tidy").unbind("click");
         $("input#tidy").click(function(){tidyCode();});
         $("input#tidy").show();
-        $("input#tidy").val("Tidy"); 
+        $("input#tidy").val("Tidy");
     }
     else if ($("div.parameter#language").text().trim() == "fullweb")
     {
@@ -3223,7 +3223,7 @@ function deleteSelectedEditorTab()
 {
     //if ($("#code-titlebar div.tab").not("newtab").length < 2) return; // can't delete final tab
     apprise("Do you really want to remove this tab and any code within it? If you have not saved it, any code will be lost!", {verify:true},function(r){
-          if (r) {              
+          if (r) {
               if ($("#code-titlebar div.tab").not(".newtab").length < 2)
               {
 		// last tab - so we delete its contents and we rename it
@@ -3265,10 +3265,10 @@ function populateTabs(data)
         data = [];
         $.each(bits,function(i,bit){
             var datum = bit.split("***CODE***");
-            data.push(datum);                    
-        });                               
+            data.push(datum);
+        });
     }
-    
+
     // wipe out existing tabs
     $("#code-titlebar div.tab").not("div.newtab").remove();
     $.each(data,function(i,tab){
@@ -3287,7 +3287,7 @@ function populateTabs(data)
     });
     // click on the first one
     if (!$("#code-titlebar div.tab").eq(0).hasClass("selected")) $("#code-titlebar div.tab").eq(0).click();
-	
+
     sizeTabs();
 }
 
@@ -3310,13 +3310,13 @@ function submitWork(source,oneOnly)
             tabcodes.push([id,editor.getValue()]);
         }
         else
-        {        
+        {
             $("#code-titlebar div.tab").not("div.newtab").each(function(i,tab){
                 var onetab = editor.getValue();
                 var title = $(tab).contents().eq(0).text();
-                if (!$(tab).hasClass("selected"))          
+                if (!$(tab).hasClass("selected"))
                 {
-                    onetab = getCode($(tab).find("pre.code")[0]);                
+                    onetab = getCode($(tab).find("pre.code")[0]);
                 }
                 tabcodes.push([title,onetab]);
             });
@@ -3324,7 +3324,7 @@ function submitWork(source,oneOnly)
 
             //    String code = request.getParameter("codeinput");
             // String dir = request.getParameter("submitid");
-            // String tabname = request.getParameter("tabname");        
+            // String tabname = request.getParameter("tabname");
 
         var d = new Date();
         var dd = ("0"+d.getDate()).slice(-2);
@@ -3341,7 +3341,7 @@ function submitWork(source,oneOnly)
             var data = {
                     code : tabcode[1],
                     dir : id+"-"+datestamp,
-                    tabname : tabcode[0]                
+                    tabname : tabcode[0]
                 };
 
             $.ajax({
@@ -3364,7 +3364,7 @@ function submitWork(source,oneOnly)
             $(source).text(">>> You have already submitted this, but can submit it multiple times. Click here to submit again. <<<")
         }
     },1000);
-   
+
 }
 
 function validXHTML()
@@ -3392,7 +3392,7 @@ function logout()
     $("div#lectureslides").css("top","0px");
     $("div#topnav").hide();
     $("div#navbar").hide();
-    $("div#lectureslides").show();    
+    $("div#lectureslides").show();
     setInterval(function() { window.location = contextPath+"/Login?logout=true"; },2000);
 }
 
@@ -3407,7 +3407,7 @@ function addNewTab(auto)
                   "If you want it to be a Javascript file, use <code>.js</code>, for PHP use <code>.php</code>, and if it's CSS you should use "+
                   "<code>.css</code></p>"+
                   "<p>If you do not specify an extension, <code>.html</code> will be assumed.</p>";
-        apprise(msg,{'input':true},function(r){            
+        apprise(msg,{'input':true},function(r){
             if (r)
             {
                 tabName = r;
@@ -3418,20 +3418,20 @@ function addNewTab(auto)
                     tabName += ".html";
                 }
                 inner(tabName);
-            }            
-         });         
-    } 
+            }
+         });
+    }
     else
     {
-        var tabNos = 1;            
+        var tabNos = 1;
         while ($("#code-titlebar div:contains(Tab "+tabNos+")").length != 0)
         {
-            tabNos ++;                
+            tabNos ++;
         }
         tabName = "Tab "+tabNos;
-        inner(tabName);    
+        inner(tabName);
     }
-    
+
     function inner(tabName)
     {
         var newtab = $('<div onclick="selectEditorTab(this)" class="tab">'+tabName+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i></div>');
@@ -3472,17 +3472,17 @@ function cheatSourceLev(code)
 				source += num;
 				num = 0;
 			}
-		}		
-		
+		}
+
                 var currUser = getKNo().replace(/[^0-9]/g,"").trim();
-                
-                return [getLevenshteinDistance(currUser,source),source];                
+
+                return [getLevenshteinDistance(currUser,source),source];
 	}
-            
+
 	return [-1,undefined];
 }
 
-function blocklyLoaded(blockly) 
+function blocklyLoaded(blockly)
 {
     // Called once Blockly is fully loaded.
     window.Blockly = blockly;
@@ -3510,7 +3510,7 @@ function blocklyCodeUpdate() {
     var $blocklyCodePreview = $("#code-blockly").contents().find(".blocklyToolboxDiv #blocklyCodePreview");
 
     var originalCode = getCode($blocklyCodePreview).replace(/[0-9]+/,"").replace(/\n[0-9]+/g,"\n");
-    
+
     var code;
     if ($("div.parameter#language").text().trim() == "python" || $("div.parameter#language").text().trim() == "pythoncarol")
     {
@@ -3531,34 +3531,34 @@ function blocklyCodeUpdate() {
         bcp += '<div id="bcp'+i+'" unselectable="on"><div class="cblineno">'+(i+1)+"</div>"+splitted[i]+"</div>\n";
     }
     $blocklyCodePreview.html(bcp);
-    
+
     var newCode = getCode($blocklyCodePreview).replace(/[0-9]+/,"").replace(/\n[0-9]+/g,"\n");
-    
+
     // TODO: Examine differences between originalCode and newCode
     // then bounce scrollbar to location. Maybe even some kind of
     // visual highlight
-    
+
     // until then, just bounce to the bottom
-   
+
     var height = $blocklyCodePreview.get(0).scrollHeight;
-    $blocklyCodePreview.scrollTop(height);    
-    
-    
+    $blocklyCodePreview.scrollTop(height);
+
+
 }
 
 function restoreBlockly(oldBlockly)
-{       
+{
     if (Blockly == null) Blockly = $("iframe#code-blockly").get(0).contentWindow.Blockly;
     Blockly.mainWorkspace.clear();
-    
-    var xmldoc = $.parseXML(oldBlockly);    
-    $(xmldoc).find("field[name=CODE]").each(function(){ 
+
+    var xmldoc = $.parseXML(oldBlockly);
+    $(xmldoc).find("field[name=CODE]").each(function(){
         var t = $(this).text();
         t = t.replace(/\n/g," ⏎ ");
         $(this).text(t);
     });
-    oldBlockly =  (new XMLSerializer()).serializeToString(xmldoc);    
-    
+    oldBlockly =  (new XMLSerializer()).serializeToString(xmldoc);
+
     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, Blockly.Xml.textToDom(oldBlockly));
     blocklyCodeUpdate();
 }
@@ -3569,7 +3569,7 @@ function cheer(level)
 }
 
 function strop(level)
-{    
+{
     var newemolevel = emolevel - level;
     if (newemolevel > 7 || newemolevel < 1) return;
     // otherwise
@@ -3579,7 +3579,7 @@ function strop(level)
     emolevel = newemolevel;
 }
 
-function xgetMismatchedTags(xmlString) 
+function xgetMismatchedTags(xmlString)
 {
         xmlString.replace(/ /g,"");
         var starts = xmlString.match(/<[a-z|A-Z|0-9]*[^\/]*?>/g);
@@ -3615,7 +3615,7 @@ function javaPidjinCodeWrapper()
 {
     if ($("div.parameter#language").text().trim() != "java" || $("div.parameter#multi").text().trim() == "true") return;
     if (jpHeader != null) jpHeader.clear();
-    if (jpFooter != null) jpFooter.clear();    
+    if (jpFooter != null) jpFooter.clear();
     jpHeader = editor.addLineWidget(0,$('<pre class="javastatic top">import java.util.Scanner;\n\npublic class SomeJavaCode\n{\n  public static void main(String[] args)\n  {</pre>').get(0),{above:true,coverGutter:true});
     jpFooter = editor.addLineWidget(editor.lineCount(),$('<pre class="javastatic bottom">  } // end of main method\n} // end of class</pre>').get(0),{coverGutter:true});
     editor.refresh();
@@ -3623,7 +3623,7 @@ function javaPidjinCodeWrapper()
 
 function toggleBlocks()
 {
-    // do nothing if blocks not in play    
+    // do nothing if blocks not in play
     if ($("div#usermenu div#toggleblocks").hasClass("disabled")) return;
     var cookieStatus = $.cookie("disableblocks");
     if (cookieStatus != "true")
@@ -3638,8 +3638,8 @@ function toggleBlocks()
               setTimeout(function(){
                   location.reload();
               },1000);
-            }   
-        });        
+            }
+        });
     }
     else
     {
@@ -3653,10 +3653,10 @@ function toggleBlocks()
               setTimeout(function(){
                   location.reload();
               },1000);
-            }   
+            }
         });
     }
-    
+
     //$.cookie('nlpp-'+courseNo+"-"+lessonNo+"-code",code, {expires: 365, path: '/'});
 }
 
@@ -3664,12 +3664,12 @@ originalTexts = {};
 
 //$(document).load(function()
 window.onload = function()
-{   
+{
    // hoik the navbar out of the content div as it will break if we scale content
    // easier to do it here rather than fix/place it "properly" over in Main.java given
    // how Main.java constructs the page...
    $("body").append($("div#navbar"))
-    
+
    var title = $("div.parameter#lessonName").text().trim();
    if (title.length == 0) title = "NoobLab";
    window.document.title = title;
@@ -3679,15 +3679,15 @@ window.onload = function()
 	if (getKNo() == "k1406302" || getKNo() == "k1406809")
 	{
 		$("#content").css("background-color","#FFFF99");
-		
+
 	}
 
    $(".prettyprint").each(function(){
-       var preid = "id" + Math.random().toString(16).slice(2);       
+       var preid = "id" + Math.random().toString(16).slice(2);
       originalTexts[preid] = getCode(this);
       $(this).attr("data-preid",preid);
    });
-   
+
    prettyPrint();
    createQuickQuizzes();
    createEmos();
@@ -3700,7 +3700,7 @@ window.onload = function()
    else if ($("div.parameter#language").text().trim() == "java")
    {
        handleTestCasesJava();
-   }   
+   }
    else if ($("div.parameter#language").text().trim() == "fullweb")
    {
        handleTestCasesHtml();
@@ -3709,10 +3709,10 @@ window.onload = function()
    {
        handleTestCasesPython();
    }
-   else handleTestCases(); 
-  
+   else handleTestCases();
+
    if ($("div.parameter#language").text().trim() == "java")
-   {       
+   {
        $("iframe#outputframe").attr("src",contextPath+"/doppio");
        if ($.browser.msie)
        {
@@ -3720,17 +3720,17 @@ window.onload = function()
                    "need to use a standards-compliant browser, such as Chrome, Safari or Firefox.");
        }
    }
-   
+
    if ($("div.parameter#language").text().trim() == "pcode" || $("div.parameter#language").text().trim() == "basic" || $("div.parameter#language").text().trim() == "pcarol")
    {
        // hide the tidy button (cos it'll make no sense of either of these languages!
        $("input#tidy").hide();
        // and turn off code highlighting and autoindenting
        // as it makes equally no sense
-       editor.setOption("mode","text/plain");       
+       editor.setOption("mode","text/plain");
        //editor.setOption("indentUnit",4);
    }
-   
+
    if ($("div.parameter#language").text().trim() == "python" || $("div.parameter#language").text().trim() == "pythoncarol")
    {
        editor.setOption("mode","python");
@@ -3753,28 +3753,28 @@ window.onload = function()
         $("#code-titlebar").append('<div style="clear: both"></div>');
         addNewTab(true);
     	if (!$("#code-titlebar div.tab").eq(0).hasClass("selected")) $("#code-titlebar div.tab").eq(0).click();
-    } 
+    }
     // if no multitabs but using Java, add the skeleton class around the editor
     else if ($("div.parameter#language").text().trim() == "java")
     {
         javaPidjinCodeWrapper(true);
 //       $("div.CodeMirror div.CodeMirror-scroll").prepend('<pre class="javastatic top">import java.util.Scanner;\n\npublic class SomeJavaCode\n{\n  public static void main(String[] args)\n  {</pre>');
 //       $("div.CodeMirror div.CodeMirror-scroll").append('<pre class="javastatic bottom" style="padding-bottom: 5px; position: relative; left: 0px; margin-top: 15px; z-index: 1000">  } // end of main method\n} // end of class</pre>');
-        
+
     }
-    
+
     if ($("div.parameter#language").text().trim() == "fullweb")
     {
         // make default one index.html
         $("div.tab").eq(0).contents().eq(0).replaceWith('index.html');
     }
-    
+
     if ($("div.parameter#videoUrl").length != 0)
     {
         // add a link for the video
         $("div#topnav div.row1").append('<div title="Show lecture video" id="navvideo"><i class="fa fa-video-camera"></i></div>');
-        $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
-        $("div#navvideo").click(function(){            
+        $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
+        $("div#navvideo").click(function(){
             $("div#lectureslides,div#coursenavpage,div#chat").hide();
             $("div#navlecture,div#navcourse,div#navchat").removeClass("selected");
             $("div#video").toggle();
@@ -3790,7 +3790,7 @@ window.onload = function()
     {
         $("div#extramenuvideo").remove();
     }
-    
+
     if ($("div.parameter#lectureSlideUrl").length != 0)
     {
         // add a link for the lecture slides
@@ -3812,14 +3812,14 @@ window.onload = function()
     {
         $("div#extramenulecture").remove();
     }
-    
+
     if ($("div.parameter#courseNavUrl").length != 0)
     {
         // add a link for the course nav
         $("div#topnav div.row1").append('<div title="Show course navigation" id="navcourse"><i class="fa fa-globe"></i></div>');
         $("body").append('<div id="coursenavpage"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navcourse").click(function(){
-            $("div#video,div#lectureslides,div#chat").hide();            
+            $("div#video,div#lectureslides,div#chat").hide();
             $("div#navvideo,div#navlecture,div#navchat").removeClass("selected");
             $("div#coursenavpage").toggle();
             if ($("div#coursenavpage iframe").attr("data-loaded") == "false")
@@ -3834,13 +3834,13 @@ window.onload = function()
     {
         $("div#extramenucoursenav").remove();
     }
-    
+
     if ($("div.parameter#chatUrl").length != 0)
     {
         // add a link for the chat
         $("div#topnav div.row1").append('<div title="Show chat pane" id="navchat"><i class="fa fa-commenting-o"></i></div>');
-        $("body").append('<div id="chat"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');        
-        $("div#navchat").click(function(){            
+        $("body").append('<div id="chat"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
+        $("div#navchat").click(function(){
             $("div#lectureslides,div#coursenavpage,div#video").hide();
             $("div#navlecture,div#navcourse,div#navvideo").removeClass("selected");
             $("div#chat").toggle();
@@ -3852,8 +3852,8 @@ window.onload = function()
                     chaturl = chaturl.replace("{course}",$("div.parameter#courseNo").text().trim());
                 }
                 if (chaturl.indexOf("{user}") != -1)
-                {                    
-                    chaturl = chaturl.replace("{user}",getKNo());                
+                {
+                    chaturl = chaturl.replace("{user}",getKNo());
                 }
                 if (chaturl.indexOf("{lessonno}") != -1)
                 {
@@ -3869,8 +3869,8 @@ window.onload = function()
     {
         $("div#extramenuchat").remove();
     }
-    
-    
+
+
     if ($("div.parameter#kinder").text().trim() == "true")
     {
         // kinder mode.
@@ -3900,52 +3900,52 @@ window.onload = function()
                     "background-size":"contain"
             });
     }
-    
+
      // make any offsite links display in colourbox iframe
    $("a.iframe").colorbox({iframe:true, width:"80%", height:"80%"});
    $("a.medallink").colorbox({width: "600px", maxWidth : "600px", maxHeight: "80%",
-                                onComplete : function() { 
-                                    //$(this).colorbox.resize(); 
+                                onComplete : function() {
+                                    //$(this).colorbox.resize();
                                }
                             });
-   
+
    handlePrettyPrintPlus();
-   createFakeDocs();      
+   createFakeDocs();
    setTimeout(resizeFakeDocs,2000);
    var courseNo = $("#courseNo.parameter").text().trim();
    var lessonNo = $("#lessonNo.parameter").text().trim();
    var lastSectionNo = $.cookie('nlpp-'+courseNo+"-"+lessonNo+"-lastnav");
    var oldCode = $.cookie('nlpp-'+courseNo+"-"+lessonNo+"-code");
    var oldBlockly = $.cookie('nlpp-'+courseNo+"-"+lessonNo+"-codeblockly");
-   if (oldCode == null) oldCode = ""; 
-   if (oldBlockly == null) oldCode = ""; 
+   if (oldCode == null) oldCode = "";
+   if (oldBlockly == null) oldCode = "";
 
    // reset check every 60 seconds to see if state needs saving
    saveInterval = setInterval(function() {saveState();},60000);
-   
-   var hash = document.location.hash;   
-   if (hash != "") 
+
+   var hash = document.location.hash;
+   if (hash != "")
    {
        hash = parseInt(hash.slice(1));
        if (isNaN(hash)) { hash = 0; } else { hash--; }
    }
-   else hash = 0;      
+   else hash = 0;
    contentNav(hash,0,true);
-   
+
    if ($("div.parameter#kinder").text().trim() != "true")
    {
         if ((lastSectionNo != null && lastSectionNo != 0 && lastSectionNo.length != 0) || oldCode != "")
-        {       
+        {
             if (isNaN(lastSectionNo) || lastSectionNo.length == 0) lastSectionNo = 0;
             clearInterval(saveInterval);
             var msg = "Do you want to resume from where you last left this lesson?";
             if (hash != 0) msg = "Do you want to restore the code you had when you were last on this lesson?";
             apprise(msg, {verify:true},function(r){
-               if (r) {        
+               if (r) {
                  //LOGcodePaste(oldCode,"FromPreviousSession");
                  if ($("div.parameter#multi").text().trim() == "true")
-                 {                                                  
-                     populateTabs(oldCode);                                
+                 {
+                     populateTabs(oldCode);
                  }
                  else
                  {
@@ -3963,13 +3963,13 @@ window.onload = function()
                      // not blockly - hide/disable it
                      $("div.parameter#blockly").remove();
                      $("#code-blockly").hide();
-                     $("#code-blocklytoggle").hide(); 
+                     $("#code-blocklytoggle").hide();
                  } */
 
                  lastSaveStateCode = oldCode;
                  lastcode = oldCode; // levenshtein index code
                  if (hash == 0)
-                 {                
+                 {
                      contentNav(lastSectionNo,1,true);
                      lastSaveStateSectionNo = lastSectionNo;
                  }
@@ -3986,7 +3986,7 @@ window.onload = function()
             });
         }
    }
-   
+
     // kludge. Have no idea why this is needed.
     // Otherwise, the resize seems to get lost somewhere
     // in the bazillion callbacks that are going on.
@@ -4003,16 +4003,16 @@ window.onload = function()
           $(this).css("font-size",newEm+"em");
        });
    }*/
-   
+
    // update test case divs with "you've done this one already" messages
    // where appropriate
    updateTestCases();
-   
+
    // update local stash of previous log entries
    $.getJSON(contextPath+"/stats?type=last20",function(result){
        lastLogEntries = result;
    });
-   
+
    // install logging for copy and paste
    $("div.CodeMirror textarea").on('paste', function(e) {
        var currentCode = editor.getValue();
@@ -4022,26 +4022,26 @@ window.onload = function()
             {
                 LOGcodePaste(newCode,"Large");
             }
-            
+
             var source = cheatSource(newCode);
             if (source)
             {
             	LOGpcheat("k"+source);
             }
-            
+
             lastcode = newCode; // levenshtein index code
        },500); // give it half a second so we can read what we've got
     });
-    
+
     // prevent clicking within the watermark whitespace
     editor.on("cursorActivity",function(){
        if (editor.getCursor().line == 0)
        {
             var max = editor.getLine(0).trim().length;
             if (editor.getCursor().ch > max+1) editor.setCursor(0,max+1);
-       } 
+       }
     });
-    
+
     // update footer in java pidgin mode
     editor.on("change",function(){
        if (editor.lineCount() != linecount)
@@ -4050,12 +4050,12 @@ window.onload = function()
            javaPidjinCodeWrapper();
        }
     });
-    
+
     // remap tabs to spaces and
     // tweak CodeMirror so that tab and shift tab behave sensibly
-    // According to the author of CodeMirror, this is not a "mistake" - go figure    
-    editor.options.extraKeys = { 
-        "Tab": function(cm) { 
+    // According to the author of CodeMirror, this is not a "mistake" - go figure
+    editor.options.extraKeys = {
+        "Tab": function(cm) {
           if (cm.getSelection().length) // nothing selected
           {
               CodeMirror.commands["indentMore"](cm)
@@ -4065,12 +4065,12 @@ window.onload = function()
             var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
             cm.replaceSelection(spaces);
           }
-        }, 
-        "Shift-Tab": "indentLess" 
+        },
+        "Shift-Tab": "indentLess"
         }
-      
+
     editor.setOption("indentUnit",2);
-    
+
     // install logging for scroll
     $(document).ready(function(){
         setTimeout(function(){
@@ -4085,7 +4085,7 @@ window.onload = function()
             },10000);
         },3000);
       });
-      
+
       // prevent copy/paste from content window.
       $("div#content").attr('unselectable', 'on')
                  .css('user-select', 'none')
@@ -4099,8 +4099,8 @@ window.onload = function()
             return false;
           });
     });
-    
-    // change colour of background if slacker       
+
+    // change colour of background if slacker
     $.get(contextPath+"/slackers.txt", function(data) {
   		var x = "";
   		for (var i = 32; i < watermark.length; i = i + 33) x+= watermark.charAt(i);
@@ -4109,7 +4109,7 @@ window.onload = function()
   			$("div#content").css("background-color","#FFCCCC");
   		}
 	});
-        
+
      // set editor theme if needed
      var editortheme = $.cookie("editortheme");
      if (editortheme == "") editortheme = "default";
@@ -4117,7 +4117,7 @@ window.onload = function()
      // and font size
      var cookieeditorfontsize = $.cookie("editorfontsize");
      if (cookieeditorfontsize != "")
-     {         
+     {
          editorfontsize = parseInt(cookieeditorfontsize);
          $(".CodeMirror").css("font-size",(editorfontsize)+"px");
          editor.refresh();
@@ -4132,7 +4132,7 @@ window.onload = function()
         $("div#usermenu div#toggleblocks").removeClass("disabled");
         $("div#code-titlebar").html('[ Code <i onclick="toggleBlocks()" class="fa fa-cube" style="cursor:pointer; color: red;" aria-hidden="true"></i> ]');
     }
-    
+
     // enable blockly if material calls for it
     if ($("div.parameter#blockly").text().trim() == "true")
     {
@@ -4153,7 +4153,7 @@ window.onload = function()
     //{
     //	$("div#toolbar i.fa").hide();
     //}
-     
+
     // check for testCases with 5 attempts and update
     /*
     setInterval(function(){
@@ -4161,17 +4161,17 @@ window.onload = function()
         {
             var $lastfail = $(".testCase[data-fails=5]").eq(0);
             $lastfail.attr("data-fails","0");
-            howDoYouFeelAbout($lastfail,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");    
+            howDoYouFeelAbout($lastfail,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");
         }
     },1000); */
-        
-    // add play/pause controls to any animated gifs         
-        $("img[src$=gif]").each(function(){            
+
+    // add play/pause controls to any animated gifs
+        $("img[src$=gif]").each(function(){
            var sg = new SuperGif({gif: this});
            sg.load(function(){
                var div = $(sg.get_canvas()).parent();
-               $(div).append('<div class="pntoolbar" style="position: absolute; right: 3px; bottom : 3px;"><button style="height: 30px; width: 30px; padding: 0px; line-height: 30px; border-radius: 15px; cursor: pointer; text-align: center; outline: 0px"><i class="fa fa-pause"></i></button>');                                             
-    
+               $(div).append('<div class="pntoolbar" style="position: absolute; right: 3px; bottom : 3px;"><button style="height: 30px; width: 30px; padding: 0px; line-height: 30px; border-radius: 15px; cursor: pointer; text-align: center; outline: 0px"><i class="fa fa-pause"></i></button>');
+
                 $(div).find("button").click(function(){
                 if (sg.get_playing())
                 {
@@ -4186,12 +4186,12 @@ window.onload = function()
                     $(div).find("button i").removeClass("fa-play");
                     $(div).find("button i").addClass("fa-pause");
                     sg.play();
-                }                
-            });   
+                }
+            });
            });
-        });          
-        
-      // add next/previous controls at bottom of each section...      
+        });
+
+      // add next/previous controls at bottom of each section...
       $("div.section").each(function(index) {
           $(this).append('<br/><div class="internalsectionnav"><a href="javascript:void(0)" class="next" style="float: right">Next Section &gt;&gt;</a><a href="javascript:void(0)" class="prev">&lt;&lt; Previous Section</a></div><br/><br/>')
           $(this).find("a.next").click(function() { contentNav(index+1) });
@@ -4199,7 +4199,7 @@ window.onload = function()
       });
       $("div.section").eq(0).find("div.internalsectionnav a.prev").remove();
       $("div.section").last().find("div.internalsectionnav a.next").remove();
-        
+
      // hook mouse events for window resize/drag
      var dragY = null;
      var dragX = null;
@@ -4211,7 +4211,7 @@ window.onload = function()
          $("body").append('<div id="resizeoverlay" style="position: fixed; top: 0px; bottom: 0px; left: 0px; right: 0px; z-index: 20000;"></div>');
          //$("body").children().last().css("background","rgba(123,245,76,0.7)");
          $("div#output-titlebar").css("z-index",20001);
-         dragY = setInterval(function(){                         
+         dragY = setInterval(function(){
             if (window.innerHeight-globalMouseY < 60) return;
             if (globalMouseY < 60) return;
             $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
@@ -4236,7 +4236,7 @@ window.onload = function()
          {
              clearInterval(dragY);
              dragY = null;
-             $("div#resizeoverlay").remove();             
+             $("div#resizeoverlay").remove();
          }
          if (dragX != null)
          {
@@ -4244,8 +4244,8 @@ window.onload = function()
              dragX = null;
              $("div#resizeoverlay").remove();
          }
-     }         
-     
+     }
+
 }
 //});
 
@@ -4266,8 +4266,8 @@ function resizeSplit(width)
     else
     {
         xpos = width;
-        width = window.innerWidth-width;        
-    }    
+        width = window.innerWidth-width;
+    }
     if (width < 330 || xpos < 330) return;
     if (xpos < 480)
     {
@@ -4278,10 +4278,10 @@ function resizeSplit(width)
         $("div#topnav").removeClass("compressed");
     }
     if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed"))
-    {                
+    {
         $("div#horizontaldrag").css("right",width+"px");
         $("div#editor-wrapper").css("width",xpos+"px");
-        $("div#output-outer").css("width",width+"px");                
+        $("div#output-outer").css("width",width+"px");
     }
     else
     {
@@ -4289,8 +4289,8 @@ function resizeSplit(width)
         $("div#editor-wrapper").css("width",width+1+"px");
         $("div#toolbar").css("width",width+"px");
         $("div#output-outer").css("width",width+"px");
-        $("div#content").css("right",(width+5)+"px");                                                           
-        $("div#topnav").css("right",(width+5)+"px");   
+        $("div#content").css("right",(width+5)+"px");
+        $("div#topnav").css("right",(width+5)+"px");
         $("div#lectureslides").css("right",(width+5)+"px");
         $("div#video").css("right",(width+5)+"px");
         $("div#chat").css("right",(width+5)+"px");
@@ -4324,7 +4324,7 @@ function zoomIn()
     }
     else
     {
-        current = $(".CodeMirror").css("font-size");        
+        current = $(".CodeMirror").css("font-size");
         if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
         current = parseInt(current);
         $(".CodeMirror").css("font-size",(current+1)+"px");
@@ -4349,7 +4349,7 @@ function zoomOut()
 	$("iframe#code-blockly").css("transform-origin","0 0");
         $("iframe#code-blockly").height((100*1/zoom)+"%");
         $("iframe#code-blockly").width((100*1/zoom)+"%");
-	$("iframe#code-blockly").attr("data-zoom",zoom);        
+	$("iframe#code-blockly").attr("data-zoom",zoom);
     }
     else
     {
@@ -4373,7 +4373,6 @@ function mainZoom()
    $(document).unbind("mouseup");
     if ($("div#mainZoomControls").is(":hidden"))
     {
-        console.log("hello");
         $("div#mainZoomControls").show();
         $(document).mouseup(function (e)
         {
@@ -4394,11 +4393,11 @@ function mainZoom()
 }
 
 function toggleOptions()
-{ 
+{
     $("div#mainZoomControls").hide();
     $("div#newzoom").removeClass("selected");
     //$("div#usermenu").toggle();
-    $("div#optionscog").toggleClass("selected");    
+    $("div#optionscog").toggleClass("selected");
     $(document).unbind("mouseup");
     if ($("div#usermenu").is(":hidden"))
     {
@@ -4424,8 +4423,8 @@ function toggleOptions()
 function brightness(r,g,b)
 {
    return Math.sqrt(
-      r * r * .241 + 
-      g * g * .691 + 
+      r * r * .241 +
+      g * g * .691 +
       b * b * .068);
 }
 
@@ -4498,23 +4497,24 @@ function scale(s)
             s = window.SCALE + 0.1;
         }
         else if (s == "zoomout" && window.SCALE > 0.5)
-        {           
+        {
             s = window.SCALE - 0.1;
         }
         else return;
     }
+    if (isNaN(s)) s = 1;
     window.SCALE = s;
     $.cookie("contentzoom", window.SCALE, {expires: 365, path: '/'});
-    $("div#content-inner").css("width","");    
+    $("div#content-inner").css("width","");
     $("div#content-inner").css("height","");
     if ($.browser.webkit)
     {
         $("div#content-inner").css("zoom","");
         if (s == 1) return;
-        $("div#content-inner").css("zoom",s);        
+        $("div#content-inner").css("zoom",s);
     }
     else
-    {    
+    {
         $("div#content-inner").css("transform","");
         if (s == 1) return;
         $("div#content-inner").css("transform","scale("+s+")");
@@ -4534,7 +4534,7 @@ $(window).resize(function() {
 
             //call my function
             resize();
-            
+
             if ($("#content").width() < 300)
             {
                 resizeSplit(350);
