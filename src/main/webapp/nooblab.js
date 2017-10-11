@@ -2818,7 +2818,7 @@ function runFullWeb(code,logcode)
            {
 		$("body",outputframe.document).html("");
 		$("body",outputframe.document).append('<code style="display: block; padding: 0.5em; background: white; border: 2px solid black; color: red"></code>');
-		$("body code",outputframe.document).text("Invalid HTML on line "+error.lineo+", column "+error.colno+" - "+error.msg);
+		$("body code",outputframe.document).text("Invalid HTML on line "+error.lineno+", column "+error.colno+" - "+error.msg);
 		if (!$("#code-titlebar div.tab").eq(i).hasClass("selected")) $("#code-titlebar div.tab").eq(i).click();
                 editor.addLineClass(error.lineno-1,"background","error");
 		//$("div.tab").eq(i).click();
