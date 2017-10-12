@@ -103,6 +103,66 @@ public class RealStats
         } catch (Exception e) { e.printStackTrace(); return "fail"; }
     }
     
+    public static boolean didStudentAttend(String student, String basedirstr, String startTextDate, String endTextDate, String ip)
+    {
+        if ("".equals(ip)) ip = null;
+        boolean didTheyTurnUp = false;        
+        try
+        {
+            Date startDate = sdf.parse(startTextDate);
+            Date endDate = sdf.parse(endTextDate);
+            CSVReader reader = new CSVReader(new FileReader(basedirstr+"/"+student+"/nocode.csv"));
+            ArrayList<String[]> lines = new ArrayList(reader.readAll());
+            while (!lines.isEmpty())
+            {
+                String[] line = lines.get(0);
+                String studentIp = line[1];
+                String studentTextDate = line[0];
+                Date studentDate = sdf.parse(studentTextDate);
+                if (studentDate.after(startDate) && studentDate.before(endDate) && (ip == null || line[1].matches(ip)))
+                {
+                    return true; // they did turn up!
+                }
+                lines.remove(0);
+            }
+        }
+        catch (Exception e) 
+        { 
+            e.printStackTrace(); 
+        };
+        return false;
+    }
+    
+    public static LinkedHashSet<Date> getStudentUsageDates(String student, String basedirstr,boolean roundhour,String ip)
+    {
+        if ("".equals(ip)) ip = null;
+        try
+        {
+            LinkedHashSet<Date> studentDates = new LinkedHashSet<Date>();
+            CSVReader reader = new CSVReader(new FileReader(basedirstr+"/"+student+"/nocode.csv"));
+            ArrayList<String[]> lines = new ArrayList(reader.readAll());
+            for (String[] line : lines)
+            {
+                if (ip == null || line[1].matches(ip))
+                {
+                    String textdate = line[0];
+                    if (roundhour)
+                    {
+                        // reset time to XX:00:00
+                        textdate = textdate.replaceAll(":[0-9][0-9]:[0-9][0-9] ",":00:00 ");
+                    }                    
+                    studentDates.add(sdf.parse(textdate));
+                }
+            }
+            return null;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public static HashMap<String,LinkedHashSet> getUsageDates(String basedirstr,boolean roundhour,String ip)
     {
         try

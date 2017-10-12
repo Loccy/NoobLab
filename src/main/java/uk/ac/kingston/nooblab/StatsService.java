@@ -82,6 +82,18 @@ public class StatsService extends HttpServlet
                 String ipmatch = request.getServletContext().getInitParameter("homeip");
                 out.println(gson.toJson(RealStats.getUsageDates(basedir, true,ipmatch)));
             }
+            if ("studentAttended".equals(statsType))
+            {                
+                response.setContentType("text/plain");
+                String student = request.getParameter("student");
+                String startdate = request.getParameter("startdate");
+                String enddate = request.getParameter("enddate");
+                String datadir = request.getSession().getServletContext().getInitParameter("datadir");
+                String course = request.getParameter("course");
+                String ipmatch = request.getServletContext().getInitParameter("homeip");
+                boolean result = RealStats.didStudentAttend(student, datadir+"/"+course, startdate, enddate, ipmatch);
+                out.println(result ? "X" : "");
+            }
             if ("testAssists".equals(statsType))
             {
                 response.setContentType("application/json");
