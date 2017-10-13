@@ -245,7 +245,7 @@
                                     }
                                     
                                     if ($("div.parameter#blockly").text().trim() == "true" && lastFilename.slice(-6) == ".bnoob")
-                                    {
+                                    {                                        
                                         // blockly file
                                         restoreBlockly(response);
                                     }

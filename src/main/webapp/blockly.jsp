@@ -110,11 +110,16 @@
             	{
                 	parent.$("xml#toolbox",document).find("category[name=Carol]").remove();
             	}
-                Blockly.inject(document.body,
+                var ws = Blockly.inject(document.body,
                         {path: './blockly/', toolbox: document.getElementById('toolbox'), sounds : false });
+                var lang = "${param.language}";                
+                lang = lang.charAt(0).toUpperCase() + lang.slice(1);                
+                if (lang == "Pcode") lang = "Pseudocode";
+                // not sure why this has become necessary with latestly Blocklies.
+                Blockly[lang].init(ws);
                 // Let the top-level application know that Blockly is ready.
                 window.parent.blocklyLoaded(Blockly);
-                Blockly.addChangeListener(window.parent.blocklyCodeUpdate);                
+                Blockly.addChangeListener(window.parent.blocklyCodeUpdate);
             }
         </script>
     </head>

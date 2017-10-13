@@ -3542,12 +3542,10 @@ function blocklyCodeUpdate() {
 
     var height = $blocklyCodePreview.get(0).scrollHeight;
     $blocklyCodePreview.scrollTop(height);
-
-
 }
 
 function restoreBlockly(oldBlockly)
-{
+{    
     if (Blockly == null) Blockly = $("iframe#code-blockly").get(0).contentWindow.Blockly;
     Blockly.mainWorkspace.clear();
 
@@ -3955,7 +3953,7 @@ window.onload = function()
 
                  if($("div.parameter#blockly").text().trim() == "true" && oldBlockly != "")
                  {
-                     restoreBlockly(oldBlockly);
+                     restoreBlockly(oldBlockly);                     
                  }
 
 /*                 if($("div.parameter#blockly").text().trim() == "true" && oldBlockly == "")
