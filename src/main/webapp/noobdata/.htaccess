@@ -1,1 +1,21 @@
+<IfModule mod_php5.c>
+Define MOD_PHP
+</IfModule>
+
+# not that PHP 6 actually exists...
+<IfModule mod_php6.c>
+Define MOD_PHP
+</IfModule>
+
+<IfModule mod_php7.c>
+Define MOD_PHP
+</IfModule>
+
+# and this is a complete guess for the future...
+<IfModule mod_php8.c>
+Define MOD_PHP
+</IfModule>
+
+<IfDefine MOD_PHP>
 php_value auto_prepend_file "/explicit/file/system/location/php_error_handler.php"
+</IfDefine>
