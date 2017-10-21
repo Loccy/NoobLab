@@ -49,27 +49,22 @@ plain HTTP you may run into browser issues regarding mixed content. I've also
 never tested a situation where the two servers would break the same origin
 policy. I can't imagine it would end well, though...
 
-To ensure that students see user friendly error messages in the NoobLab UI
-(rather than deep within the bowels of the error.log that Apache generates),
-you will need to make sure that your web server/PHP configuration prepends
-noobdata/php_error_handler.php to all PHP files served from noobdata and its
-subdirectories. If you are using Apache, we suggest placing either an .htaccess
-or a .user.ini in your noobdata directory to achieve this. Examples for Apache
-are included in the same directory as this readme file. Other servers are left
-as an exercise for the so-inclined (we'll award you a gold medal if you make
-it work! :-)
+When a student runs a piece of fullweb content, they create a directory in
+the Data dir called (surprisingly) fullweb/(their ID). To ensure that they see
+user friendly error messages in the NoobLab UI (rather than deep within the
+bowels of the error.log that Apache/whatever generates), NoobLab pushes
+.htaccess and .user.ini files to this directory along with their own content.
+These are designed so that the php_error_handler.php file gets prepended to
+each PHP script that runs. If you are using Apache with the prefork MPM, then
+it will probably be running PHP as an Apache module and the .htaccess is what
+will be used. This should work for current (as of 2017!) versions of PHP and
+there are some sensible predictions but if you are reading this in the future
+then you might need to edit this file.
 
-In Apache, if you are using the prefork MPM, then PHP is most likely running as
-an Apache module and you will need to use the .htaccess. If you are using
-FPM/fastcgi (almost certain if your MPM is worker or event), then use the
-.user.ini. If you're not sure, try both at the same time. Having both there 
-shouldn't break anything, although you are adding a (small) overhead if you're
-on FPM/fastcgi. If you know for certain that you're on FPM/fastcgi then ideally
-you should use the .user.ini only.
+If you are using the worker or event MPMs in Apache, the .user.ini file is
+likely what will end up getting used. Chances are PHP will be running through
+FPM/fastcgi in such instances. This should be ignored if PHP's running as a
+module.
 
-The .htaccess is configured so that it will kick in if it detects mod_php5,
-mod_php6 (shouldn't ever happen), mod_php7 or mod_php8 (greetings from the
-future!). Again, if you know the specifics of your configuration, and you
-know for a fact that you're using mod_php of some flavour, you can delete
-all the IfModules and IfDefines and just have a single line .htaccess with
-the php_value directive.
+Other servers are left as an exercise for the so-inclined (we'll award you a
+gold medal if you make it work! :-)

@@ -1,20 +1,5 @@
 <?php
 
-/* This page MUST go in the top level of the noobdata directory. Assuming noobdata isn't in your
- * servlet container area, you will need to copy it over to your alternate web server for
- * web-based exercises.
- * 
- * You will also either need an .htaccess or a .user.ini in the root of the noobdata directory
- * 
- * .htaccess:
- * php_value auto_prepend_file "/explicit/file/system/location/php_error_handler.php"
- * (note the quotes)
- * 
- * .user.ini
- * auto_prepend_file =  /explicit/file/system/location/php_error_handler.php
- * (note the ABSENCE of quotes)
- */
-
 $php_errors = Array();
 
 set_error_handler("errorHandler");

@@ -134,6 +134,12 @@ public class RunFullWeb extends HttpServlet {
         // pull in PHP error handler
         InputStream phperror = request.getServletContext().getResourceAsStream("/noobdata/php_error_handler.php");
         String phperrorcode = IOUtils.toString(phperror);
+        
+        InputStream htaccess = request.getServletContext().getResourceAsStream("/noobdata/.htaccess");
+        String htaccesscode = IOUtils.toString(htaccess);
+        
+        InputStream userini = request.getServletContext().getResourceAsStream("/noobdata/.user.ini");
+        String userinicode = IOUtils.toString(userini);
 
         // if PHP error handler does not exist in noobdata dir, create it
         File datadirAsFile = new File(basedir+"/php_error_handler.php");
@@ -143,10 +149,10 @@ public class RunFullWeb extends HttpServlet {
         }
         
         // create .htaccess and .user.ini in user's home dir
-        String htaccess = "<IfModule mod_php5.c>\nphp_value auto_prepend_file "+basedir+"/php_error_handler.php\n</IfModule>";
-        FileUtils.writeStringToFile(new File(datadir+"/.htaccess"),htaccess);
-        String userini = "auto_prepend_file="+basedir+"/php_error_handler.php";
-        FileUtils.writeStringToFile(new File(datadir+"/.user.ini"),userini);
+        //String htaccess = "<IfModule mod_php5.c>\nphp_value auto_prepend_file "+basedir+"/php_error_handler.php\n</IfModule>";
+        FileUtils.writeStringToFile(new File(datadir+"/.htaccess"),htaccesscode);
+        //String userini = "auto_prepend_file="+basedir+"/php_error_handler.php";
+        FileUtils.writeStringToFile(new File(datadir+"/.user.ini"),userinicode);
         
         request.setAttribute("defaultPage", urlToData+"/fullweb/"+username+"/"+actualDefaultPage);                                                        
         RequestDispatcher rd = request.getRequestDispatcher("runfullweb.jsp");
