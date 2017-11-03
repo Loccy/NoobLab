@@ -42,6 +42,7 @@ Blockly.Python['lists_create_with'] = function(block) {
         Blockly.Python.ORDER_NONE) || 'None';
   }
   var code = '[' + elements.join(', ') + ']';
+  code = code.replace(", None]","]");
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
 

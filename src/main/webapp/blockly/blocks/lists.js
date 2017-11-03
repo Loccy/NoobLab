@@ -138,11 +138,23 @@ Blockly.Blocks['lists_create_with'] = {
   init: function() {
     this.setHelpUrl(Blockly.Msg.LISTS_CREATE_WITH_HELPURL);
     this.setColour(Blockly.Blocks.lists.HUE);
-    this.itemCount_ = 3;
+    this.itemCount_ = 1;
     this.updateShape_();
     this.setOutput(true, 'Array');
     this.setMutator(new Blockly.Mutator(['lists_create_with_item']));
     this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_TOOLTIP);
+  },
+  onchange : function(ev) {      
+      if (this.inputList[this.inputList.length-1].connection.targetConnection != null)
+      {
+          this.itemCount_++;
+          this.updateShape_();
+      }
+      else if (this.inputList.length != -1 && this.inputList[this.inputList.length-2].connection.targetConnection == null)
+      {
+          this.itemCount_--;
+          this.updateShape_();
+      }
   },
   /**
    * Create XML to represent list inputs.
@@ -178,8 +190,8 @@ Blockly.Blocks['lists_create_with'] = {
       itemBlock.initSvg();
       connection.connect(itemBlock.previousConnection);
       connection = itemBlock.nextConnection;
-    }
-    return containerBlock;
+    }    
+    return containerBlock;    
   },
   /**
    * Reconfigure this block based on the mutator dialog's components.
@@ -223,14 +235,14 @@ Blockly.Blocks['lists_create_with'] = {
       i++;
       itemBlock = itemBlock.nextConnection &&
           itemBlock.nextConnection.targetBlock();
-    }
+    }    
   },
   /**
    * Modify this block to have the correct number of inputs.
    * @private
    * @this Blockly.Block
    */
-  updateShape_: function() {
+  updateShape_: function() {      
     if (this.itemCount_ && this.getInput('EMPTY')) {
       this.removeInput('EMPTY');
     } else if (!this.itemCount_ && !this.getInput('EMPTY')) {

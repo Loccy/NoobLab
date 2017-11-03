@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,6 +14,7 @@
         <script type="text/javascript" src="blockly/blocks/colour.js"></script>  
         <script type="text/javascript" src="blockly/blocks/logic.js"></script>  
         <script type="text/javascript" src="blockly/blocks/math.js"></script>  
+        <script type="text/javascript" src="blockly/blocks/lists.js"></script>
         <script type="text/javascript" src="blockly/blocks/text.js"></script>  
         <script type="text/javascript" src="blockly/blocks/loops.js"></script>  
         <script type="text/javascript" src="blockly/blocks/procedures.js"></script>  
@@ -24,6 +26,7 @@
         <script type="text/javascript" src="blockly/generators/${param.language}/colour.js"></script>  
         <script type="text/javascript" src="blockly/generators/${param.language}/logic.js"></script>  
         <script type="text/javascript" src="blockly/generators/${param.language}/math.js"></script>  
+        <script type="text/javascript" src="blockly/generators/${param.language}/lists.js"></script>
         <script type="text/javascript" src="blockly/generators/${param.language}/text.js"></script>  
         <script type="text/javascript" src="blockly/generators/${param.language}/loops.js"></script>  
         <script type="text/javascript" src="blockly/generators/${param.language}/procedures.js"></script>  
@@ -134,7 +137,7 @@
             <block type="math_arithmetic"></block>
             <block type="math_single"></block>
         </category>        
-        <category name="Variables">
+        <category name="Variables<c:if test = '${param.language == "python"}'> and lists</c:if>">
             <block type="variables_set">
                 <field name="VAR">p</field>
                 <value name="VALUE">
@@ -149,7 +152,23 @@
             <block type="variables_input">
                 <field name="VAR">p</field>
             </block>
-        </category>  
+            <c:if test = '${param.language == "python"}'>            
+                <block type="lists_create_empty"></block>
+                <block type="lists_create_with"></block>
+                <block type="lists_repeat">
+                  <value name="NUM">
+                    <block type="math_number">
+                      <field name="NUM">5</field>
+                    </block>
+                  </value>
+                </block>
+                <block type="lists_length"></block>
+                <block type="lists_isEmpty"></block>
+                <block type="lists_indexOf"></block>
+                <block type="lists_getIndex"></block>
+                <block type="lists_setIndex"></block>
+            </c:if>
+        </category>
         <category name="Decisions and loops">
             <block type="controls_if"></block>
             <block type="controls_for">
