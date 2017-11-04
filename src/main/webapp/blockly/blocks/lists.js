@@ -59,10 +59,53 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "tooltip": "%{BKY_LISTS_CREATE_EMPTY_TOOLTIP}",
     "helpUrl": "%{BKY_LISTS_CREATE_EMPTY_HELPURL}"
   },
+  // Block for adding to a list
+  {
+    "type" : "lists_add",
+    "message0" : "append %1 onto end of list %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ITEM"
+      },
+      {
+        "type": "input_value",
+        "name": "LIST"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "inputsInline": true,
+    "colour": "%{BKY_LISTS_HUE}"
+  },
+  // Block for inserting into a list
+  {
+    "type" : "lists_insert",
+    "message0" : "insert %1 at position %2 in list %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "ITEM"
+      },
+      {
+        "type": "input_value",
+        "name": "INDEX",
+        "check" : "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "LIST"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "inputsInline": true,
+    "colour": "%{BKY_LISTS_HUE}"
+  },
   // Block for creating a list with one element repeated.
   {
     "type": "lists_repeat",
-    "message0": "%{BKY_LISTS_REPEAT_TITLE}",
+    "message0": 'list with %1 repeated %2 times', //"%{BKY_LISTS_REPEAT_TITLE}",
     "args0": [
       {
         "type": "input_value",
@@ -145,16 +188,19 @@ Blockly.Blocks['lists_create_with'] = {
     this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_TOOLTIP);
   },
   onchange : function(ev) {      
-      if (this.inputList[this.inputList.length-1].connection.targetConnection != null)
+      try 
       {
-          this.itemCount_++;
-          this.updateShape_();
-      }
-      else if (this.inputList.length != -1 && this.inputList[this.inputList.length-2].connection.targetConnection == null)
-      {
-          this.itemCount_--;
-          this.updateShape_();
-      }
+        if (this.inputList[this.inputList.length-1].connection.targetConnection != null)
+        {
+            this.itemCount_++;
+            this.updateShape_();
+        }
+        else if (this.inputList.length != -1 && this.inputList[this.inputList.length-2].connection.targetConnection == null)
+        {
+            this.itemCount_--;
+            this.updateShape_();
+        }
+      } catch (e) {} // easiest way to handle the canvas version...
   },
   /**
    * Create XML to represent list inputs.
@@ -254,7 +300,7 @@ Blockly.Blocks['lists_create_with'] = {
       if (!this.getInput('ADD' + i)) {
         var input = this.appendValueInput('ADD' + i);
         if (i == 0) {
-          input.appendField(Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH);
+          input.appendField(/*Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH*/ "list containing");
         }
       }
     }
@@ -335,8 +381,8 @@ Blockly.Blocks['lists_getIndex'] = {
          [Blockly.Msg.LISTS_GET_INDEX_GET_REMOVE, 'GET_REMOVE'],
          [Blockly.Msg.LISTS_GET_INDEX_REMOVE, 'REMOVE']];
     this.WHERE_OPTIONS =
-        [[Blockly.Msg.LISTS_GET_INDEX_FROM_START, 'FROM_START'],
-         [Blockly.Msg.LISTS_GET_INDEX_FROM_END, 'FROM_END'],
+        [[/* Blockly.Msg.LISTS_GET_INDEX_FROM_START */"item number", 'FROM_START'],
+         [/*Blockly.Msg.LISTS_GET_INDEX_FROM_END*/ "item number from the end", 'FROM_END'],
          [Blockly.Msg.LISTS_GET_INDEX_FIRST, 'FIRST'],
          [Blockly.Msg.LISTS_GET_INDEX_LAST, 'LAST'],
          [Blockly.Msg.LISTS_GET_INDEX_RANDOM, 'RANDOM']];
@@ -515,8 +561,8 @@ Blockly.Blocks['lists_setIndex'] = {
         [[Blockly.Msg.LISTS_SET_INDEX_SET, 'SET'],
          [Blockly.Msg.LISTS_SET_INDEX_INSERT, 'INSERT']];
     this.WHERE_OPTIONS =
-        [[Blockly.Msg.LISTS_GET_INDEX_FROM_START, 'FROM_START'],
-         [Blockly.Msg.LISTS_GET_INDEX_FROM_END, 'FROM_END'],
+            [[/* Blockly.Msg.LISTS_GET_INDEX_FROM_START */"item number", 'FROM_START'],
+         [/*Blockly.Msg.LISTS_GET_INDEX_FROM_END*/ "item number from the end", 'FROM_END'],        
          [Blockly.Msg.LISTS_GET_INDEX_FIRST, 'FIRST'],
          [Blockly.Msg.LISTS_GET_INDEX_LAST, 'LAST'],
          [Blockly.Msg.LISTS_GET_INDEX_RANDOM, 'RANDOM']];

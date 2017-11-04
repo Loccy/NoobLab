@@ -86,6 +86,11 @@ function getCode(e)
 
 function codePaste(e)
 {
+    if ($("div.parameter#blockly").text().trim() == "true")
+    {
+        apprise("You cannot paste this text-based code with the blocks enabled.");
+        return;
+    }
     apprise("Pasting this code into the editor will overwrite any existing code. Are you sure?",{verify:true},function(r){
         if (r)
         {
@@ -3064,6 +3069,10 @@ function handlePrettyPrintPlus()
             }
             $(this).parent().prepend("<div class=\"linenos\">"+html+"</div>");
    });
+   
+   $("div.blockpaste").click(function(){
+       blockPaste($(this));
+   })
 
    if ($("div.parameter#multi").text().trim() == "true")
     {
@@ -3079,8 +3088,29 @@ function handlePrettyPrintPlus()
     }
 }
 
+function blockPaste(source)
+{
+    if ($("div.parameter#blockly").text().trim() != "true")
+    {
+        apprise("You cannot paste these example blocks with the text-based editor enabled.");
+        return;
+    }
+    var code = $(source).text();    
+    apprise("This will overwrite all of your existing blocks on the canvas! Are you sure?",{verify:true},function(r){
+        if (r)
+        {
+            restoreBlockly(code);
+        }
+    });
+}
+
 function pasteCodeBundle(source)
 {
+    if ($("div.parameter#blockly").text().trim() == "true")
+    {
+        apprise("You cannot paste this text-based code with the blocks enabled.");
+        return;
+    }
     apprise("Pasting this code bundle into the editor will overwrite any existing code. Be sure to save ALL your work first! Use the <i>Save all as zip</i> if you're slightly unsure!<p>Are you sure you want to proceed?</p>",{verify:true},function(r){
         if (r)
         {

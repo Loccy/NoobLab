@@ -114,7 +114,7 @@
                 	parent.$("xml#toolbox",document).find("category[name=Carol]").remove();
             	}
                 var ws = Blockly.inject(document.body,
-                        {path: './blockly/', toolbox: document.getElementById('toolbox'), sounds : false });
+                        {path: './blockly/', toolbox: document.getElementById('toolbox'), sounds : false, oneBasedIndex: false });
                 var lang = "${param.language}";                
                 lang = lang.charAt(0).toUpperCase() + lang.slice(1);                
                 if (lang == "Pcode") lang = "Pseudocode";
@@ -164,9 +164,22 @@
                 </block>
                 <block type="lists_length"></block>
                 <block type="lists_isEmpty"></block>
-                <block type="lists_indexOf"></block>
+                <block type="lists_indexOf"></block>                
                 <block type="lists_getIndex"></block>
                 <block type="lists_setIndex"></block>
+                <block type="lists_add"></block>
+                <block type="lists_insert">
+                    <value name="INDEX">
+                        <block type="math_number">
+                          <field name="NUM">0</field>
+                        </block>
+                  </value>
+                </block>
+                <block type="lists_getIndex">
+                    <mutation statement="true" at="false"></mutation>
+                    <field name="MODE">REMOVE</field>
+                    <field name="WHERE">LAST</field>                                        
+                </block>
             </c:if>
         </category>
         <category name="Decisions and loops">

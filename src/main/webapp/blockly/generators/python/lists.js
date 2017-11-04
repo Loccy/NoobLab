@@ -34,6 +34,26 @@ Blockly.Python['lists_create_empty'] = function(block) {
   return ['[]', Blockly.Python.ORDER_ATOMIC];
 };
 
+Blockly.Python["lists_add"] = function(block) {
+    var item = Blockly.Python.valueToCode(block, 'ITEM',
+      Blockly.Python.ORDER_NONE) || 'None';
+    var list = Blockly.Python.valueToCode(block, 'LIST',
+      Blockly.Python.ORDER_NONE) || 'None';
+    var code = list+".append("+item+")";
+    return code+"\n";
+}
+
+Blockly.Python["lists_insert"] = function(block) {
+    var item = Blockly.Python.valueToCode(block, 'ITEM',
+      Blockly.Python.ORDER_NONE) || 'None';
+    var list = Blockly.Python.valueToCode(block, 'LIST',
+      Blockly.Python.ORDER_NONE) || 'None';
+    var index = Blockly.Python.valueToCode(block, 'INDEX',
+      Blockly.Python.ORDER_NONE) || 'None';      
+    var code = list+".insert("+index+","+item+")";
+    return code+"\n";
+}
+
 Blockly.Python['lists_create_with'] = function(block) {
   // Create a list with any number of elements of any type.
   var elements = new Array(block.itemCount_);

@@ -385,6 +385,29 @@ div.precodepaste div.linenos, div.prenopaste div.linenos {
     font-family : monospace;
 }
 
+div.blockpaste {    
+    text-align: center;
+    border : 1px solid #888;
+    padding : 0.5em;
+    position: relative;
+    cursor : pointer;
+}
+
+div.blockpaste div.blockly {
+    display : none;
+}
+
+div.blockpaste::after {
+    content : "CLICK BLOCKS TO PASTE >>>";
+    position : absolute;
+    right : 0px;
+    top : 0px;
+    background-color : gray;
+    font-size : 11px;
+    padding : 3px;
+    color : white;            
+}
+
 #content-inner {
     transform-origin : top left;
 }
