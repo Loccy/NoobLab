@@ -220,16 +220,23 @@
                                     // if we only have one tab and it's blank
                                     if ($("div.tab").not(".newtab").length == 1 && editor.getValue().trim().length == 0)
                                     {
-                                        editor.setValue(response);
+                                        // we can overwrite
+                                        // use populateTabs with wipe out
+                                        populateTabs("***TAB***\n"+lastFilename+"\n***CODE***\n"+response);
+                                        
+                                        //editor.setValue(response);
                                         lastcode = getTabBundleCode();
-                                        $("div.tab.selected").text(lastFilename);
+                                        //$("div.tab.selected").html(lastFilename+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
                                     }
                                     else // we load into a new tab rather than currently selected one...
                                     {
-                                        $("div.newtab").click();
-                                        editor.setValue(response);
+                                        //addNewTab(true);
+                                        //$("div.newtab").click();
+                                        //editor.setValue(response);
+                                        populateTabs("***TAB***\n"+lastFilename+"\n***CODE***\n"+response,true);
+                                        $("div.tab").not(".newtab").last().click();
                                         lastcode = getTabBundleCode();
-                                        $("div.tab.selected").text(lastFilename);
+                                        //$("div.tab.selected").html(lastFilename+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
                                     }
                                 }
                                 else // not multitab, just change editor contents
@@ -252,9 +259,18 @@
                                     else
                                     {
                                         // not blockly - hide/disable it
-                                        $("div.parameter#blockly").remove();
-                                        $("#code-blockly").hide();
-                                        $("#code-blocklytoggle").hide();                                        
+                                        //$("div.parameter#blockly").remove();
+                                        //$("#code-blockly").hide();
+                                        //$("#code-blocklytoggle").hide();
+                                        
+                                         // inspect pasted code for not-you watermarks       
+                                        var source = cheatSource(response);
+
+                                        // strip watermarking from pastedText
+                                        response = response.replace(/\t\s+\n/g,"\n");
+                                        
+                                        if (source) LOGcheat(source);
+                                        
                                         editor.setValue(response);      
                                         lastcode = response;
                                     }

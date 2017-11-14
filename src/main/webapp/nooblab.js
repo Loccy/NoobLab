@@ -2592,38 +2592,62 @@ function hiddenRun(code,test,codefortest)
     disableRun();
 }
 
-function whiteSpaceify(code)
+function knoToWhitespace(kno)
 {
-        // check current state of play
-        var lev = cheatSourceLev(code);
-        if (lev[0] == 0) return code; // current user is already on watermark
-        if (lev[0] > 2) return code; // current user is already an out and out cheat
-
-        // otherwise, if watermark not present or watermark likely to be
-        // corrupted but likely still the actual user logged in
-    	var firstline = code.split("\n")[0];
-        // strip any existing watermark
-        var firstlinetrimmed = firstline.replace(/\s+$/g, '');
-        code = code.replace(firstline,firstlinetrimmed);
-
-	// add whitespace watermark to first line
-	var num = getKNo().replace(/[^0-9]/g,"");
-	num = num.split("");
-	var wswm = "";
-	for (var i = 0; i < num.length; i++)
-	{
-		for (var x = 0; x < num[i]; x++)
-		{
-			wswm += " ";
-		}
-		/* if (i != num.length-1) */ wswm+= "\t";
-	}
-	code = code.replace(wswm,"");
-	code = code.replace(/\n/,wswm+"\n");
-	return code;
+    var num = kno.replace(/[^0-9]/g,"");
+    num = num.split("");
+    var wswm = "";
+    for (var i = 0; i < num.length; i++)
+    {
+            for (var x = 0; x < num[i]; x++)
+            {
+                    wswm += " ";
+            }
+            /* if (i != num.length-1) */ wswm+= "\t";
+    }
+    return wswm;
 }
 
-function watermarkEditorCode()
+function whiteSpaceify(code)
+{
+    var whitespace = knoToWhitespace(getKNo());
+    code = code.replace(/\s+\n/g,"\n"); // trim existing lines
+    code = code.replace(/\n/g,"\t"+whitespace+"\n");    
+    return code;
+}
+
+//function oldWhiteSpaceify(code) // legacy - not used any more
+//{
+//        // check current state of play
+//        var lev = cheatSourceLev(code);
+//        if (lev[0] == 0) return code; // current user is already on watermark
+//        if (lev[0] > 2) return code; // current user is already an out and out cheat
+//
+//        // otherwise, if watermark not present or watermark likely to be
+//        // corrupted but likely still the actual user logged in
+//    	var firstline = code.split("\n")[0];
+//        // strip any existing watermark
+//        var firstlinetrimmed = firstline.replace(/\s+$/g, '');
+//        code = code.replace(firstline,firstlinetrimmed);
+//
+//	// add whitespace watermark to first line
+//	var num = getKNo().replace(/[^0-9]/g,"");
+//	num = num.split("");
+//	var wswm = "";
+//	for (var i = 0; i < num.length; i++)
+//	{
+//		for (var x = 0; x < num[i]; x++)
+//		{
+//			wswm += " ";
+//		}
+//		/* if (i != num.length-1) */ wswm+= "\t";
+//	}
+//	code = code.replace(wswm,"");
+//	code = code.replace(/\n/,wswm+"\n");
+//	return code;
+//}
+
+/*function watermarkEditorCode()
 {
 	// get first line of the editor window
 	var code = editor.getValue();
@@ -2642,7 +2666,7 @@ function watermarkEditorCode()
 		tabcode = whiteSpaceify(tabcode);
 		$(this).text(tabcode);
 	});
-}
+}*/
 
 function run()
 {
@@ -2651,7 +2675,7 @@ function run()
     // symptom rather than the disease.
     var editorScrollpos = editor.getScrollInfo();
 
-    watermarkEditorCode();
+    //watermarkEditorCode();
     var code = editor.getValue();
     saveState();
 
@@ -2840,7 +2864,7 @@ function runFullWeb(code,logcode)
 }
 
 function save(tabs)
-{
+{    
     var code = editor.getValue();
     if ($("div.parameter#blockly").text().trim() == "true")
     {
@@ -2848,7 +2872,17 @@ function save(tabs)
     }
 
     var language = $("div.parameter#language").text().trim();
-    document.getElementById("codeinput").value = (tabs) ? getTabBundleCode() : code;
+    
+    var watermarkedCode = (tabs) ? getTabBundleCode() : code;
+    watermarkedCode = whiteSpaceify(watermarkedCode);
+    if (tabs)
+    {
+        watermarkedCode = watermarkedCode.replace(/\*\*\*TAB\*\*\*\s+\n/g,"***TAB***\n");
+        watermarkedCode = watermarkedCode.replace(/\*\*\*CODE\*\*\*\s+\n/g,"***CODE***\n");
+    }
+    console.log(watermarkedCode);
+        
+    document.getElementById("codeinput").value = watermarkedCode;
 
     if (language.slice(0,4) == "java" && !tabs)
     {
@@ -2862,7 +2896,7 @@ function save(tabs)
             return;
         }
     }
-    else if (language.slice(0,7) == "fullweb")
+    else if (language.slice(0,7) == "fullweb" && !tabs)
     {
         // assume that the extension for "fullweb" code is already there...
         saveState();
@@ -2873,7 +2907,7 @@ function save(tabs)
 
     // if not Java, or fullweb, or pigin Java, or can't figure out the class name...
     var msg;
-    var extension;
+    var extension;    
     if (language.slice(0,4) == "java" && $("div.parameter#multi").text().trim() == "true" && !tabs)
     {
         msg =
@@ -2896,9 +2930,9 @@ function save(tabs)
         if ($("div.parameter#blockly").text().trim() == "true")
         {
             extension = ".bnoob";
-        }
-        // add watermarking
-        document.getElementById("codeinput").value = code+"<noob>"+watermark+"</noob>";
+            // add watermarking
+            document.getElementById("codeinput").value = code+"<noob>"+watermark+"</noob>";
+        }                
     }
     apprise(msg,{'input':true},function(r){
        var filename;
@@ -3282,7 +3316,7 @@ function deleteSelectedEditorTab()
     });
 }
 
-function populateTabs(data)
+function populateTabs(data,noremove)
 {
     if (typeof data == "string")
     {
@@ -3300,17 +3334,18 @@ function populateTabs(data)
     }
 
     // wipe out existing tabs
-    $("#code-titlebar div.tab").not("div.newtab").remove();
+    if (!noremove) $("#code-titlebar div.tab").not("div.newtab").remove();
     $.each(data,function(i,tab){
         var newtab = $('<div onclick="selectEditorTab(this)" class="tab">'+tab[0].trim()+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i></div>');
         // put code in existing tab into a hidden pre.code
-        var newpre = $('<pre class="code"/>');
-        newpre.text(tab[1].trim());
-        var source = cheatSource(tab[1].trim());
+        var newpre = $('<pre class="code"/>');            
+        var source = cheatSource(tab[1]);        
         if (source)
-        {
-           	LOGpcheat("k"+source);
+        {            
+           	LOGcheat(source);
         }
+        var dewhitespaced = tab[1].replace(/\t\s+\n/g,"\n");
+        newpre.text(dewhitespaced.trim());        
         $(newtab).append(newpre);
         $(newtab).append('<span class="cursor">0,0</span>');
         $("#code-titlebar div.newtab").before(newtab);
@@ -3473,13 +3508,47 @@ function addNewTab(auto)
 
 function cheatSource(code)
 {
+    var strippedKno = getKNo().replace(/[^0-9]/g,"");
+    var lines = code.split("\n");        
+    for (var x = 0; x < lines.length; x++)
+    {        
+        var line = lines[x];        
+        line = line.replace(/\n/g,"").replace(/\r/g,"");
+        // find whitespace in current line
+        var res = line.match(/\t(\s+)$/);
+        var source = "";
+        var num = 0;
+        //console.log(res.length);
+        if (res)
+        {
+            res = res[1];
+            for (var i = 0; i < res.length; i++)
+            {                
+                if (res.charAt(i) == " ")
+                {
+                        num++;
+                }
+                else
+                {
+                        source += num;
+                        num = 0;
+                }
+            }            
+            if (source != strippedKno) return source; // cheat!
+        }
+    }
+    return false;
+}
+
+/*function oldcheatSource(code)
+{
     code = code.trim();
     var lev = cheatSourceLev(code);
     if (lev[0] > 2 && lev[1] != 0) return lev[1];
     return false;
-}
+} */
 
-function cheatSourceLev(code)
+/*function cheatSourceLev(code) // not used any more...
 {
         code = code.trim();
 	// look for any whitespace in the first line
@@ -3510,7 +3579,7 @@ function cheatSourceLev(code)
 	}
 
 	return [-1,undefined];
-}
+}*/
 
 function blocklyLoaded(blockly)
 {
@@ -3970,7 +4039,7 @@ window.onload = function()
             if (hash != 0) msg = "Do you want to restore the code you had when you were last on this lesson?";
             apprise(msg, {verify:true},function(r){
                if (r) {
-                 //LOGcodePaste(oldCode,"FromPreviousSession");
+                 LOGcodePaste(oldCode,"FromPreviousSession");
                  if ($("div.parameter#multi").text().trim() == "true")
                  {
                      populateTabs(oldCode);
@@ -4041,34 +4110,80 @@ window.onload = function()
        lastLogEntries = result;
    });
 
-   // install logging for copy and paste
-   $("div.CodeMirror textarea").on('paste', function(e) {
+   $("div.CodeMirror textarea").on("copy",function(e){
+       var selection = editor.getSelection();
+       var copiedText = whiteSpaceify(selection);
+              
+       $("body").append('<textarea id="tempcopy"></textarea>');
+       $("textarea#tempcopy").text(copiedText);       
+       $("textarea#tempcopy")[0].select();
+       /*if (! */ document.execCommand('copy') /* ) {
+       {
+           $("textarea#tempcopy").remove();
+           apprise("Failed to copy text - please use a more up to date browser.");
+           return false;
+       } */
+       $("textarea#tempcopy").remove();
+       editor.focus();
+       e.preventDefault();
+       return false;
+   })
+
+   // install logging for copy and paste   
+   $("div.CodeMirror textarea").on("paste", function(e) {
+       //e.preventDefault(); this should block the paste event, but CodeMirror fails hard
+       editor.undo(); // so we do this instead.
+       
+       // get pasted code
+       var pastedText = undefined;
+       if (window.clipboardData && window.clipboardData.getData) { // IE
+            pastedText = window.clipboardData.getData('Text');
+       } else {
+            var clipboardData = (e.originalEvent || e).clipboardData;
+            if (clipboardData && clipboardData.getData) {
+                pastedText = clipboardData.getData('text/plain');
+            }            
+        }
+       
+       // inspect pasted code for not-you watermarks       
+       var source = cheatSource(pastedText);
+       
+       // strip watermarking from pastedText
+       pastedText = pastedText.replace(/\t\s+\n/g,"\n");
+       
+       // insert pastedText into codeMirror at current cursor position       
+       var doc = editor.getDoc();
+       var cursor = doc.getCursor();
+       doc.replaceRange(pastedText, cursor);
+              
        var currentCode = editor.getValue();
        setTimeout(function(){
             var newCode = editor.getValue();
+            var recorded = false;
             if (getLevenshteinDistance(currentCode, newCode) > 500)
             {
-                LOGcodePaste(newCode,"Large");
+                LOGcodePaste(pastedText,"Large");
+                recorded = true;
             }
-
-            var source = cheatSource(newCode);
+            
             if (source)
             {
-            	LOGpcheat("k"+source);
+                if (!recorded) LOGcodePaste(pastedText,"BadSource");
+            	LOGpcheat(source);                
             }
 
             lastcode = newCode; // levenshtein index code
-       },500); // give it half a second so we can read what we've got
+       },10); // give it half a second so we can read what we've got
     });
 
     // prevent clicking within the watermark whitespace
-    editor.on("cursorActivity",function(){
-       if (editor.getCursor().line == 0)
-       {
-            var max = editor.getLine(0).trim().length;
-            if (editor.getCursor().ch > max+1) editor.setCursor(0,max+1);
-       }
-    });
+    //editor.on("cursorActivity",function(){
+    //   if (editor.getCursor().line == 0)
+    //   {
+    //        var max = editor.getLine(0).trim().length;
+    //        if (editor.getCursor().ch > max+1) editor.setCursor(0,max+1);
+    //   }
+    //});
 
     // update footer in java pidgin mode
     editor.on("change",function(){
