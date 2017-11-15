@@ -57,19 +57,23 @@ public class RunPage extends HttpServlet {
         try {
             engine.eval(testCode);
         } catch (ScriptException ex) {
-            String error = ex.getMessage();
-            String[] x = error.split(": ");
-            error = "";
-            for (int i = 1; i < x.length; i++)
-            {
-                error = error + x[i]+" ";
-            }
+            String error = ex.getMessage();            
+            String[] x = error.split(":");
+            x = x[2].split(" ",2);
+            x = x[1].split("\n");
+            String errormsg = x[0].trim();
+            int lineno = ex.getLineNumber();
+            errormsg += " at line "+lineno;
+            //for (int i = 1; i < x.length; i++)
+            //{
+            //    error = error + x[i]+" ";
+            //}
             // get rid of all the weirdness of the error message, e.g. (#2)
-            error = error.replaceAll("<Unknown source>","");
-            error = error.replaceAll("\\(#\\d\\)", "");
-            error = error.replace("in  at ","<br/>Error at or around ");
+            //error = error.replaceAll("<Unknown source>","");
+            //error = error.replaceAll("\\(#\\d\\)", "");
+            //error = error.replace("in  at ","<br/>Error at or around ");
 
-            request.setAttribute("error",error);
+            request.setAttribute("error",errormsg);
             request.setAttribute("linenumber",ex.getLineNumber()-1);
             RequestDispatcher rd = request.getRequestDispatcher("runpage.jsp");
             rd.forward(request, response);
