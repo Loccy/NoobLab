@@ -238,7 +238,7 @@ function LOGmedal(newMedal)
     }
     
     // watermark code if not already
-    watermarkEditorCode();    
+    //watermarkEditorCode();    
 
     logActivity("Medal",CLSstr(),newMedal,"");
     // also need to update client-side record of medals/test
