@@ -38,6 +38,8 @@ public class RunFullWeb extends HttpServlet {
         
         String username = request.getSession().getAttribute("username").toString();
         
+        boolean httpsOnImages = "true".equalsIgnoreCase(getServletContext().getInitParameter("httpsOnImages"));
+        
         String fullcode = request.getParameter("codeinput");   
         //String givenDefaultPage = request.getParameter("defaultPage");
         String givenDefaultPage = request.getParameter("filename");
@@ -58,6 +60,16 @@ public class RunFullWeb extends HttpServlet {
             String[] blobs = blob.split("\\*\\*\\*CODE\\*\\*\\*");
             String filename = blobs[0].trim();
             String code = blobs[1].trim();
+            
+            // check current protocol
+            // if we're using HTTPS, then do a file/replace on all http:// 
+            // and make them https:// to avoid mixed content rubbish
+            if (httpsOnImages)
+            {
+                code = code.replace("http://","//");
+                code = code.replace("HTTP://","//");
+            }
+            
             File newFile = new File(datadir+"/"+filename);
             
              // inject error handling Javascript into HTML/PHP

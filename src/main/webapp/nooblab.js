@@ -3508,6 +3508,7 @@ function addNewTab(auto)
 
 function cheatSource(code)
 {
+    var sourceCounts = {};
     var strippedKno = getKNo().replace(/[^0-9]/g,"");
     var lines = code.split("\n");        
     for (var x = 0; x < lines.length; x++)
@@ -3533,8 +3534,10 @@ function cheatSource(code)
                         source += num;
                         num = 0;
                 }
-            }            
-            if (source != strippedKno) return source; // cheat!
+            }
+            if (sourceCounts[source] == undefined) sourceCounts[source] = 0;
+            sourceCounts[source]++;
+            if (source != strippedKno && sourceCounts[source] > 1)  return source; // cheat and more than one match!
         }
     }
     return false;
@@ -4109,51 +4112,71 @@ window.onload = function()
    $.getJSON(contextPath+"/stats?type=last20",function(result){
        lastLogEntries = result;
    });
-
-   $("div.CodeMirror textarea").on("copy",function(e){
+   
+   function copyCut(editor,e){
+       e.preventDefault();
        var selection = editor.getSelection();
        var copiedText = whiteSpaceify(selection);
-              
-       $("body").append('<textarea id="tempcopy"></textarea>');
-       $("textarea#tempcopy").text(copiedText);       
-       $("textarea#tempcopy")[0].select();
-       /*if (! */ document.execCommand('copy') /* ) {
+       if (e.type == "cut") editor.replaceSelection("");
+       
+       if (navigator.platform.slice(0,3) == "Mac")
        {
-           $("textarea#tempcopy").remove();
-           apprise("Failed to copy text - please use a more up to date browser.");
-           return false;
-       } */
-       $("textarea#tempcopy").remove();
-       editor.focus();
-       e.preventDefault();
-       return false;
-   })
+           // Three days of seeing the same code in the same browser version
+           // do different things. The only difference? The broken one was
+           // a Mac. Browser is irrelevant. Code works on Windows and Linux,
+           // yet in the same browser version it breaks on a Mac.
+           // DIE, Apple. Just F**KING die.
+           window.NLCB = copiedText;
+       }
+       else
+       {           
+           $("body").append('<textarea style="position: fixed; top: 50px; left: 10px; width: 100px; height: 100px" id="tempcopy"></textarea>');
+           $("textarea#tempcopy").text(copiedText);
+           $("textarea#tempcopy").focus();
+           $("textarea#tempcopy")[0].select();
+           document.execCommand('copy');
+            $("textarea#tempcopy").remove();
+           editor.focus();
+       }       
+   }
+   editor.on("copy",copyCut);
+   editor.on("cut",copyCut);      
 
    // install logging for copy and paste   
-   $("div.CodeMirror textarea").on("paste", function(e) {
-       //e.preventDefault(); this should block the paste event, but CodeMirror fails hard
-       editor.undo(); // so we do this instead.
+   editor.on("paste", function(editor,e) {       
+       e.preventDefault();       
        
        // get pasted code
        var pastedText = undefined;
-       if (window.clipboardData && window.clipboardData.getData) { // IE
-            pastedText = window.clipboardData.getData('Text');
-       } else {
-            var clipboardData = (e.originalEvent || e).clipboardData;
-            if (clipboardData && clipboardData.getData) {
-                pastedText = clipboardData.getData('text/plain');
-            }            
+       if (navigator.platform.slice(0,3) == "Mac" && window.NLCB != undefined)
+       {
+           // DIE, Apple. Just f**king DIE.
+           pastedText = window.NLCB;
+           console.log(pastedText);
+       }
+       else
+       {
+            if (window.clipboardData && window.clipboardData.getData) { // IE
+                 pastedText = window.clipboardData.getData('Text');
+            } else {
+                 var clipboardData = (e.originalEvent || e).clipboardData;
+                 if (clipboardData && clipboardData.getData) {
+                     pastedText = clipboardData.getData('text/plain');
+                 }            
+             }
         }
-       
+      
        // inspect pasted code for not-you watermarks       
        var source = cheatSource(pastedText);
        
        // strip watermarking from pastedText
        pastedText = pastedText.replace(/\t\s+\n/g,"\n");
        
-       // insert pastedText into codeMirror at current cursor position       
+       // if stuff highlighed then delete it
+       if (editor.getSelection() != "") editor.replaceSelection("");
+       // insert pastedText into codeMirror at current cursor position              
        var doc = editor.getDoc();
-       var cursor = doc.getCursor();
+       var cursor = doc.getCursor();       
        doc.replaceRange(pastedText, cursor);
               
        var currentCode = editor.getValue();
