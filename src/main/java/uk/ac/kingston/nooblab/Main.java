@@ -57,7 +57,7 @@ public class Main extends HttpServlet
         response.addHeader("X-UA-Compatible", "IE=Edge");
         
         boolean httpsOnImages = "true".equalsIgnoreCase(getServletContext().getInitParameter("httpsOnImages"));
-        
+                
         String contentsrc = request.getParameter("contentsrc");        
         if (contentsrc == null)
         {
@@ -221,15 +221,15 @@ public class Main extends HttpServlet
                     }
                     for (String ipRestrict : ipRestricts.split(","))
                     {
-                        if (!request.getRemoteAddr().contains(ipRestrict)) validPlace = true;
-                        if (request.getRemoteAddr().contains("127.0.0.1")) validPlace = true; // if from localhost
+                        if (request.getRemoteAddr().contains(ipRestrict)) validPlace = true;
+                        //if (request.getRemoteAddr().contains("127.0.0.1")) validPlace = true; // if from localhost
                     }
                     if (!validTime || !validPlace)
                     {
                         doc.select("div.parameter[id=courseNo]").html("BLOCKED-"+originalCNo);
                         // remove all sections
                         doc.select("div.section").remove();
-                        // add a "you naught boy" section
+                        // add a "you naughty boy" section
                         doc.body().append("<div class=\"section\" id=\"blocked\">"+
                         "<h2 class=\"title\">Content requires unlocking</h2>"+
                         "<b>This particular content must be unlocked by logging into it at/during a scheduled workshop session.</b>"+
