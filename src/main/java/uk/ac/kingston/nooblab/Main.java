@@ -219,9 +219,12 @@ public class Main extends HttpServlet
                             validTime = true;
                         }
                     }
+                    String debug = "";
                     for (String ipRestrict : ipRestricts.split(","))
-                    {
+                    {                        
                         if (request.getRemoteAddr().contains(ipRestrict)) validPlace = true;
+                        if (request.getHeader("X-Forwarded-For") != null && request.getHeader("X-Forwarded-For").contains(ipRestrict)) validPlace = true;
+                        debug += request.getRemoteAddr()+":"+ipRestrict+":"+request.getHeader("X-Forwarded-For")+":"+validPlace+"<br/>";
                         //if (request.getRemoteAddr().contains("127.0.0.1")) validPlace = true; // if from localhost
                     }
                     if (!validTime || !validPlace)
@@ -231,11 +234,14 @@ public class Main extends HttpServlet
                         doc.select("div.section").remove();
                         // add a "you naughty boy" section
                         doc.body().append("<div class=\"section\" id=\"blocked\">"+
-                        "<h2 class=\"title\">Content requires unlocking</h2>"+
+                        "<h2 class=\"title\">Content requires unlocking</h2>"+                        
                         "<b>This particular content must be unlocked by logging into it at/during a scheduled workshop session.</b>"+
                         "<p>Your tutor will give you the details as to when and where you need to unlock this content.</p>"+
                         "<p>Once you have unlocked this page, you will be able to work on it remotely on any computer and at any time you like.</p>"+
-                        "<p>Contact your tutor for further information, or if you feel you have received this message in error.</p></div>");
+                        "<p>Contact your tutor for further information, or if you feel you have received this message in error.</p>"+
+                        "<p>("+(validTime ? 1 : 0)+"/"+(validPlace ? 1 : 0)+")</p>"+
+                        "<p>"+debug+"</p>"+
+                        "</div>");
                     }
                     else
                     {
