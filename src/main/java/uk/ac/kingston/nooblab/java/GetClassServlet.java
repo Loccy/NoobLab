@@ -38,8 +38,12 @@ public class GetClassServlet extends HttpServlet
     {       
         HttpSession session = request.getSession();        
         String username = session.getAttribute("username").toString();
-        String basedir = MiscUtils.getDataDir(request)+"/"+username+"/java/compiled/"; 
-                //session.getServletContext().getInitParameter("datadir")+"/"+username+"/java/compiled/";            
+        String basedir = MiscUtils.getDataDir(request)+"/"+username+"/java/compiled/";
+        if (request.getParameter("internal") != null)
+        {
+            basedir = JavaRunningUtils.class.getResource("/").getPath()+"/";
+        }
+        //session.getServletContext().getInitParameter("datadir")+"/"+username+"/java/compiled/";            
         String classFileLoc = request.getParameter("classfile");
         classFileLoc = classFileLoc.replace(".", "/")+".class";
         classFileLoc = basedir+classFileLoc;        

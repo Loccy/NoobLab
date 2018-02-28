@@ -102,9 +102,11 @@ public class JavaRunner extends HttpServlet
         
             String[] code = request.getParameterValues("code[]");
             
+            boolean newdoppio = (request.getParameter("newdoppio") != null && !request.getParameter("newdoppio").equals("false"));
+            
             // compile our code
             String[] compileresults = JavaRunningUtils.compileCode(code,username,basedir+"/java",
-                    main,mainPkg,false,getServletContext());
+                    main,mainPkg,false,newdoppio,getServletContext());
                         
             if ("**ERROR**".equals(compileresults[0]))
             {

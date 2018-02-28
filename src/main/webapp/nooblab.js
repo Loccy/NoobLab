@@ -12,6 +12,8 @@ window.SCALE = $.cookie("contentzoom");
 if (window.SCALE == "") window.SCALE = 1;
 window.SCALE = parseFloat(window.SCALE);
 
+newdoppio = false;
+
 ///// de-crap IE
 String.prototype.trim = function() {
     return $.trim(this)
@@ -547,6 +549,8 @@ function maxMinCodeWeb(outputheight,force)
 		$("div#toolbar").css("width","100%");
                 $("div#navbar").hide();
                 $("div#lectureslides").hide();
+                $("div#graphics").hide();
+                $("div#chat").hide();
                 $("div#topnav").hide();
                 $("div#navlecture").removeClass("selected");
                 $("div#video").hide();
@@ -621,6 +625,8 @@ function maxMinCode(outputheight,force)
         $("body").css("overflow","hidden");
         $("div#navbar").hide();
         $("div#lectureslides").hide();
+        $("div#graphics").hide();
+        $("div#navgraphics").removeClass("selected");
         $("div#topnav").hide();
         $("div#navlecture").removeClass("selected");
         $("div#video").hide();
@@ -2994,11 +3000,20 @@ function stop()
     }
     else if ($("div.parameter#language").text().trim() == "java")
     {
-        // send a rogue command to the console - should simulate pressing
-        // return, just in case we're sitting waiting for input...
-        try { outputframe.controller.commandHandle("fnar"); } catch (e) {};
-        outputframe.stopRequested = true;
-        enableRun();
+        if (!newdoppio)
+        {
+            // send a rogue command to the console - should simulate pressing
+            // return, just in case we're sitting waiting for input...
+            try { outputframe.controller.commandHandle("fnar"); } catch (e) {};
+            outputframe.stopRequested = true;
+            enableRun();
+        }
+        else
+        {
+            // beat that horse until it's dead :-)
+            for (var i = 0; i < 10; i++) { outputframe.shell.killProgram(); }
+            lastExitStatus = -1;
+        }
     }
     else if ($("div.parameter#language").text().trim() == "cpp")
     {
@@ -3194,8 +3209,8 @@ function selectEditorTab(source,norename)
             y = spancursor[0];
             x = spancursor[1];
         }
-        editor.setValue(code);
-        javaPidjinCodeWrapper(true);
+        editor.setValue(code);        
+        javaPidjinCodeWrapper(true);                
         // this next line doesn't seem to work...
         //editor.setCursor(y,x);
         // select
@@ -3276,10 +3291,10 @@ function selectEditorTab(source,norename)
         $("input#tidy").show();
         $("input#tidy").val("Validate");
 
-    }
-    editor.refresh(); editor.undo(); editor.redo();
+    }    
     editor.setOption("readOnly");
     if (editor.getValue().indexOf("NOOBLAB READONLY") != -1) editor.setOption("readOnly","true");
+    editor.undo(); editor.redo(); editor.refresh();
     }
 }
 
@@ -3679,6 +3694,24 @@ function strop(level)
     emolevel = newemolevel;
 }
 
+function toggleJavaRuntime()
+{
+    if (newdoppio)
+    {
+         newdoppio = false;
+         $.cookie("newdoppio","false",{expires: 365, path: '/'});
+         $("div#javaruntimemenu").text("Use new Java runtime");
+         $("iframe#outputframe").attr("src",contextPath+"/doppio");
+    }
+    else
+    {
+         newdoppio = true;
+         $.cookie("newdoppio","true",{expires: 365, path: '/'});
+         $("div#javaruntimemenu").text("Use old Java runtime");
+         $("iframe#outputframe").attr("src",contextPath+"/newdoppio");
+    }
+}
+
 function xgetMismatchedTags(xmlString)
 {
         xmlString.replace(/ /g,"");
@@ -3760,6 +3793,23 @@ function toggleBlocks()
     //$.cookie('nlpp-'+courseNo+"-"+lessonNo+"-code",code, {expires: 365, path: '/'});
 }
 
+function toggleGraphics(turnon)
+{
+    $("div#chat,div#lectureslides,div#coursenavpage,div#video").hide();
+    $("div#navchat,div#navlecture,div#navcourse,div#navvideo").removeClass("selected");
+    if (turnon)
+    {
+        $("div#navgraphics").show();
+        $("div#graphics").show();
+        $("div#navgraphics").addClass("selected");
+    }
+    else
+    {
+        $("div#graphics").toggle();
+        $("div#navgraphics").toggleClass("selected");
+    }
+}
+
 originalTexts = {};
 
 //$(document).load(function()
@@ -3791,6 +3841,30 @@ window.onload = function()
    prettyPrint();
    createQuickQuizzes();
    createEmos();
+   
+   // hide Java runtime menu option if not Java
+   if ($("div.parameter#language").text().trim() != "java")
+   {
+       $("div#javaruntimemenu").remove();
+   }
+   else // if Java, handle runtime selection
+   {
+        if ($.cookie("newdoppio") == "")
+        {
+            $.cookie("newdoppio","true",{expires: 365, path: '/'});
+        }
+        newdoppio = $.cookie("newdoppio") == "true";
+        if (newdoppio)
+        {
+            $("div#javaruntimemenu").text("Use old Java runtime");
+            $("iframe#outputframe").attr("src",contextPath+"/newdoppio");
+        }
+        else
+        {
+            $("div#javaruntimemenu").text("Use new Java runtime");
+            $("iframe#outputframe").attr("src",contextPath+"/doppio");
+        }
+   }
 
    // test cases
    if ($("div.parameter#language").text().trim() == "basic")
@@ -3813,7 +3887,14 @@ window.onload = function()
 
    if ($("div.parameter#language").text().trim() == "java")
    {
-       $("iframe#outputframe").attr("src",contextPath+"/doppio");
+       if (newdoppio)
+       {
+           $("iframe#outputframe").attr("src",contextPath+"/newdoppio");
+       }
+       else
+       {
+           $("iframe#outputframe").attr("src",contextPath+"/doppio");
+       }
        if ($.browser.msie)
        {
            alert("You are using Internet Explorer, in which this material will not function properly. You will "+
@@ -3875,8 +3956,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show lecture video" id="navvideo"><i class="fa fa-video-camera"></i></div>');
         $("body").append('<div id="video"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navvideo").click(function(){
-            $("div#lectureslides,div#coursenavpage,div#chat").hide();
-            $("div#navlecture,div#navcourse,div#navchat").removeClass("selected");
+            $("div#lectureslides,div#coursenavpage,div#chat,div#graphics").hide();
+            $("div#navlecture,div#navcourse,div#navchat,div#navgraphics").removeClass("selected");
             $("div#video").toggle();
             if ($("div#video iframe").attr("data-loaded") == "false")
             {
@@ -3897,8 +3978,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show lecture slides" id="navlecture"><i class="fa fa-graduation-cap"></i></div>');
         $("body").append('<div id="lectureslides"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navlecture").click(function(){
-            $("div#video,div#coursenavpage,div#chat").hide();
-            $("div#navvideo,div#navcourse,div#navchat").removeClass("selected");
+            $("div#video,div#coursenavpage,div#chat,div#graphics").hide();
+            $("div#navvideo,div#navcourse,div#navchat,div#navgraphics").removeClass("selected");
             $("div#lectureslides").toggle();
             if ($("div#lectureslides iframe").attr("data-loaded") == "false")
             {
@@ -3919,8 +4000,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show course navigation" id="navcourse"><i class="fa fa-globe"></i></div>');
         $("body").append('<div id="coursenavpage"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navcourse").click(function(){
-            $("div#video,div#lectureslides,div#chat").hide();
-            $("div#navvideo,div#navlecture,div#navchat").removeClass("selected");
+            $("div#video,div#lectureslides,div#chat,div#graphics").hide();
+            $("div#navvideo,div#navlecture,div#navchat,div#navgraphics").removeClass("selected");
             $("div#coursenavpage").toggle();
             if ($("div#coursenavpage iframe").attr("data-loaded") == "false")
             {
@@ -3941,8 +4022,8 @@ window.onload = function()
         $("div#topnav div.row1").append('<div title="Show chat pane" id="navchat"><i class="fa fa-commenting-o"></i></div>');
         $("body").append('<div id="chat"><iframe data-loaded="false" src="'+contextPath+'/holding.html"></iframe></div>');
         $("div#navchat").click(function(){
-            $("div#lectureslides,div#coursenavpage,div#video").hide();
-            $("div#navlecture,div#navcourse,div#navvideo").removeClass("selected");
+            $("div#lectureslides,div#coursenavpage,div#video,div#graphics").hide();
+            $("div#navlecture,div#navcourse,div#navvideo,div#navgraphics").removeClass("selected");
             $("div#chat").toggle();
             if ($("div#chat iframe").attr("data-loaded") == "false")
             {
@@ -4253,18 +4334,22 @@ window.onload = function()
       });
 
       // prevent copy/paste from content window.
-      $("div#content").attr('unselectable', 'on')
+    if (getKNo().toLowerCase().indexOf("ku") == -1)
+    {
+        $("div#content").attr('unselectable', 'on')
                  .css('user-select', 'none')
                  .css("-moz-user-select","none")
                  .on('selectstart', false);
+     
 
-   // disable right-click
-   $(document).ready(function()
-    {
-       $(document).bind("contextmenu",function(e){
-            return false;
-          });
-    });
+        // disable right-click
+        $(document).ready(function()
+         {
+            $(document).bind("contextmenu",function(e){
+                 return false;
+               });
+         });
+    }
 
     // change colour of background if slacker
     $.get(contextPath+"/slackers.txt", function(data) {
@@ -4458,6 +4543,7 @@ function resizeSplit(width)
         $("div#content").css("right",(width+5)+"px");
         $("div#topnav").css("right",(width+5)+"px");
         $("div#lectureslides").css("right",(width+5)+"px");
+        $("div#graphics").css("right",(width+5)+"px");
         $("div#video").css("right",(width+5)+"px");
         $("div#chat").css("right",(width+5)+"px");
         $("div#coursenavpage").css("right",(width+5)+"px");

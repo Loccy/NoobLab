@@ -39,6 +39,15 @@ public class JavaRunningUtils {
     {
         return compileCode(codes,id,basedir,classWithMain,pkgWithMain,true,sc);
     }
+    
+    public static String[] compileCode(String codes[], String id, String basedir,
+                                        String classWithMain, String pkgWithMain, boolean serverRun,
+                                        ServletContext sc) throws IOException
+    {
+        return compileCode(codes, id, basedir,
+                            classWithMain, pkgWithMain, 
+                            serverRun, false,sc);
+    }
 
     /**
      * Compiles what is supplied in the string code into the basedir.
@@ -51,6 +60,7 @@ public class JavaRunningUtils {
      */
     public static String[] compileCode(String codes[], String id, String basedir,
                                         String classWithMain, String pkgWithMain, boolean serverRun,
+                                        boolean newdoppio,
                                         ServletContext sc) throws IOException
     {     
         if (pkgWithMain == null || "".equals(pkgWithMain)) pkgWithMain = "defaultpackage";
@@ -127,23 +137,37 @@ public class JavaRunningUtils {
         }
         
         String[] compileOptions;
+        //System.out.println(JavaRunningUtils.class.getResource("/").getPath());
         if (sc != null)
         {
-            compileOptions = new String[]{
-                "-d", basedir+"/compiled",
-                "-target","1.6",
-                "-source","1.6",
-                "-bootclasspath", oldrt.getCanonicalPath(),
-                "-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
-                //"-cp", sc.getRealPath("/WEB-INF/classes"), "-g"
-            };            
+            if (!newdoppio) // old doppio
+            {
+                compileOptions = new String[]{
+                    "-d", basedir+"/compiled",
+                    "-target","1.6",
+                    "-source","1.6",
+                    "-bootclasspath", oldrt.getCanonicalPath(),
+                    "-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
+                    //"-cp", sc.getRealPath("/WEB-INF/classes"), "-g"
+                };
+            }
+            else // new doppio
+            {
+                compileOptions = new String[]{
+                    "-d", basedir+"/compiled",
+                    "-target","1.8",
+                    "-source","1.8",
+                    "-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
+                    //"-cp", sc.getRealPath("/WEB-INF/classes"), "-g"
+                };
+            }
         }
         else
         {
             compileOptions = new String[]{
                 "-d", basedir+"/compiled",
-                "-target","1.6",
-                "-source","1.6",/*
+                "-target","1.8",
+                "-source","1.8",/*
                 "-cp", sc.getRealPath("/WEB-INF/classes"), "-g" */
             };
         }

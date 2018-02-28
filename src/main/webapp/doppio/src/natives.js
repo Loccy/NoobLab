@@ -83,7 +83,34 @@
   };
 
   trapped_methods = {
+    // just trying...
+    nooblab: {
+        Graphics : [
+            o('updatePosition(Ljava/lang/String;II)V', function(rs,id,x,y) {
+                  parent.updatePosition(id.jvm2js_str(),x,y);
+                  rs.curr_frame().runner = function() {
+                    return rs.meta_stack().pop();
+                  };
+                  throw new exceptions.YieldIOException(function(cb) {
+                    return setTimeout(cb, 0);
+                  })
+              })
+        ]
+     },
+    // we highjack a fairly obscure method in the Java API in order to create a two-way channel
+    // between Javascriptland and the JVM.    
     java: {
+      //java.awt.datatransfer.SystemFlavorMap.decodeJavaMIMEType
+      awt: {
+          datatransfer : {
+              SystemFlavorMap : [
+                   o('decodeJavaMIMEType(Ljava/lang/String;)Ljava/lang/String;', function(rs,x) {
+                    var result = eval(x.jvm2js_str());
+                    return rs.init_string(result+"");
+                  })
+              ]
+          }
+      },
       lang: {
         ref: {
           Reference: [o('<clinit>()V', function(rs) {})]

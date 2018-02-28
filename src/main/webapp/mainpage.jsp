@@ -19,10 +19,10 @@
         <script src="${pageContext.request.contextPath}/jq.js"></script>
 
         <%-- our own stuff --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js?date=28022018"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/actions.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/innerxhtml.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css?date=28022018"/>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/lib/codemirror.css"/>
         <c:forEach items="${cmthemes}" var="cmtheme">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/theme/${cmtheme}.css"/>
@@ -65,7 +65,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/apprise.min.css"/>
         
         <%-- java runner --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/java.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/java.js?date=28022018"></script>
         
         <%-- pcode "compiler" --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/psuedocode.js"></script>
@@ -85,7 +85,10 @@
         </script>
         
         <%-- gifpauserxtreme (for animated gifs) --%>        
-        <script type="text/javascript" src="${pageContext.request.contextPath}/gifpause/libgif.js"></script>                
+        <script type="text/javascript" src="${pageContext.request.contextPath}/gifpause/libgif.js"></script>
+        
+        <%-- graphics library --%>        
+        <script type="text/javascript" src="${pageContext.request.contextPath}/drawing.js"></script>
         
         <%-- font awesome --%>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -126,11 +129,13 @@
                 <div title="Logout" id="logout" onclick="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
                 <div title="Options" id="optionscog" onclick="toggleOptions()"><i class="fa fa-bars"></i></div>
                 <div title="Change zoom settings" id="newzoom" onclick="mainZoom()">Aa</div>                    
+                <div title="Show graphics output" id="navgraphics" onclick="toggleGraphics()"><i class="fa fa-pie-chart"></i></div> 
 <!--                    <div id="content-zoom"><span onclick="scale('zoomin')">&#128474;</span>&nbsp;<span onclick="scale('zoomout')">&#128475;</span></div>                    -->
             </div>
             <div style="clear:both"></div>
             <div class="row2">
                 <div id="usermenu">
+                    <div class="extramenu" id="extramenugraphics" onclick="$('div#navgraphics').click()">Show/hide graphics output pane</div>
                     <div class="extramenu" id="extramenuchat" onclick="$('div#navchat').click()">Show/hide chat pane</div>
                     <div class="extramenu" id="extramenucoursenav" onclick="$('div#navcourse').click()">Show/hide course navigation</div>
                     <div class="extramenu" id="extramenulecture" onclick="$('div#navlecture').click()">Show/hide lecture slides</div>
@@ -141,7 +146,8 @@
                     <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>            
                     <!--<div onclick="setName()">Set my name</div>-->
                     <div class="disabled" id="toggleblocks" onclick="toggleOptions(); toggleBlocks()">Disable blocks</div>
-                    <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>                                                                
+                    <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>
+                    <div id="javaruntimemenu" onclick="toggleJavaRuntime()">Use new Java runtime</div>
                 </div>            
                 <div id="mainZoomControls">
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -187,10 +193,10 @@
             <input id="loadbutton" type="button" value="Load file"/>
             <input id="savebutton" type="button" value="Save file" onclick ="save()"/>
             <input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/>
-            <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>
+            <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>            
             <input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/></div>
                         
-            <div style="clear: both"></div>
+            <div style="clear: both"></div>            
         </div>
         <script type="text/javascript">
             var stoppit = false;
@@ -367,7 +373,19 @@
                 </c:forEach>
             </div>
         </div>
-        ${navbar}
-        
+        <div id="graphics">            
+            <svg class="container">
+                <rect x="0" y="0" width="100%" height="100%" fill="gray"/>
+                <svg class="main" version="1.1" viewBox="0 0 1000 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                    <rect id="graphicsbackground" width="1000" height="1000" fill="white"/>
+                    <clipPath id="clip">
+                        <use xlink:href="#graphicsbackground"/>
+                    </clipPath>
+                    <g clip-path="url(#clip)">
+                    </g>
+                </svg>
+            </svg>            
+        </div>
+        ${navbar}        
     </body>
 </html>
