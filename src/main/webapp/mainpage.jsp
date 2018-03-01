@@ -147,7 +147,7 @@
                     <!--<div onclick="setName()">Set my name</div>-->
                     <div class="disabled" id="toggleblocks" onclick="toggleOptions(); toggleBlocks()">Disable blocks</div>
                     <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>
-                    <div id="javaruntimemenu" onclick="toggleJavaRuntime()">Use new Java runtime</div>
+                    <div id="javaruntimemenu" onclick="toggleJavaRuntime()">Use new Java runtime<br/>(old currently in use)</div>
                 </div>            
                 <div id="mainZoomControls">
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>

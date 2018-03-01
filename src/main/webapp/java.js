@@ -893,15 +893,17 @@ singleTestMethod +=
                 }
             });
  
-            status("Testing... test number 0 of "+numTests,"border test wipe");
-            
-            numTestMon = setInterval(function(){
-                try
-                {
-                    var doneNum = (newdoppio) ? javaTestCount : getConsoleText().trim().match(/TESTCOUNT/g).length;
-                    status("Testing... test number "+doneNum+" of "+numTests,"border test wipe");
-                } catch (e) {}
-            },500);
+            if (!newdoppio)
+            {
+                status("Testing... test number 0 of "+numTests,"border test wipe");
+                numTestMon = setInterval(function(){
+                     try
+                     {
+                         var doneNum = (newdoppio) ? javaTestCount : getConsoleText().trim().match(/TESTCOUNT/g).length;
+                         status("Testing... test number "+doneNum+" of "+numTests,"border test wipe");
+                     } catch (e) {}
+                },500);
+            };
              
             testCode = testCode.replace("CODEINCLUDESOFFSET",offset);
             
@@ -999,7 +1001,7 @@ function javaSuccessfulTest(mark,medal)
     {
         if (newdoppio)
         {
-            medal = javaTestMedal;
+            try { medal = javaTestMedal } catch (e) {}; //ugly!
             javaTestMedal = undefined;
         }
         else
@@ -1091,6 +1093,7 @@ function javaRuntimeDuringTest(error)
     var msg = "Sorry! Your code threw a runtime error during the test (or you pressed 'Stop'). If this is an error, it might be because it has a runtime error somewhere in it,"
         msg+= " or it might just be doing something entirely unexpected with respect to the exercise at hand. Either way, it is not a correct solution to the exercise.";
         status (msg,"error border");
+    console.log(error);
     LOGtestFailed("RuntimeError:"+error,"error border");
     javaRuntimeError = standardJavaRuntimeError;
 }

@@ -227,12 +227,4 @@ public class Graphics
       return result;
   }
   
-  class DrawingException extends Exception
-  {
-      public DrawingException(String message)
-      {
-          super(message);
-      }
-  }
-  
 }

@@ -3696,19 +3696,28 @@ function strop(level)
 
 function toggleJavaRuntime()
 {
+    $("div#output-main div.status").remove();
     if (newdoppio)
     {
          newdoppio = false;
+         saveState();
          $.cookie("newdoppio","false",{expires: 365, path: '/'});
-         $("div#javaruntimemenu").text("Use new Java runtime");
-         $("iframe#outputframe").attr("src",contextPath+"/doppio");
+         setTimeout(function(){
+             location.reload();
+         },500);
+         //$("div#javaruntimemenu").text("Use new Java runtime");
+         //$("iframe#outputframe").attr("src",contextPath+"/doppio");
     }
     else
     {
          newdoppio = true;
+         saveState();
          $.cookie("newdoppio","true",{expires: 365, path: '/'});
-         $("div#javaruntimemenu").text("Use old Java runtime");
-         $("iframe#outputframe").attr("src",contextPath+"/newdoppio");
+         setTimeout(function(){
+             location.reload();
+         },500);
+         //$("div#javaruntimemenu").text("Use old Java runtime");
+         //$("iframe#outputframe").attr("src",contextPath+"/newdoppio");
     }
 }
 
@@ -3842,12 +3851,16 @@ window.onload = function()
    createQuickQuizzes();
    createEmos();
    
+   // comment out below if we decide to go back to the selectable runtime.
+   // I think we're going to set it at exercise level for now and keep the
+   // old runtime around. I'm not sure I trust the new one enough, yet.
+   //
    // hide Java runtime menu option if not Java
-   if ($("div.parameter#language").text().trim() != "java")
+   if (true) //if ($("div.parameter#language").text().trim() != "java")
    {
        $("div#javaruntimemenu").remove();
    }
-   else // if Java, handle runtime selection
+   /*else // if Java, handle runtime selection
    {
         if ($.cookie("newdoppio") == "")
         {
@@ -3856,15 +3869,15 @@ window.onload = function()
         newdoppio = $.cookie("newdoppio") == "true";
         if (newdoppio)
         {
-            $("div#javaruntimemenu").text("Use old Java runtime");
+            $("div#javaruntimemenu").html("Use old Java runtime<br/>(new currently in use)");
             $("iframe#outputframe").attr("src",contextPath+"/newdoppio");
         }
         else
         {
-            $("div#javaruntimemenu").text("Use new Java runtime");
+            $("div#javaruntimemenu").html("Use new Java runtime<br/>(old currently in use)");
             $("iframe#outputframe").attr("src",contextPath+"/doppio");
         }
-   }
+   } */
 
    // test cases
    if ($("div.parameter#language").text().trim() == "basic")
@@ -3873,6 +3886,7 @@ window.onload = function()
    }
    else if ($("div.parameter#language").text().trim() == "java")
    {
+       if ($("div.parameter#javaruntime").text().trim() == "new") newdoppio = true;
        handleTestCasesJava();
    }
    else if ($("div.parameter#language").text().trim() == "fullweb")

@@ -62,7 +62,7 @@ context of NoobLab:
 Doppio (plus BrowserFS and xterm.js, which is included) is licenced under the 
 MIT licence:
 
-Doppo
+Doppio
 Copyright (c) 2012, 2013, 2014, 2015 John Vilk, CJ Carey, Jez Ng, and 
 Jonny Leahey.
 
