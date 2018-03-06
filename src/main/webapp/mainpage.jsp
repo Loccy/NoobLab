@@ -19,10 +19,10 @@
         <script src="${pageContext.request.contextPath}/jq.js"></script>
 
         <%-- our own stuff --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js?date=28022018"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js?date=06023018"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/actions.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/innerxhtml.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css?date=28022018"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css?date=06032018"/>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/lib/codemirror.css"/>
         <c:forEach items="${cmthemes}" var="cmtheme">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/theme/${cmtheme}.css"/>
@@ -65,7 +65,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/apprise.min.css"/>
         
         <%-- java runner --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/java.js?date=28022018"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/java.js?date=06003018"></script>
         
         <%-- pcode "compiler" --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/psuedocode.js"></script>
@@ -385,6 +385,11 @@
                     </g>
                 </svg>
             </svg>            
+        </div>
+        <div id="editorRightClick">
+            <div class="option" onclick="addGettersAndSetters('getters')">Add getters</div>
+            <div class="option" onclick="addGettersAndSetters('setters')">Add setters</div>
+            <div class="option" onclick="addGettersAndSetters('both')">Add both getters and setters</div>
         </div>
         ${navbar}        
     </body>

@@ -319,17 +319,18 @@ public class Code
                                    if (newdoppio)
                                    {
                                        // check to see if we have /tmp/doppio/Graphics.class
-                                       if (!outputframe.fs.existsSync("/tmp/doppio/Graphics.class"))
+                                       if (!outputframe.fs.existsSync("/tmp/com/nooblab/Graphics.class"))
                                        {
                                            $.post(contextPath + "/GetClass",{
                                                "internal" : "true",
-                                               "classfile" : "doppio.Graphics"
+                                               "classfile" : "com.nooblab.Graphics"
                                            },
                                            function(classBin){
-                                               outputframe.runShellCommand("mkdir /tmp/doppio");
+                                               outputframe.runShellCommand("mkdir /tmp/com");
+                                               outputframe.runShellCommand("mkdir /tmp/com/nooblab");
                                                writeBase64(classBin,"/tmp/","Graphics.class");
-                                               // not sure why I can't put it straight into /tmp/doppio... but hey...
-                                               outputframe.runShellCommand("mv /tmp/Graphics.class /tmp/doppio/Graphics.class");
+                                               // not sure why I can't put it straight into the dir... but hey...
+                                               outputframe.runShellCommand("mv /tmp/Graphics.class /tmp/com/nooblab/Graphics.class");
                                                finalPhaseRunJava();
                                            });
                                        }

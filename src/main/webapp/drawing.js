@@ -314,16 +314,33 @@ function getShape(id)
 
 function getXPos(id)
 {
-    return getShape(id).getAttribute("cx");
+    var shapeType = getShape(id).tagName;
+    if (shapeType == "circle")
+    {
+        return getShape(id).getAttribute("cx");
+    }
+    else
+    {
+        return getShape(id).getAttribute("x");
+    }
+    
 }
 
 function getYPos(id)
 {
-    return getShape(id).getAttribute("cy");
+    var shapeType = getShape(id).tagName;
+    if (shapeType == "circle")
+    {
+        return getShape(id).getAttribute("cy");
+    }
+    else
+    {
+        return getShape(id).getAttribute("y");
+    }
 }
 
 function updatePosition(id,x,y)
-{    
+{  
     if (x == undefined) x = getXPos(id);
     if (y == undefined) y = getYPos(id);
     

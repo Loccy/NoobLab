@@ -3209,6 +3209,9 @@ function selectEditorTab(source,norename)
             y = spancursor[0];
             x = spancursor[1];
         }
+        // clear undo history to avoid any confusion.
+        // TODO: store undo history for each tab!
+        editor.clearHistory();
         editor.setValue(code);        
         javaPidjinCodeWrapper(true);                
         // this next line doesn't seem to work...
@@ -3819,6 +3822,55 @@ function toggleGraphics(turnon)
     }
 }
 
+function addGettersAndSetters(which)
+{
+    $("div#editorRightClick").hide();
+    if (which == undefined) which = "both";
+    try
+    {
+        var attributeLines = (editor.getSelection()+"");
+        var newcode = attributeLines + "\n\n";
+        if (attributeLines.trim() == "")
+        {
+            apprise("You need to highlight the attributes you want to create getters and/or setters for.");
+            return;
+        }
+        var attributeLines = attributeLines.match(/private (\w*) (\w*);|private (\w*) (\w*)\s*=/gm);        
+        var firstline = editor.getLine(editor.getCursor(true).line);
+        var indent = firstline.match(/\s+/);
+        indent = indent ? indent[0] : "";        
+        for (var i = 0; i < attributeLines.length; i++)
+        {
+            var attributeLine = attributeLines[i];
+            var details = attributeLine.match(/private (\w*) (\w*);/);
+            if (details == null) details = attributeLine.match(/private (\w*) (\w*)\s*=/);                
+            var dataType = details[1];
+            var varname = details[2];
+            
+            if(which == "setters" || which == "both")
+            {
+                newcode += indent + "public void set"+capitaliseFirstLetter(varname)+"("+dataType+" "+varname+")\n";
+                newcode += indent + "{\n";
+                newcode += indent + "   this."+varname+" = "+varname+";\n";
+                newcode += indent + "}\n\n";
+            }
+            if(which == "getters" || which == "both")
+            {
+                var methodprefix = (dataType.toLowerCase() == "boolean") ? "is" : "get";
+                
+                newcode += indent + "public "+dataType+" "+methodprefix+capitaliseFirstLetter(varname)+"()\n";
+                newcode += indent + "{\n";
+                newcode += indent + "   return this."+varname+";\n";
+                newcode += indent + "}\n\n";
+            }
+        }        
+        editor.replaceSelection(newcode);
+    } catch (e) {
+        console.log(e);
+        apprise("Unable to interpret highlighted text as class attributes.");
+    }
+}
+
 originalTexts = {};
 
 //$(document).load(function()
@@ -4326,7 +4378,7 @@ window.onload = function()
             var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
             cm.replaceSelection(spaces);
           }
-        },
+        },        
         "Shift-Tab": "indentLess"
         }
 
@@ -4361,8 +4413,40 @@ window.onload = function()
          {
             $(document).bind("contextmenu",function(e){
                  return false;
-               });
+               });                           
          });
+    }
+    
+    // if Java and multitabs (so not pidgin mode) enable getters and setters creator on right click
+    if ($("div.parameter#language").text().trim() == "java" && $("div.parameter#multi").text().trim() == "true")
+    {
+        // only if enabled - although always enabled if lecturer...
+        if($("div.parameter#gettersAndSetters").text().trim() != "" || getKNo().indexOf("ku") != -1)
+        {    
+            // disable right-click on editor area...
+            $(document).ready(function(){
+                $("div#code-main").bind("contextmenu",function(e){
+                    return false;
+                });
+            })
+
+            // and bind right click on editor to extra options
+            $("div#code-main").mousedown(function(e){        
+                if ($("div#editorRightClick").is(":visible"))
+                {
+                    $("div#editorRightClick").hide();
+                    return false;
+                }
+                if( e.button == 2 ) {             
+                  $("div#editorRightClick").css("left",e.clientX+"px");
+                  $("div#editorRightClick").css("top",e.clientY+"px");
+                  // delay is to prevent the newly shown div from grabbing the right-click event!
+                  setTimeout(function() { $("div#editorRightClick").show(); },200);
+                  return false; 
+                } 
+                return true; 
+              }); 
+        }
     }
 
     // change colour of background if slacker

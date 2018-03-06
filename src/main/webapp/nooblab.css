@@ -571,7 +571,7 @@ img#nooblabemo {
 }
 
 
-#optionscog, #usermenu,#logout {        
+#optionscog, #usermenu,#logout,#editorRightClick {        
     cursor : pointer;
     cursor : hand;
     font-weight : bold;    
@@ -594,14 +594,17 @@ img#nooblabemo {
     float : right;
 }
 
-#usermenu {    
+#usermenu,#editorRightClick {    
     border : 1px solid black;
-    background-color : white;
-    float : right;
+    background-color : white;    
     font-size : 80%;
 }
 
-#usermenu div {
+#usermenu {
+    float : right;
+}
+
+#usermenu div,#editorRightClick div {
     padding-left : 5px;
     padding-right : 5px;
 }
@@ -630,22 +633,29 @@ img#nooblabemo {
     display : none;
 }
 
+#editorRightClick {
+    position : fixed;
+    top : 0px;
+    left : 0px;
+    display : none;
+}
 
-#usermenu div {
+
+#usermenu div,#editorRightClick div {
     border-bottom : 1px solid gray;
 }
 
-#usermenu div.disabled {
+#usermenu div.disabled,#editorRightClick div.disabled {
     color : gray;
 }
 
 
-#usermenu div:not(.disabled):hover {
+#usermenu div:not(.disabled):hover,#editorRightClick div:not(.disabled):hover {
     background: #CFE5E8;
 }
 
 
-#usermenu div:last-child {
+#usermenu div:last-child,#editorRightClick div:last-child {
     border-bottom : 0px;
 }
 

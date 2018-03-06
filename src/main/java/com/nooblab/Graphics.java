@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package doppio;
+package com.nooblab;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +13,16 @@ public class Graphics
   private static void redraw()
   {
     try { Thread.yield(); } catch (Exception e) {}
+  }
+  
+  public static void sleep(long millis)
+  {
+      try { Thread.sleep(millis); } catch (Exception e) {};
+  }
+  
+  public static void setAspectRatio(int x, int y)
+  {
+      doppio.JavaScript.eval("parent.setAspectRatio("+x+","+y+")");
   }
   
   public static void wipeCanvas()	    	      	     	        	       	
@@ -190,8 +200,15 @@ public class Graphics
       return result;
   }
   
-  public static void updatePosition(String id, int x, int y)	    	      	     	        	       	
-  {	    	      	     	        	       	
+  public static void updatePosition(String id, int x)
+  {
+      doppio.JavaScript.eval("parent.updatePosition('"+id+"',"+x+")");	    	      	     	        	       	
+      redraw();
+  }
+  
+  public static void updatePosition(String id, Object x, int y)	    	      	     	        	       	
+  {
+    if (x == null) x = "undefined";
     doppio.JavaScript.eval("parent.updatePosition('"+id+"',"+x+","+y+")");	    	      	     	        	       	
     redraw();
   }
