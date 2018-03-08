@@ -306,6 +306,13 @@ function updateTextStyle(id,newstyle)
     getShape(id).setAttribute("style",newstyle);
 }
 
+function updateShapeStyle(id,fillColour,strokeColour,strokeWeight)
+{    
+    if (strokeColour != undefined) getShape(id).setAttribute("stroke",strokeColour);
+    if (strokeWeight != undefined) getShape(id).setAttribute("stroke-width",strokeWeight);
+    if (fillColour != undefined) getShape(id).setAttribute("fill",fillColour); 
+}
+
 function getShape(id)
 {    
     var shape = $("div#graphics svg.container svg.main g")[0].querySelector("#"+id);

@@ -148,6 +148,21 @@ public class Graphics
       doppio.JavaScript.eval("parent.updateTextStyle('"+id+"','"+newstyle+"')");
   }
   
+  public static void updateShapeStyle(String id,String colour,String strokeColour,String strokeWeight)
+  {
+      doppio.JavaScript.eval("parent.updateShapeStyle('"+id+"','"+colour+"','"+strokeColour+"',"+strokeWeight+")");
+  }
+  
+  public static void updateShapeStyle(String id,String colour,String strokeColour)
+  {
+      doppio.JavaScript.eval("parent.updateShapeStyle('"+id+"','"+colour+"','"+strokeColour+")");
+  }
+  
+  public static void updateShapeStyle(String id,String colour)
+  {
+      doppio.JavaScript.eval("parent.updateShapeStyle('"+id+"','"+colour+"')");
+  }
+  
   public static String drawWebSprite(int x, int y, String url, int w, int h)
   {
       String result = doppio.JavaScript.eval("parent.drawWebSprite("+x+","+y+",'"+url+"',"+w+","+h+")");

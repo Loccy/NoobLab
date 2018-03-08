@@ -50,6 +50,11 @@ context of NoobLab:
 * Also also also in app.js, we have made the shell publicly accessible. To
   replicate, look for var=25 and insert window.shell = this; just before.
 
+* Also also also also in app.js, we have extended shell.loadingCompleted so
+  that it calls newDoppioLoaded in shims.js. Look for 
+  t.prototype.loadingCompleted and add a simple newDoppioLoaded() call at the
+  beginning of the function.
+
 * index.html and associated CSS has been butchered so that all is displayed
   is the console. Some aspects of the original demo's HTML are retained and
   set to display: none as it was easier to programmatically interact with

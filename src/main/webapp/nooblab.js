@@ -3169,7 +3169,7 @@ function pasteCodeBundle(source)
                 var code = getCode(this);
                 var tabname = $(this).attr("data-filename").trim();
                 addNewTab(true);
-                $("div.tab.selected").text(tabname);
+                $("div.tab.selected").html(tabname+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
                 editor.setValue(code);
                 javaPidjinCodeWrapper(true);
             });
@@ -3317,7 +3317,7 @@ function deleteSelectedEditorTab()
                 }
                 else
         	{
-		  $("div.tab.selected").text("Tab 1");
+                  $("div.tab.selected").html('Tab 1<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
                 }
 		sizeTabs();
               }

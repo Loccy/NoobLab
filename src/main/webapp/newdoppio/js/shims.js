@@ -65,48 +65,37 @@ function runShellCommand(cmd,pf)
     },100);        
 }
 
+function newDoppioLoaded()
+{                    
+    parent.$("div#output-main div.status").remove();
+    parent.enableRun();
+    shell._shellEnabled = false;
+    Buffer = BrowserFS.BFSRequire('buffer').Buffer;
+    parent.status("The enhanced Java runtime has loaded. Photon torpedoes ready, captain.","border");
+    setTimeout(function(){
+        parent.$("div#output-main div.status").remove();
+    },5000);        
+    
+    setTimeout(function(){
+        //resizeWindow();
+        var resizeTimer;
+        $(window).on('resize', function(e) {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function() {
+            // Run code here, resizing has "stopped"
+            resizeWindow();
+            //console.log("stopped");
+          },50);
+        });
+      },1000);
+}
+
 $(document).ready(function(){
   // click the "start demo" button
   setTimeout(function(){
     $("button#demo_button").click();
     parent.$("input#runbutton").prop('disabled', true);
     parent.status("The enhanced Java runtime is loading. You'll be able to run code once it's done - although you can start editing right away.","border error");
-    // wait for shell to exist
-    var shellmon = setInterval(function(){
-        try
-        {
-            if (shell.loadingCompleted != undefined)
-            {
-                // yeah, we'll be overriding that, ta muchly
-                shell.loadingCompleted = function(e) {                    
-                    parent.$("div#output-main div.status").remove();
-                    parent.enableRun();
-                    shell._shellEnabled = false;
-                    Buffer = BrowserFS.BFSRequire('buffer').Buffer;
-                    clearInterval(shellmon);
-                    parent.status("The enhanced Java runtime has loaded. Photon torpedoes ready, captain.","border");
-                    setTimeout(function(){
-                        parent.$("div#output-main div.status").remove();
-                    },5000);
-                    
-                    setTimeout(function(){
-                        //resizeWindow();
-                        var resizeTimer;
-                        $(window).on('resize', function(e) {
-                          clearTimeout(resizeTimer);
-                          resizeTimer = setTimeout(function() {
-                            // Run code here, resizing has "stopped"
-                            resizeWindow();
-                            //console.log("stopped");
-                          },50);
-                        });
-                      },1000);
-                    
-                }
-            }
-        }
-        catch (e) {};
-    },10);
   },10);
 
 });
