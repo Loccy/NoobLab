@@ -2617,7 +2617,7 @@ function knoToWhitespace(kno)
 function whiteSpaceify(code)
 {
     var whitespace = knoToWhitespace(getKNo());
-    code = code.replace(/\s+\n/g,"\n"); // trim existing lines
+    code = code.replace(/[ |\t]+?\n/g,"\n"); // trim existing lines
     code = code.replace(/\n/g,"\t"+whitespace+"\n");    
     return code;
 }
@@ -3362,7 +3362,7 @@ function populateTabs(data,noremove)
         {            
            	LOGcheat(source);
         }
-        var dewhitespaced = tab[1].replace(/\t\s+\n/g,"\n");
+        var dewhitespaced = tab[1].replace(/[ |\t]+?\n/g,"\n");
         newpre.text(dewhitespaced.trim());        
         $(newtab).append(newpre);
         $(newtab).append('<span class="cursor">0,0</span>');
@@ -3554,6 +3554,7 @@ function cheatSource(code)
                 }
             }
             if (sourceCounts[source] == undefined) sourceCounts[source] = 0;
+            console.log(source);
             sourceCounts[source]++;
             if (source != strippedKno && sourceCounts[source] > 1)  return source; // cheat and more than one match!
         }
@@ -4317,7 +4318,8 @@ window.onload = function()
        var source = cheatSource(pastedText);
        
        // strip watermarking from pastedText
-       pastedText = pastedText.replace(/\t\s+\n/g,"\n");
+       
+       pastedText = pastedText.replace(/[ |\t]+?\n/g,"\n");
        
        // if stuff highlighed then delete it
        if (editor.getSelection() != "") editor.replaceSelection("");
