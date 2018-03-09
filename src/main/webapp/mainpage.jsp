@@ -19,7 +19,7 @@
         <script src="${pageContext.request.contextPath}/jq.js"></script>
 
         <%-- our own stuff --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js?date=06023018"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js?date=09023018"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/actions.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/innerxhtml.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css?date=06032018"/>
@@ -65,7 +65,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/apprise.min.css"/>
         
         <%-- java runner --%>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/java.js?date=06003018"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/java.js?date=09003018"></script>
         
         <%-- pcode "compiler" --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/psuedocode.js"></script>
