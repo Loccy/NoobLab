@@ -86,8 +86,8 @@ function drawSprite(x,y,data,width,height)
         if (data[y].length > maxx) maxx = data[y].length;
     }
     
-    var pixelwidth = width/maxx;
-    var pixelheight = height/maxy;
+    var pixelwidth = 100/maxx;
+    var pixelheight = 100/maxy;
     
     for (var y = 0; y < maxy; y++)
     {
