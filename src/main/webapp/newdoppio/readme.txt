@@ -48,7 +48,7 @@ context of NoobLab:
   up the minified grammar/syntax!
 
 * Also also also in app.js, we have made the shell publicly accessible. To
-  replicate, look for var=25 and insert window.shell = this; just before.
+  replicate, look for var i=25 and insert window.shell = this; just before.
 
 * Also also also also in app.js, we have extended shell.loadingCompleted so
   that it calls newDoppioLoaded in shims.js. Look for 

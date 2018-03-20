@@ -78,6 +78,7 @@ function drawSprite(x,y,data,width,height)
     svgel.setAttribute("y",y);
     svgel.setAttribute("width",width);
     svgel.setAttribute("height",height);
+    svgel.setAttribute("shape-rendering","optimizeSpeed");
     // find out how many "pixels" wide we are
     var maxx = 0;
     var maxy = data.length;
@@ -99,8 +100,8 @@ function drawSprite(x,y,data,width,height)
                 var svgpixel = document.createElementNS('http://www.w3.org/2000/svg','rect');
                 svgpixel.setAttribute("x",x*pixelwidth+"%");
                 svgpixel.setAttribute("y",y*pixelheight+"%");
-                svgpixel.setAttribute("width",pixelwidth+"%");
-                svgpixel.setAttribute("height",pixelheight+"%");
+                svgpixel.setAttribute("width",(pixelwidth)+"%");
+                svgpixel.setAttribute("height",(pixelheight)+"%");
                 svgpixel.setAttribute("stroke",col);
                 svgpixel.setAttribute("stroke-width",0);
                 svgpixel.setAttribute("fill",col); 
@@ -303,6 +304,7 @@ function updateText(id,newtext)
 function updateTextStyle(id,newstyle)
 {
     if (getShape(id).tagName != "text") return; // fail silently...
+    newstyle = newstyle.replace(/color\s*:/g,"fill:").replace(/-fill/g,"-color");
     getShape(id).setAttribute("style",newstyle);
 }
 
