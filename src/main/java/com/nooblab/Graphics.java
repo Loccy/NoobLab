@@ -259,4 +259,19 @@ public class Graphics
       return result;
   }
   
+  public static void hideShape(String id)
+  {
+      doppio.JavaScript.eval("parent.hideShape('"+id+"')");
+  }
+  
+  public static void showShape(String id)
+  {
+      doppio.JavaScript.eval("parent.showShape('"+id+"')");
+  }
+  
+  public static void toggleShape(String id)
+  {
+      doppio.JavaScript.eval("parent.toggleShape('"+id+"')");
+  }
+  
 }

@@ -36,7 +36,7 @@ public class LogActivity extends HttpServlet {
 
         // get parameters
         String username = (String)request.getSession().getAttribute("username");
-        if (username == null || username.equals("guest")) return;
+        if (username == null || username.equals("guest") || username.equals("embed")) return;
 
         //String date = request.getParameter("datetime");
         String DATE_FORMAT = "HH:mm:ss yyyy/MM/dd";

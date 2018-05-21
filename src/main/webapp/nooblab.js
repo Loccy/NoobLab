@@ -2676,6 +2676,12 @@ function whiteSpaceify(code)
 
 function run()
 {
+    if ($("body").hasClass("embed"))
+    {
+        // show the output "pane"
+        toggleEmbedOutput(true);
+    }
+    
     // I really regret "upgrading" CodeMirror... I am not sure why this code
     // is causing the scroll position to bounce around... but let's solve the
     // symptom rather than the disease.
@@ -3815,6 +3821,10 @@ function toggleGraphics(turnon)
         $("div#navgraphics").show();
         $("div#graphics").show();
         $("div#navgraphics").addClass("selected");
+        if (embed)
+        {
+            $("div#output-outer").addClass("graphics");
+        }
     }
     else
     {
@@ -4179,8 +4189,47 @@ window.onload = function()
    }
    else hash = 0;
    contentNav(hash,0,true);
+   
+   if (embed)
+   {
+       if ($("div.parameter#multi").text().trim() == "true")
+       {
+           populateTabs(embedcode);
+       }
+       else if ($("div.parameter#blockly").text().trim() == "true")
+       {
+            restoreBlockly(embedcode);
+       }
+       else
+       {
+           editor.setValue(embedcode.split("***CODE***")[1].trim());
+       }
+       editor.setOption("readOnly",true);
+       
+       if (carolcode)
+       {
+           // is it actually Carolcode?
+           if (carolcode.trim().slice(0,8) == "fakeDoc:")
+           {
+               carolcode = carolcode.slice(9);
+               // not Carol - Javascript fakedoc
+               var newiframe = $('<iframe style="border: 0px; height: 100%; width: 100%" border="0"><iframe>');
+               $("div#output-outer").append(newiframe);
+               newiframe.contents().find("body").append(carolcode);
+               visibleFakeDoc = newiframe.get(0).contentDocument;
+           }
+           else
+           {
+                // drag Carol in...
+                var newcaroldiv = $('<div class="fakedoc carol embed"></div>');
+                newcaroldiv.html(carolcode);
+                $("div#output-outer").append(newcaroldiv);
+           }
+           $("body").addClass("hascarol");
+       }
+   }
 
-   if ($("div.parameter#kinder").text().trim() != "true")
+   if ($("div.parameter#kinder").text().trim() != "true" && !embed)
    {
         if ((lastSectionNo != null && lastSectionNo != 0 && lastSectionNo.length != 0) || oldCode != "")
         {
@@ -4596,6 +4645,11 @@ window.onload = function()
              $("div#resizeoverlay").remove();
          }
      }
+     
+     if ($("body").hasClass("embed"))
+     {
+         configureEmbed();
+     }
 
 }
 //});
@@ -4606,6 +4660,64 @@ onmousemove = function(e){
          globalMouseX = e.clientX;
          globalMouseY = e.clientY;
      }
+
+function toggleEmbedOutput(forceOutput)
+{
+    if (forceOutput || $("div#editor-wrapper").css("visibility") != "hidden")
+    {
+        $("div#output-outer").css("visibility","visible");
+        $("div#graphics").css("visibility","visible");
+        $("div#editor-wrapper").css("visibility","hidden");
+        $("input#toggleEmbed").val("Show code");
+    }
+    else
+    {
+        $("div#output-outer").css("visibility","hidden");
+        $("div#graphics").css("visibility","hidden");
+        $("div#editor-wrapper").css("visibility","visible");
+        $("input#toggleEmbed").val("Show output");
+    }
+}
+
+function configureEmbed()
+{
+    
+}
+
+function getEmbedLink()
+{
+    // build params
+    var params = $("div.parameter").not("[id^=course]").not("[id^=lesson]").not("[id^=lock]").not("[id$=Url]");
+    var paramobj = {};
+    var carol = getCarolDiv();
+    var code = getTabBundleCode();
+    if (carol)
+    {
+        carol = carol.html();
+    }
+    if ($("div.parameter#blockly").text().trim() == "true")
+    {
+        code = getBlocklyXml();
+    }
+    for (var i = 0; i < params.length; i++)
+    {
+        paramobj[$(params[i]).attr("id")] = $(params[i]).text().trim();
+    }
+    var json = JSON.stringify(paramobj);    
+    var data = {
+        params : json,
+        code : code,
+        carol : carol
+    };
+    if ($("div.fakedocwrapper.onscreen").size() == 1) data.fakeDoc = $("body",visibleFakeDoc).html();
+    $.post(contextPath+"/GenerateEmbed",data,function(id){
+        var msg = "To embed your work in another page, use the following HTML code:<p>";
+        msg += '<textarea style="width: 100%; padding: 8px; box-sizing: border-box">&lt;iframe style="width: 500px; height: 500px;" src="'+location.origin+contextPath+"?embed="+id+'"&gt;&lt;/iframe&gt;</textarea>';        
+        msg += "<p>(note this is on a single line with no line breaks)</p>";
+        msg += "<p>You can tweak the <code>width</code> and <code>height</code> to suit the host page if needed.</p>";        
+        apprise(msg);
+    })
+}
 
 function resizeSplit(width)
 {
@@ -4877,6 +4989,8 @@ function scale(s)
 }
 
 $(window).resize(function() {
+    if (embed) return;
+    
         //confirm window was actually resized
         if($(window).height()!=lastWindowHeight || $(window).width()!=lastWindowWidth){
 

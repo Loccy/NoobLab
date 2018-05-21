@@ -156,8 +156,8 @@ function drawCircle(x,y,radius,colour,strokeColour,strokeWeight)
     
     var svgel = document.createElementNS('http://www.w3.org/2000/svg','circle');
     svgel.setAttribute("id",id);
-    svgel.setAttribute("cx",x);
-    svgel.setAttribute("cy",y);
+    svgel.setAttribute("cx",parseFloat(x)+parseFloat(radius));
+    svgel.setAttribute("cy",parseFloat(y)+parseFloat(radius));
     svgel.setAttribute("r",radius);
     svgel.setAttribute("stroke",strokeColour);
     svgel.setAttribute("stroke-width",strokeWeight);
@@ -323,24 +323,29 @@ function getShape(id)
 
 function getXPos(id)
 {
-    var shapeType = getShape(id).tagName;
+    var shape = getShape(id);
+    var shapeType = shape.tagName;
     if (shapeType == "circle")
     {
-        return getShape(id).getAttribute("cx");
+        var radius = shape.getAttribute("r");
+        var x = shape.getAttribute("cx");
+        return parseFloat(x)-parseFloat(radius);        
     }
     else
     {
         return getShape(id).getAttribute("x");
     }
-    
 }
 
 function getYPos(id)
 {
-    var shapeType = getShape(id).tagName;
+    var shape = getShape(id);
+    var shapeType = shape.tagName;
     if (shapeType == "circle")
     {
-        return getShape(id).getAttribute("cy");
+        var radius = shape.getAttribute("r");
+        var y = shape.getAttribute("cy");
+        return parseFloat(y)-parseFloat(radius);        
     }
     else
     {
@@ -353,12 +358,14 @@ function updatePosition(id,x,y)
     if (x == undefined) x = getXPos(id);
     if (y == undefined) y = getYPos(id);
     
-    var shapeType = getShape(id).tagName;
+    var shape = getShape(id);
+    var shapeType = shape.tagName;
     
     if (shapeType == "circle")
-    {
-        getShape(id).setAttribute("cx",x);
-        getShape(id).setAttribute("cy",y);
+    {        
+        var r = shape.getAttribute("r");
+        shape.setAttribute("cx",parseFloat(x)+parseFloat(r));
+        shape.setAttribute("cy",parseFloat(y)+parseFloat(r));
     }
     else if (shapeType == "polygon")
     {
@@ -378,14 +385,14 @@ function updatePosition(id,x,y)
             newpoints += newx+","+newy+" ";
         }
         newpoints = newpoints.trim();
-        getShape(id).setAttribute("points",newpoints);
-        getShape(id).setAttribute("x",x);
-        getShape(id).setAttribute("y",y);
+        shape.setAttribute("points",newpoints);
+        shape.setAttribute("x",x);
+        shape.setAttribute("y",y);
     }
     else
     {
-        getShape(id).setAttribute("x",x);
-        getShape(id).setAttribute("y",y);
+        shape.setAttribute("x",x);
+        shape.setAttribute("y",y);
     }
 }
 
@@ -446,6 +453,83 @@ function resizeShape(id,width,height)
     }
 }
 
+function hideShape(id)
+{
+    $(getShape(id)).hide();
+}
+
+function showShape(id)
+{
+    $(getShape(id)).show();
+}
+
+function toggleShape(id)
+{
+    //$(getShape(id)).toggle();
+    // not sure why I'm having to do this manually - .toggle() should work...
+    // .is(":visible") wasn't working either - perhaps it's an SVG/JQuery quirk
+    if ($(getShape(id)).css("display") == "none")
+    {
+        showShape(id);
+    }
+    else
+    {
+        hideShape(id);
+    }
+}
+
+var animationProcesses = {};
+function animateShapes(shapes,period)
+{       
+    if (typeof shapes == "string") shapes = shapes.split(",");
+    // grab x,y of first shape
+    var x = getXPos(shapes[0]);
+    var y = getYPos(shapes[0]);        
+    
+    // create new wrapper svg element
+    var svgel = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    
+    var id = "g"+Math.random().toString(36).substr(2, 10);
+    svgel.setAttribute("id",id);    
+    svgel.setAttribute("x",x);
+    svgel.setAttribute("y",y);
+    svgel.setAttribute("data-period",period);
+    $("div#graphics svg.container svg.main g").append(svgel);
+    
+    for (var i = 0; i < shapes.length; i++)
+    {        
+        updatePosition(shapes[i],0,0);                
+        svgel.appendChild(getShape(shapes[i]));
+        $(getShape(shapes[i])).hide();
+    }
+    $(getShape(shapes[0])).show();
+    getShape(shapes[0]).classList.add("visible");
+    
+    $(svgel).css("overflow","visible");
+    startAnimation(id,period);
+    return id;
+}
+
+function stopAnimation(id)
+{
+    clearInterval(animationProcesses[id]);    
+}
+
+function startAnimation(id,period)
+{
+    if (period == undefined) period = getShape(id).getAttribute("data-period");
+    var procid = setInterval(function(id){
+        // what's visible?
+        var vis = $("div#graphics svg.container svg.main g svg#"+id).find(".visible").get(0);
+        vis.classList.remove("visible");
+        $(vis).hide();
+        var newvis = ($(vis).is(":last-child")) ? $("div#graphics svg.container svg.main g svg#"+id).find(":first-child") : $(vis).next();       
+        newvis.get(0).classList.add("visible");
+        $(newvis).show();                
+    },period,id);
+    animationProcesses[id] = procid;
+    return id;
+}
 
 function removeShape(id)
 {

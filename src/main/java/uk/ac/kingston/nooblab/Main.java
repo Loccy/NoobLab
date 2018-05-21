@@ -4,6 +4,7 @@
  */
 package uk.ac.kingston.nooblab;
 
+import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -13,9 +14,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,28 +59,98 @@ public class Main extends HttpServlet
         response.addHeader("X-UA-Compatible", "IE=Edge");
         
         boolean httpsOnImages = "true".equalsIgnoreCase(getServletContext().getInitParameter("httpsOnImages"));
-                
-        String contentsrc = request.getParameter("contentsrc");        
-        if (contentsrc == null)
+        
+        // is this an embed link?
+        boolean embed = false;
+        String embedstr = request.getParameter("embed");
+        File embedFile = null;
+        if (embedstr != null && !embedstr.equals(""))
         {
-            // do we have it courtesy of a RESTful URL?
-            String pathInfo = request.getPathInfo();
-            if (pathInfo != null)
-            {
-                pathInfo = pathInfo.substring(1);
-                contentsrc = pathInfo;
-            }
-        }
+            // we have an embed - does it exist?
+            String datadir = getServletContext().getInitParameter("datadir");
+            embedFile = new File(datadir+"/embed/"+embedstr);
+            if (embedFile.exists()) embed = true;
+        }        
+        
         Document doc = null;
-        if (contentsrc != null)
+        String contentsrc = request.getParameter("contentsrc"); 
+        
+        // if they're logged in as embed, clear it
+        // it'll be reset again in a moment anyway.
+        if ("embed".equals(request.getSession().getAttribute("username"))) request.getSession().removeAttribute("username");
+        
+        if (embed)
         {
-            // get learning content from t'interwebs
-            doc = Jsoup.connect("http://"+contentsrc).get();
+            // suck in the embed file
+            String embedData = FileUtils.readFileToString(embedFile);
+            String[] splitted = embedData.split("NOOBLABSEPSEPSEPNOOBLAB");
+            String paramsJson = splitted[0];
+            Gson gson = new Gson();            
+            String code = splitted[1];
+            request.setAttribute("embedcode",gson.toJson(code));
+            if (splitted.length == 3)
+            {
+                request.setAttribute("embedcarol",gson.toJson(splitted[2]));
+            }
+            else
+            {
+                request.setAttribute("embedcarol","undefined");
+            }
+            HashMap<String,String> params = gson.fromJson(paramsJson, HashMap.class);
+            
+            // "log" them in as embed
+            request.getSession().setAttribute("username","embed");
+            // build a new JSoup document
+            doc = Jsoup.parse("<html><head><title>NoobLab Embed</title></head><body></body></html>");
+            
+            // add the params
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                doc.select("body").append("<div class=\"parameter\" id=\""+key+"\">"+value+"</div>");
+            }
+            
+            // build a vestigial NoobLab content page
+            doc.select("body").append("<h1>Embed</h1>");
+            doc.select("body").append("<div id=\"embedmain\"></div>");
+            //doc.select("body div#embedmain").attr("id","embed");
+            doc.select("body div#embedmain").addClass("section");
+            doc.select("body div#embedmain").append("<h2></h2>");
+            doc.select("body div#embedmain h2").html("Embed");
+            doc.select("body div#embedmain h2").addClass("title");
+            doc.select("body div#embedmain").append("<p>Embed</p>");            
+            
+            //request.getSession().setAttribute("watermark",MiscUtils.klungeUID("embed"));
+            // clear any error
+            request.getSession().setAttribute("error",null);
+            // note that we've just logged in
+            request.getSession().setAttribute("freshlogin","true"); 
+            
+            request.setAttribute("embed", true);
         }
+        else
+        {                   
+            if (contentsrc == null)
+            {
+                // do we have it courtesy of a RESTful URL?
+                String pathInfo = request.getPathInfo();
+                if (pathInfo != null)
+                {
+                    pathInfo = pathInfo.substring(1);
+                    contentsrc = pathInfo;
+                }
+            }
+
+            if (contentsrc != null)
+            {
+                // get learning content from t'interwebs
+                doc = Jsoup.connect("http://"+contentsrc).get();
+            }
+        }        
         
         // are we logged in?                
-        if (request.getSession().getAttribute("username") == null)
-        {
+        if (request.getSession().getAttribute("username") == null && !embed)
+        {            
             // if not, grab original URL and bounce to login page
             String originalUrl = request.getRequestURL().toString();
             if (request.getQueryString() != null) originalUrl += "?"+request.getQueryString().toString();
@@ -114,7 +186,7 @@ public class Main extends HttpServlet
         data = data.replace("\"","\\\"");
         request.setAttribute("codetext", data);
         
-        if (contentsrc != null)
+        if (contentsrc != null || embed)
         {
             // handle alternates            
             String alt = doc.select("div.parameter[id=defaultAlternate]").text().trim();

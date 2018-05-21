@@ -12,7 +12,13 @@
 
         <%-- put current ${pageContext.request.contextPath} into Javascript land --%>
         <script type="text/javascript">
-            var contextPath = "${pageContext.request.contextPath}";            
+            var contextPath = "${pageContext.request.contextPath}";
+            var embed = false;
+            <c:if test="${embed}">
+            embed = true;
+            var embedcode = ${embedcode};
+            var carolcode = ${embedcarol};
+            </c:if>
         </script>
 
         <%-- JQuery --%>
@@ -123,7 +129,7 @@
         
 
     </head>
-    <body class="main">
+    <body class="main<c:if test="${embed}"> embed</c:if>">
          <div id="topnav">
             <div class="row1">
                 <div title="Logout" id="logout" onclick="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
@@ -147,6 +153,7 @@
                     <!--<div onclick="setName()">Set my name</div>-->
                     <div class="disabled" id="toggleblocks" onclick="toggleOptions(); toggleBlocks()">Disable blocks</div>
                     <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>
+                    <div id="getembedlink" onclick="getEmbedLink()">Get embed link</div>
                     <div id="javaruntimemenu" onclick="toggleJavaRuntime()">Use new Java runtime<br/>(old currently in use)</div>
                 </div>            
                 <div id="mainZoomControls">
@@ -191,6 +198,7 @@
             &nbsp;<input id="runbutton" type="button" value="Run" onclick="run();"/>
             <input id="stopbutton" type="button" value="Stop" onclick="stop();" disabled="true"/>
             <input id="loadbutton" type="button" value="Load file"/>
+            <input id="toggleEmbed" type="button" value="Show output" onclick="toggleEmbedOutput()"/>
             <input id="savebutton" type="button" value="Save file" onclick ="save()"/>
             <input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/>
             <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>            

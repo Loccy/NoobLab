@@ -951,3 +951,119 @@ div#output-outer { display : none }
         .cboxSlideshow_off #cboxSlideshow{background-position:-150px -25px; right:27px;}
         .cboxSlideshow_off #cboxSlideshow:hover{background-position:-125px 0px;}
 
+
+/* embed adjustments */
+
+body.embed div#content {
+    display : none;
+}
+
+body.embed div#topnav {
+    display : none;
+}
+
+body.embed div#navbar {
+    display : none;
+}
+
+body.embed div#horizontaldrag {
+    display : none;
+}
+
+body.embed div#editor-wrapper {
+    top : 0px;
+    bottom : 16px !important;
+    left : 0px;
+    right : 0px;
+    width : 100%;
+    border-top : 1px solid #888;
+    margin-bottom : 0px;
+}
+
+body.embed div#toolbar {
+    top: 0px;
+    left : 0px;
+    width :100%;
+}
+
+body.embed div#output-titlebar {
+    display : none;
+}
+
+body.embed div#code-titlebar i,body.embed div#code-titlebar div.newtab {
+    display : none;
+}
+
+body.embed div#output-inner {
+    top : 0px;
+}
+
+body.embed div#output-outer {
+    top : 25px;
+    bottom : 0px !important;
+    left : 0px;
+    right : 0px;
+    width : auto;
+    height : auto !important;
+    visibility : hidden;
+}
+
+body.embed div#output-main {
+    height : 100%;
+}
+
+body.embed span.maximisebutton {
+    display : none;
+}
+
+body.embed div#toolbar > * {
+    display : none !important;
+}
+
+div#toggleEmbed {
+    display : none;
+}
+
+body.embed div#toolbar input#runbutton,
+body.embed div#toolbar input#stopbutton,
+body.embed div#toolbar input#toggleEmbed {
+    display : inline !important;
+}
+
+body.embed div#graphics {
+    top : 26px;
+    bottom : 100px;
+    left : 0px;
+    right : 0px;
+    border-top : 1px solid #888;
+}
+
+body.embed div#output-outer.graphics {
+    top: calc(100% - 100px);
+    bottom : 0px;
+    left : 0px;
+    right : 0px;
+    width : auto;
+    height : auto;
+    visibility : hidden;
+}
+
+body.embed div.carol {
+    position : absolute;
+    top : 0px;
+    height : calc(100vh - 100px);
+    width : calc(100vh - 100px);
+    margin-left: auto;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+body.embed div.carol div.carolwrapper {
+    width : 100% !important;
+    height : 100% !important;
+}
+
+body.embed.hascarol div#output-inner {
+    top: calc(100% - 62px);
+    border-top: 1px solid #888;
+}
