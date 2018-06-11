@@ -72,6 +72,21 @@ public class Main extends HttpServlet
             if (embedFile.exists()) embed = true;
         }        
         
+        String embedMedal = request.getParameter("embedmedal");
+        if (embedMedal != null)
+        {            
+            String referrer = request.getHeader("referer");
+            //System.out.println(referrer);
+            String emsources = getServletContext().getInitParameter("emsources");
+            if (referrer != null && referrer.matches(emsources))
+            {            
+                // look for a username parameter
+                request.getSession().setAttribute("username",embedMedal);            
+            }
+            // otherwise, it'll expect them to log in - not sure how that will work out
+            // in an iframe, but still...
+        }
+        
         Document doc = null;
         String contentsrc = request.getParameter("contentsrc"); 
         
@@ -146,7 +161,7 @@ public class Main extends HttpServlet
                 // get learning content from t'interwebs
                 doc = Jsoup.connect("http://"+contentsrc).get();
             }
-        }        
+        }                
         
         // are we logged in?                
         if (request.getSession().getAttribute("username") == null && !embed)
@@ -559,7 +574,7 @@ public class Main extends HttpServlet
             try
             {
                 doc.select("#navbar .navitem").get(1).addClass("selected");
-            } catch (Exception e) {}
+            } catch (Exception e) {}            
             
             request.setAttribute("contentshtml",doc.select("body > *").toString());
         }
@@ -579,7 +594,7 @@ public class Main extends HttpServlet
         {
             cmthemes[i] = cmthemes[i].replace("/codemirror/theme/","").replace(".css","");
         }
-        request.setAttribute("cmthemes",cmthemes);
+        request.setAttribute("cmthemes",cmthemes);                
         
         RequestDispatcher rd = request.getRequestDispatcher("/mainpage.jsp");
         rd.forward(request, response);

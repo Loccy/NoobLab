@@ -3833,6 +3833,22 @@ function toggleGraphics(turnon)
     }
 }
 
+function tryMedalEmbed()
+{
+    // switch to output
+    toggleEmbedOutput(true);
+    // find the first medal link and click it...
+    $("div.testCase").eq(0).click();
+    // well that was easy...
+}
+
+function pasteCodeEmbed()
+{
+    $("pre.codepaste").eq(0).click();
+    $("div.codebundle").eq(0).click();
+    // and so was that
+}
+
 function addGettersAndSetters(which)
 {
     $("div#editorRightClick").hide();
@@ -3887,6 +3903,7 @@ originalTexts = {};
 //$(document).load(function()
 window.onload = function()
 {
+    
    // hoik the navbar out of the content div as it will break if we scale content
    // easier to do it here rather than fix/place it "properly" over in Main.java given
    // how Main.java constructs the page...
@@ -4166,6 +4183,19 @@ window.onload = function()
                                     //$(this).colorbox.resize();
                                }
                             });
+                            
+   // is there an medalembed in the url?
+   if (getUrlParameter("embedmedal"))
+   {
+       // If so, add the "embed" class to the body
+       $("body").addClass("embed embedmedal");
+       // if save all as zip is visible, then hide save file
+       if ($("input#saveallbutton").is(":visible"))
+       {
+           $("input#savebutton").hide();                                 
+       }
+       $("input#tidy").hide();
+   }
 
    handlePrettyPrintPlus();
    createFakeDocs();

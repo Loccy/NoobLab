@@ -990,7 +990,7 @@ body.embed div#output-titlebar {
     display : none;
 }
 
-body.embed div#code-titlebar i,body.embed div#code-titlebar div.newtab {
+body.embed:not(.embedmedal) div#code-titlebar i,body.embed:not(.embedmedal) div#code-titlebar div.newtab {
     display : none;
 }
 
@@ -1016,11 +1016,11 @@ body.embed span.maximisebutton {
     display : none;
 }
 
-body.embed div#toolbar > * {
+body.embed:not(.embedmedal) div#toolbar > * {
     display : none !important;
 }
 
-div#toggleEmbed {
+input#toggleEmbed {
     display : none;
 }
 
@@ -1028,6 +1028,10 @@ body.embed div#toolbar input#runbutton,
 body.embed div#toolbar input#stopbutton,
 body.embed div#toolbar input#toggleEmbed {
     display : inline !important;
+}
+
+body.embed div#toolbar input#runbutton[disabled],body.embed div#toolbar input#stopbutton[disabled] {
+    display : none !important;
 }
 
 body.embed div#graphics {

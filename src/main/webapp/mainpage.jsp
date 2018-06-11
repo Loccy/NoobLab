@@ -197,15 +197,17 @@
             <div style="float: right"><%-- <i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i>--%><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>
             &nbsp;<input id="runbutton" type="button" value="Run" onclick="run();"/>
             <input id="stopbutton" type="button" value="Stop" onclick="stop();" disabled="true"/>
-            <input id="loadbutton" type="button" value="Load file"/>
-            <input id="toggleEmbed" type="button" value="Show output" onclick="toggleEmbedOutput()"/>
+            <input id="loadbutton" type="button" value="Load file"/>            
             <input id="savebutton" type="button" value="Save file" onclick ="save()"/>
             <input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/>
             <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>            
-            <input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/></div>
-                        
-            <div style="clear: both"></div>            
+            <input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/>
+            <input id="toggleEmbed" type="button" value="Show output" onclick="toggleEmbedOutput()"/>
+            <input id="pasteExample" type="button" value="Paste example code" onclick="pasteCodeEmbed()"/>
+            <input id="runMedal" type="button" value="Try for medal" onclick="tryMedalEmbed()"/>
         </div>
+                       
+        <div style="clear: both"></div>                    
         <script type="text/javascript">
             var stoppit = false;
             var lastFilename = "";
