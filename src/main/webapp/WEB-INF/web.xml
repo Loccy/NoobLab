@@ -284,4 +284,12 @@
         <param-name>homeip</param-name>
         <param-value>.*</param-value>
     </context-param>
+    <context-param>
+        <description>Acceptable sources for embedmedal links</description>
+        <!-- a regex match is done on the param-value supplied against IP of the user -->
+        <!-- leave empty if you don't want this -->
+        <!-- Do NOT remove the entry -->
+        <param-name>emsources</param-name>
+        <param-value>kingston.ac.uk</param-value>
+    </context-param>
 </web-app>
