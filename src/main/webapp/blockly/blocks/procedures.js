@@ -44,7 +44,8 @@ Blockly.Blocks['procedures_defnoreturn'] = {
         Blockly.Procedures.rename);
     nameField.setSpellcheck(false);
     this.appendDummyInput()
-        .appendField(Blockly.Msg.PROCEDURES_DEFNORETURN_TITLE)
+        //.appendField(Blockly.Msg.PROCEDURES_DEFNORETURN_TITLE)
+        .appendField("Define function")
         .appendField(nameField, 'NAME')
         .appendField('', 'PARAMS');
     this.setMutator(new Blockly.Mutator(['procedures_mutatorarg']));
@@ -340,7 +341,8 @@ Blockly.Blocks['procedures_defreturn'] = {
         Blockly.Procedures.rename);
     nameField.setSpellcheck(false);
     this.appendDummyInput()
-        .appendField(Blockly.Msg.PROCEDURES_DEFRETURN_TITLE)
+        //.appendField(Blockly.Msg.PROCEDURES_DEFRETURN_TITLE)
+        .appendField("Define function")
         .appendField(nameField, 'NAME')
         .appendField('', 'PARAMS');
     this.appendValueInput('RETURN')
@@ -458,6 +460,7 @@ Blockly.Blocks['procedures_callnoreturn'] = {
    */
   init: function() {      
     this.appendDummyInput('TOPROW')
+        .appendField("Call function")
         .appendField(this.id, 'NAME');
     this.setPreviousStatement(true);
     this.setNextStatement(true);

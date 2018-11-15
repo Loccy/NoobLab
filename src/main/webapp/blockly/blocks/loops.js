@@ -121,7 +121,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   // Block for 'for' loop.
   {
     "type": "controls_for",
-    "message0": "%{BKY_CONTROLS_FOR_TITLE}",
+    "message0": "%{BKY_CONTROLS_FOR_TITLE}",    
     "args0": [
       {
         "type": "field_variable",
@@ -165,7 +165,8 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
   // Block for 'for each' loop.
   {
     "type": "controls_forEach",
-    "message0": "%{BKY_CONTROLS_FOREACH_TITLE}",
+    //"message0": "%{BKY_CONTROLS_FOREACH_TITLE}",
+    "message0" : "for loop with %1 from %2 to %3 step %4",
     "args0": [
       {
         "type": "field_variable",

@@ -73,18 +73,20 @@ public class Main extends HttpServlet
         }        
         
         String embedMedal = request.getParameter("embedmedal");
-        if (embedMedal != null)
-        {            
+        if (embedMedal != null && !embedMedal.equals(""))
+        {                        
             String referrer = request.getHeader("referer");
-            //System.out.println(referrer);
-            String emsources = getServletContext().getInitParameter("emsources");
-            if (referrer != null && referrer.matches(emsources))
+            String mydomain = request.getServerName().replaceAll(".*\\.(?=.*\\.)", "");            
+            if (referrer != null && referrer.matches("(.*)"+mydomain+"(.*)"))
             {            
                 // look for a username parameter
-                request.getSession().setAttribute("username",embedMedal);            
+                request.getSession().setAttribute("username",embedMedal);                
             }
             // otherwise, it'll expect them to log in - not sure how that will work out
             // in an iframe, but still...
+            
+            // and set the watermark
+            request.getSession().setAttribute("watermark",MiscUtils.klungeUID(embedMedal));
         }
         
         Document doc = null;
@@ -92,7 +94,7 @@ public class Main extends HttpServlet
         
         // if they're logged in as embed, clear it
         // it'll be reset again in a moment anyway.
-        if ("embed".equals(request.getSession().getAttribute("username"))) request.getSession().removeAttribute("username");
+        if ("embed".equals(request.getSession().getAttribute("username"))) request.getSession().removeAttribute("username");        
         
         if (embed)
         {
@@ -134,8 +136,8 @@ public class Main extends HttpServlet
             doc.select("body div#embedmain h2").html("Embed");
             doc.select("body div#embedmain h2").addClass("title");
             doc.select("body div#embedmain").append("<p>Embed</p>");            
+                        
             
-            //request.getSession().setAttribute("watermark",MiscUtils.klungeUID("embed"));
             // clear any error
             request.getSession().setAttribute("error",null);
             // note that we've just logged in

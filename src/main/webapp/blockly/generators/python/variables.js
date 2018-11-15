@@ -52,3 +52,18 @@ Blockly.Python['variables_input'] = function(block) {
   var code = variable_var+"= input()\n";
   return code;
 };
+
+Blockly.Python['variables_input_prompt'] = function(block) {
+  var variable_var = Blockly.Python.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+  var msg = Blockly.Python.valueToCode(block, 'PROMPT',
+      Blockly.Python.ORDER_NONE) || "";
+  //var variable_prompt = block.getFieldValue("PROMPT");
+  if (msg == "'...'") msg = "";
+  if (msg == "''") msg = "";
+  var code = variable_var+"= input("+msg+")\n";
+  if (msg == "")
+  {
+      code = variable_var+"= input()";
+  }
+  return code;
+};

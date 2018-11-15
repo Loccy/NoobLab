@@ -972,7 +972,7 @@ body.embed div#horizontaldrag {
 
 body.embed div#editor-wrapper {
     top : 0px;
-    bottom : 16px !important;
+    bottom : 17px !important;
     left : 0px;
     right : 0px;
     width : 100%;
@@ -983,10 +983,14 @@ body.embed div#editor-wrapper {
 body.embed div#toolbar {
     top: 0px;
     left : 0px;
-    width :100%;
+    width : calc(100% - 2px);
 }
 
 body.embed div#output-titlebar {
+    display : none;
+}
+
+input#pasteExample,input#runMedal,input#gettersAndSetters {
     display : none;
 }
 
@@ -1070,4 +1074,30 @@ body.embed div.carol div.carolwrapper {
 body.embed.hascarol div#output-inner {
     top: calc(100% - 62px);
     border-top: 1px solid #888;
+}
+
+img#embedmedalhighlight {
+    position : fixed;
+    bottom : 10px;
+    right : 10px;
+    opacity : 0.3;
+    display : none;
+    width : 4%;
+}
+
+div#loadingspinner {
+    z-index : 100000000;
+    position : fixed;
+    top : 0px;
+    bottom : 0px;
+    right : 0px;
+    left : 0px;
+    background-color : #CFE5E8;
+}
+
+div#loadingspinner iframe {
+    left : 0px;
+    border : 0px;
+    width : 100%;
+    height : 100%;    
 }

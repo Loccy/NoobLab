@@ -44,14 +44,12 @@ Blockly.Python['carol_isNotAtGoal'] = function(block) {
   return [code, Blockly.Python.ORDER_NONE];
 };
 
-Blockly.Python['carol_ispickupvisible'] = function(block) {
+Blockly.Python['carol_isPickupVisible'] = function(block) {
   var code = 'carol.isPickupVisible()';
   return [code, Blockly.Python.ORDER_NONE];
 };
 
-Blockly.Python['carol_distancetopickup'] = function(block) {
+Blockly.Python['carol_distanceToPickup'] = function(block) {
   var code = 'carol.distanceToPickup()';
   return [code, Blockly.Python.ORDER_NONE];
 };
-
-

@@ -5,10 +5,9 @@
 package uk.ac.kingston.nooblab;
 
 import com.google.gson.Gson;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,13 +35,21 @@ public class StatsService extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+        // DIE, same origin. Just bloody DIE.
+        response.addHeader("Access-Control-Allow-Origin","*");
         
         // get parameters
         String basedir = MiscUtils.getDataDir(request); 
                 //request.getSession().getServletContext().getInitParameter("datadir");
         String username = request.getParameter("student");
         if (username == null) username = request.getSession().getAttribute("username").toString();
-        String statsType = request.getParameter("type");                
+        String statsType = request.getParameter("type");
+        
+        String module = request.getParameter("module");
+        if (module != null)
+        {
+            basedir = request.getServletContext().getInitParameter("datadir")+"/"+module;            
+        }        
         
         PrintWriter out = response.getWriter();
         try {            
@@ -73,6 +80,12 @@ public class StatsService extends HttpServlet
                 json += "}";
                 json = json.replace(",\n}","\n}");
                 out.print(json);*/
+            }
+            if ("testMedalsWithDate".equals(statsType))
+            {
+                response.setContentType("application/json");
+                Gson gson = new Gson();
+                out.print(gson.toJson(StudentStatuses.testWithMedal(basedir+"/"+username,true)));
             }
             if ("loginTimes".equals(statsType))
             {                                

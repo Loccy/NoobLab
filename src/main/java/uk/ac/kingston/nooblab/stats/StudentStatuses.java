@@ -186,6 +186,11 @@ public class StudentStatuses
     
     public static HashMap<String,String> testWithMedal(String dir)
     {
+        return testWithMedal(dir,false);
+    }
+    
+    public static HashMap<String,String> testWithMedal(String dir, boolean withDate)
+    {
             List<String[]> testLines = new ArrayList<String[]>();            
             try
             {
@@ -217,9 +222,10 @@ public class StudentStatuses
                 }
             }
             for (String[] medalLine : medalLines)
-            {                                
+            {                           
+                String date = medalLine[0];
                 String[] details = medalLine[3].split(":");
-                String grade = details[0];
+                String grade = withDate ? details[0]+":"+date : details[0];
                 String id = details[details.length-1];
                 String current = tests.get(id);
                 if (current == null) current = "";                

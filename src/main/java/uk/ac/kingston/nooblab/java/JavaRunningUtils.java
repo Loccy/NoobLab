@@ -100,10 +100,10 @@ public class JavaRunningUtils {
             
             String className = "(unknown)";
             //pattern = Pattern.compile("class (.*?)\\{",Pattern.DOTALL);
-            pattern = Pattern.compile("\\s*class (\\w+)");
+            pattern = Pattern.compile("\\s*(class|interface) (\\w+)");
             matcher = pattern.matcher(code);
             if (matcher.find()) {
-                className = matcher.group(1);
+                className = matcher.group(2);
                 className = className.trim();
             }
             else

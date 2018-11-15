@@ -2082,6 +2082,43 @@ function updateTestCases()
         dataType : "json",
         success : function(r) {
             medals = r;
+            
+            // is there an medalembed in the url?
+            if (getUrlParameter("embedmedal"))
+            {
+                // is there a medal link in scope?
+                if ($("div.testCase").eq(0).attr("data-medal") != undefined && $("div.testCase").eq(0).attr("data-medal") != "")
+                {           
+                    var dm = $("div.testCase").eq(0).attr("data-medal");
+                    var src = $("img#embedmedalhighlight").attr("src");           
+                    if (dm.indexOf("bronze") != -1)
+                    {
+                        $("img#embedmedalhighlight").attr("src",src.replace("gold","bronze"));
+                    }
+                    else if (dm.indexOf("silver") != -1)
+                    {
+                        $("img#embedmedalhighlight").attr("src",src.replace("gold","silver"));
+                    }
+                    // if gold, do nothing - default is gold...
+
+                    // show embedded medal icon
+                    $("img#embedmedalhighlight").show();
+                    // tweak position to accommodate codemirror's scrollbars
+                    var offset = $("div.CodeMirror-vscrollbar").width();
+                    $("img#embedmedalhighlight").css("right",(offset+10)+"px");
+                    $("img#embedmedalhighlight").css("bottom",(offset+5)+"px");
+
+                    // have we won the current medal?
+                    var dms = dm.split(":");           
+                    var medalid = dms[2];       
+                    
+                    if (medals[medalid] != undefined)
+                    {                        
+                        $("img#embedmedalhighlight").css("opacity","1.0");
+                    }
+                }
+            }
+            
             $(".testCase").each(function(){
                 // get any emotional content
                 var testId = $(this).attr("data-id");
@@ -3093,6 +3130,7 @@ function resize()
     $("#outputframe").css("height",wrapperHeight);
     resizeFakeDocs();
     resizeCarols();
+    if (getUrlParameter("embedmedal")) return;
     if ($("#content").width() < 480)
     {
          $("div#topnav").addClass("compressed");
@@ -3862,15 +3900,15 @@ function addGettersAndSetters(which)
             apprise("You need to highlight the attributes you want to create getters and/or setters for.");
             return;
         }
-        var attributeLines = attributeLines.match(/private (\w*) (\w*);|private (\w*) (\w*)\s*=/gm);        
+        var attributeLines = attributeLines.match(/private ([\w|\<|\>]*) (\w*);|private ([\w|\<|\>]*) (\w*)\s*=/gm);        
         var firstline = editor.getLine(editor.getCursor(true).line);
         var indent = firstline.match(/\s+/);
         indent = indent ? indent[0] : "";        
         for (var i = 0; i < attributeLines.length; i++)
         {
             var attributeLine = attributeLines[i];
-            var details = attributeLine.match(/private (\w*) (\w*);/);
-            if (details == null) details = attributeLine.match(/private (\w*) (\w*)\s*=/);                
+            var details = attributeLine.match(/private ([\w|\<|\>]*) (\w*);/);
+            if (details == null) details = attributeLine.match(/private ([\w|\<|\>]*) (\w*)\s*=/);                
             var dataType = details[1];
             var varname = details[2];
             
@@ -3902,8 +3940,7 @@ originalTexts = {};
 
 //$(document).load(function()
 window.onload = function()
-{
-    
+{    
    // hoik the navbar out of the content div as it will break if we scale content
    // easier to do it here rather than fix/place it "properly" over in Main.java given
    // how Main.java constructs the page...
@@ -4192,9 +4229,18 @@ window.onload = function()
        // if save all as zip is visible, then hide save file
        if ($("input#saveallbutton").is(":visible"))
        {
-           $("input#savebutton").hide();                                 
+           $("input#savebutton").hide();                                            
        }
        $("input#tidy").hide();
+       if ($("pre.codepaste").size() != 0 || $("div.codebundle").size() != 0) $("input#pasteExample").show();
+       $("input#runMedal").show();              
+       $("input#gettersAndSetters").show();              
+       // relabel buttons so as to give us a bit more screen real estate
+       $("input#savebutton").val("Save");
+       $("input#saveallbutton").val("Save");
+       $("input#loadbutton").val("Load");                     
+       $("div#editorRightClick").css("left",$("input#gettersAndSetters").position().left+20+$("input#gettersAndSetters").width()-$("div#editorRightClick").width()+"px");
+       $("div#editorRightClick").css("top","26px");
    }
 
    handlePrettyPrintPlus();
@@ -4258,7 +4304,7 @@ window.onload = function()
            $("body").addClass("hascarol");
        }
    }
-
+    
    if ($("div.parameter#kinder").text().trim() != "true" && !embed)
    {
         if ((lastSectionNo != null && lastSectionNo != 0 && lastSectionNo.length != 0) || oldCode != "")
@@ -4266,7 +4312,7 @@ window.onload = function()
             if (isNaN(lastSectionNo) || lastSectionNo.length == 0) lastSectionNo = 0;
             clearInterval(saveInterval);
             var msg = "Do you want to resume from where you last left this lesson?";
-            if (hash != 0) msg = "Do you want to restore the code you had when you were last on this lesson?";
+            if (hash != 0) msg = "Do you want to restore the code you had when you were last on this lesson?";            
             apprise(msg, {verify:true},function(r){
                if (r) {
                  LOGcodePaste(oldCode,"FromPreviousSession");
@@ -4317,7 +4363,10 @@ window.onload = function()
     // kludge. Have no idea why this is needed.
     // Otherwise, the resize seems to get lost somewhere
     // in the bazillion callbacks that are going on.
-    setTimeout(function() {resize()},100);
+    setTimeout(function() {
+        resize();
+        $("div#loadingspinner").hide();
+    },100);
 
    // if IE, shrink all pres and codes by .1 em
    // GRRRRRRR.
@@ -4396,9 +4445,8 @@ window.onload = function()
        // inspect pasted code for not-you watermarks       
        var source = cheatSource(pastedText);
        
-       // strip watermarking from pastedText
-       
-       pastedText = pastedText.replace(/[ |\t]+?\n/g,"\n");
+       // strip watermarking from pastedText       
+       pastedText = pastedText.replace(/\t[ |\t]+?[\r|\n]+/g,"\n");
        
        // if stuff highlighed then delete it
        if (editor.getSelection() != "") editor.replaceSelection("");
@@ -4528,6 +4576,11 @@ window.onload = function()
                 return true; 
               }); 
         }
+        else // but if not, disable the G&S button when embedded
+        {
+            console.log(getKNo());
+            $("input#gettersAndSetters").hide();
+        }        
     }
 
     // change colour of background if slacker
@@ -4679,7 +4732,7 @@ window.onload = function()
      if ($("body").hasClass("embed"))
      {
          configureEmbed();
-     }
+     }          
 
 }
 //});
@@ -4751,6 +4804,7 @@ function getEmbedLink()
 
 function resizeSplit(width)
 {
+    if (getUrlParameter("embedmedal")) return;
     var xpos = globalMouseX;
     if (width == undefined)
     {

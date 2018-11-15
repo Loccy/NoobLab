@@ -109,4 +109,3 @@ Blockly.Blocks['carol_distanceToPickup'] = {
     this.setTooltip('');
   }
 };
-

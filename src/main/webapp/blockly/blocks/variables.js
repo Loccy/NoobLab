@@ -121,6 +121,45 @@ Blockly.Blocks['variables_input'] = {
   customContextMenu: Blockly.Blocks['variables_get'].customContextMenu
 };
 
+Blockly.Blocks['variables_input_prompt'] = {
+  init: function() {
+    this.setHelpUrl(Blockly.Msg.VARIABLES_GET_HELPURL);
+    this.setColour(330);
+    this.appendDummyInput()
+        .appendField("Display");
+    this.appendValueInput("PROMPT");
+        //.appendField(new Blockly.FieldTextInput(""), "PROMPT")
+    this.appendDummyInput()
+        .appendField("and get")
+        .appendField(new Blockly.FieldVariable("item"), "VAR")
+        .appendField("from keyboard");
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('');
+  },
+  /**
+   * Return all variables referenced by this block.
+   * @return {!Array.<string>} List of variable names.
+   * @this Blockly.Block
+   */
+  getVars: function() {
+    return [this.getFieldValue('VAR')];
+  },
+  /**
+   * Notification that a variable is renaming.
+   * If the name matches one of this block's variables, rename it.
+   * @param {string} oldName Previous name of variable.
+   * @param {string} newName Renamed variable.
+   * @this Blockly.Block
+   */
+  renameVar: function(oldName, newName) {
+    if (Blockly.Names.equals(oldName, this.getFieldValue('VAR'))) {
+      this.setFieldValue(newName, 'VAR');
+    }
+  },
+  customContextMenu: Blockly.Blocks['variables_get'].customContextMenu
+};
+
 /**
  * Mixin to add context menu items to create getter/setter blocks for this
  * setter/getter.

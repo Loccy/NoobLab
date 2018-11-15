@@ -152,6 +152,14 @@
             <block type="variables_input">
                 <field name="VAR">p</field>
             </block>
+            <block type="variables_input_prompt">
+                <value name="PROMPT">
+                    <block type="text">
+                        <field name="TEXT">...</field>
+                    </block>
+                </value>
+                <field name="VAR">p</field>
+            </block>
             <c:if test = '${param.language == "python"}'>            
                 <block type="lists_create_empty"></block>
                 <block type="lists_create_with"></block>

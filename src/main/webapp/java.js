@@ -180,7 +180,8 @@ function actuallyDoRunJava(codeFiles,main,actuallyRun)
     var codeIncludesClass = (function () {/*
 
 package Java;
-
+import java.lang.reflect.*;
+        
 public class Code
 {
   public static String getRaw()
@@ -196,6 +197,290 @@ public class Code
   {
      return getRaw().split(System.getProperty("line.separator")+"...ENDOFCLASS..."+System.getProperty("line.separator"));
   }
+        
+   public static boolean classExists(String clazz) {
+  try {
+   Object target = Class.forName(clazz);
+   return true;
+  } catch (Exception e) {
+   return false;
+  }
+ }
+
+ public static boolean validEncapsulation(String clazz) {
+  if (!classExists(clazz)) return false;
+  try {
+   if (Class.forName(clazz).getFields().length > 0) return false;
+  } catch (ClassNotFoundException e) {
+   return false;
+  }
+  return true;
+ }
+
+ public static int getNumberOfConstructors(String clazz) {
+  if (!classExists(clazz)) return -1;
+  try {
+   return Class.forName("Citizen").getConstructors().length;
+  } catch (ClassNotFoundException e) {
+   return -1;
+  }
+ }
+
+ public static boolean classHasConstructor(String clazz, String conSig) {
+  if (!classExists(clazz)) return false;
+  conSig = verbosifyString(conSig);
+  try {
+   Constructor[] constructors = Class.forName(clazz).getConstructors();
+   for (Constructor constructor: constructors) {
+    if (constructor.toString().equals("public " + clazz + "(" + conSig + ")")) return true;
+   }
+  } catch (ClassNotFoundException e) {}
+  return false;
+ }
+
+ public static boolean classHasDefaultConstructor(String clazz) {
+  return classHasConstructor(clazz, "");
+ }
+
+ public static boolean classHasMethod(String clazz, String methodSig, String returnType) {
+  if (!classExists(clazz)) return false;
+  methodSig = verbosifyString(methodSig);
+  returnType = verbosifyString(returnType);
+  try {
+   Method[] methods = Class.forName(clazz).getMethods();
+   for (Method method: methods) {
+    if (method.toString().equals("public " + returnType + " " + clazz + "." + methodSig)) return true;
+   }
+  } catch (Exception e) {}
+  return false;
+ }
+
+ public static boolean classHasMethod(String clazz, String methodSig) {
+  return classHasMethod(clazz, methodSig, "void");
+ }
+
+ public static Object callMethod(Object instance, String methodName) {
+  try {
+   return instance.getClass().getMethod(methodName).invoke(instance);
+  } catch (Exception e) {
+   return false;
+  }
+ }
+
+ public static Object callMethod(Object instance, String methodName, Object param) {
+  try {
+   return instance.getClass().getMethod(methodName, devolve(param.getClass())).invoke(instance, param);
+  } catch (Exception e) {
+   e.printStackTrace();
+   return false;
+  }
+ }
+        
+ public static Object callMethod(Object instance, String methodName, Object param, String clazz) {
+  try {
+   return instance.getClass().getMethod(methodName,Class.forName(clazz) ).invoke(instance, param);
+  } catch (Exception e) {
+   e.printStackTrace();
+   return false;
+  }
+ }
+
+ public static Object callMethod(Object instance, String methodName, Object[] params) {
+  Class[] paramType = new Class[params.length];
+  for (int i = 0; i < params.length; i++) {
+   paramType[i] = devolve(params[i].getClass());
+  }
+
+  try {
+   return instance.getClass().getMethod(methodName, (Class[]) paramType).invoke(instance, params);
+  } catch (Exception e) {
+   e.printStackTrace();
+   return false;
+  }
+ }
+
+ private static String verbosifyString(String s) {
+  if (s.contains("String") && !s.contains("java.lang.String")) {
+   s = s.replace("String", "java.lang.String");
+  }
+  return s;
+ }
+
+ private static Class devolve(Class o) {
+  if (o == Integer.class) o = Integer.TYPE;
+  if (o == Byte.class) o = Byte.TYPE;
+  if (o == Short.class) o = Short.TYPE;
+  if (o == Long.class) o = Long.TYPE;
+  if (o == Float.class) o = Integer.TYPE;
+  if (o == Double.class) o = Double.TYPE;
+  if (o == Boolean.class) o = Boolean.TYPE;
+  if (o == Character.class) o = Character.TYPE;
+  return o;
+ }
+
+ public static Object createObject(String clazz) {
+  if (!classExists(clazz)) return null;
+  try {
+   return Class.forName(clazz).newInstance();
+  } catch (Exception e) {}
+  return null;
+ }
+
+ public static Object createObject(String clazz, Object param) {
+  if (!classExists(clazz)) return null;
+  try {
+   return Class.forName(clazz).getDeclaredConstructor(devolve(param.getClass())).newInstance(param);
+  } catch (Exception e) {}
+  return null;
+ }
+        
+ public static Object createObject(String clazz, Object param, String override) {
+  if (!classExists(clazz)) return null;
+  try {
+   return Class.forName(clazz).getDeclaredConstructor(Class.forName(override)).newInstance(param);
+  } catch (Exception e) {}
+  return null;
+ }      
+
+ public static Object createObject(String clazz, Object[] params) {
+  if (!classExists(clazz)) return null;
+  Class[] paramTypes = new Class[params.length];
+  for (int i = 0; i < params.length; i++) {
+   paramTypes[i] = devolve(params[i].getClass());
+  }
+  try {
+   return Class.forName(clazz).getDeclaredConstructor(paramTypes).newInstance(params);
+  } catch (Exception e) {}
+  return null;
+ }
+        
+ public static Object[] testGettersAndSetters(String[] classNames, java.util.ArrayList attribs)
+ {
+    for (String className : classNames)
+    {
+      if (Java.Code.classExists(className.toLowerCase()))
+      {
+        return(new Object[]{false,"You were asked to create a '"+className+"' class - check your capitalisation!"});        
+      }
+      if (!Java.Code.classExists(className))
+      {
+        return(new Object[]{false,"You were asked to create a '"+className+"' class but don't seem to have it"});        
+      }
+      if (!Java.Code.validEncapsulation(className))
+      {
+        return(new Object[]{false,className+" seems to have public attriutes. Whither encaspulation?"});        
+      }
+      if (!Java.Code.classHasDefaultConstructor(className))
+      {
+        return(new Object[]{false,className+" does not seem to have the default constructor. Have you added a constructor that wasn't asked for in the exercise?"});
+      }
+    }
+    
+    for (int i = 0; i < attribs.size(); i++)
+    {
+      String targetClass = classNames[i];
+
+      Object instance = null;
+      try
+      {
+        instance = Java.Code.createObject(targetClass);
+      }
+      catch (Exception e)
+      {
+        return(new Object[]{false,"I tried to create an instance of "+targetClass+" but wasn't able to. Maybe you have messed with its constructors - we didn't ask for any parameterised constructors in this exercise."});        
+      }
+
+      String[] attribList = (String[])attribs.get(i);
+
+      for (String attrib : attribList)
+      {
+        String attribType = "java.lang.String";
+        if (attrib.contains(":"))
+        {
+          String[] splitted = attrib.split(":");
+          attrib = splitted[0];
+          attribType = splitted[1];
+        }
+        if (attribType.equals("String[]")) attribType = "java.lang.String[]";
+        String cappedFirst = attrib.substring(0, 1).toUpperCase() + attrib.substring(1);
+        String setter = "set"+cappedFirst+"("+attribType+")";
+        if (!Java.Code.classHasMethod(targetClass,setter))
+        {          
+          return(new Object[]{false,targetClass+" does not seem to have a correct setter for the attribute "+attrib});          
+        }
+
+        String getter = attribType.equals("boolean") ? "is"+cappedFirst+"()" : "get"+cappedFirst+"()";
+        if (!Java.Code.classHasMethod(targetClass,getter,attribType))
+        {
+          String feedback = targetClass+" does not seem to have a correct getter for the attribute "+attrib;
+          if (attribType.equals("boolean"))
+          {
+            feedback += "However... note that when you're dealing with booleans, the 'getter' shouldn't be called getWhatever; rather, it should be called isWhatever... :-) ... maybe that's your problem?";
+          }
+          return(new Object[]{false,feedback});
+        }
+
+        try
+        {
+          if (attribType.equals("java.lang.String")) Java.Code.callMethod(instance,"set"+cappedFirst,"bums");
+          if (attribType.equals("int")) Java.Code.callMethod(instance,"set"+cappedFirst,17);
+          if (attribType.equals("double")) Java.Code.callMethod(instance,"set"+cappedFirst,17.5);
+          if (attribType.equals("boolean"))
+          {
+            Java.Code.callMethod(instance,"set"+cappedFirst,true);
+          }
+        }
+        catch (Exception e)
+        {
+          return(new Object[]{false,"I tried to use the setter for "+attrib+" in "+targetClass+" but something went wrong."});          
+        }
+
+        try
+        {
+          if (attribType.equals("java.lang.String"))
+          {
+            String res = (String)Java.Code.callMethod(instance,"get"+cappedFirst);
+            if (!"bums".equals(res))
+            {
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+            }
+          }
+          if (attribType.equals("int"))
+          {
+            int res = (Integer)Java.Code.callMethod(instance,"get"+cappedFirst);
+            if (res != 17)
+            {
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+            }
+          }
+          if (attribType.equals("double"))
+          {
+            double res = (Double)Java.Code.callMethod(instance,"get"+cappedFirst);
+            if (res != 17.5)
+            {
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+            }
+          }
+          if (attribType.equals("boolean"))
+          {
+            boolean res = (Boolean)Java.Code.callMethod(instance,"is"+cappedFirst);
+            if (!res)
+            {              
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+            }
+          }
+        }
+        catch (Exception e)
+        {
+          return(new Object[]{false,"I tried to use the getter and setters for "+attrib+" in "+targetClass+" but something went wrong."});          
+        }
+
+      }
+      
+    }
+    return new Object[] { true };    
+    
+ }
 
 }
 
@@ -386,7 +671,7 @@ function getClassName(code)
 {
     try
     {
-        return code.match(/class\s*[a-z|A-Z|0-9]*/)[0].split(/\s/).pop();
+        return code.match(/(class|interface)\s*[a-z|A-Z|0-9]*/)[0].split(/\s/).pop();
     }
     catch (e) { return undefined; }
 }

@@ -12,8 +12,9 @@
     <head>
         <title>NoobLab Login</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/nooblab.css">
-         <%-- JQuery --%>
+         <%-- JQuery --%>        
         <script src="${pageContext.request.contextPath}/jq.js"></script>
+        <script src="${pageContext.request.contextPath}/canvas-auto-login.js.jsp"></script>
         <script src="${pageContext.request.contextPath}/aes.js"></script>
     </head>
     <body>

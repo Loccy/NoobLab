@@ -14,6 +14,7 @@
         <script type="text/javascript">
             var contextPath = "${pageContext.request.contextPath}";
             var embed = false;
+            var sourceips = [ "${header["X-Forwarded-For"]}","${pageContext.request.remoteHost}" ];
             <c:if test="${embed}">
             embed = true;
             var embedcode = ${embedcode};
@@ -130,6 +131,7 @@
 
     </head>
     <body class="main<c:if test="${embed}"> embed</c:if>">
+        <div id="loadingspinner"><iframe border="0" src="${pageContext.request.contextPath}/holding.html"></iframe></div>
          <div id="topnav">
             <div class="row1">
                 <div title="Logout" id="logout" onclick="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
@@ -205,6 +207,7 @@
             <input id="toggleEmbed" type="button" value="Show output" onclick="toggleEmbedOutput()"/>
             <input id="pasteExample" type="button" value="Paste example code" onclick="pasteCodeEmbed()"/>
             <input id="runMedal" type="button" value="Try for medal" onclick="tryMedalEmbed()"/>
+            <input id="gettersAndSetters" type="button" value="G&S" onclick="$('div#editorRightClick').toggle()"/>
         </div>
                        
         <div style="clear: both"></div>                    
@@ -401,6 +404,7 @@
             <div class="option" onclick="addGettersAndSetters('setters')">Add setters</div>
             <div class="option" onclick="addGettersAndSetters('both')">Add both getters and setters</div>
         </div>
+        <img id="embedmedalhighlight" src="${pageContext.request.contextPath}/images/medalgold.png"/>        
         ${navbar}        
     </body>
 </html>

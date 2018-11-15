@@ -81,4 +81,5 @@ div.status.border {
 
 div.status.error {
     color : red;
+    white-space : pre-wrap;
 }
