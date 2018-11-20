@@ -3907,8 +3907,8 @@ function addGettersAndSetters(which)
         for (var i = 0; i < attributeLines.length; i++)
         {
             var attributeLine = attributeLines[i];
-            var details = attributeLine.match(/private ([\w|\<|\>]*) (\w*);/);
-            if (details == null) details = attributeLine.match(/private ([\w|\<|\>]*) (\w*)\s*=/);                
+            var details = attributeLine.match(/private ([\w|\<|\>|\[|\]]*) (\w*);/);
+            if (details == null) details = attributeLine.match(/private ([\w|\<|\>|\[|\]]*) (\w*)\s*=/);                
             var dataType = details[1];
             var varname = details[2];
             

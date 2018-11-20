@@ -133,9 +133,12 @@
         </category>
         <category name="Text, numbers and maths">            
             <block type="text"></block>
+            <c:if test = '${param.language == "python"}'>
+            <block type="text_concatenate"></block>
+            </c:if>
             <block type="math_number"></block>
             <block type="math_arithmetic"></block>
-            <block type="math_single"></block>
+            <block type="math_single"></block>            
         </category>        
         <category name="Variables<c:if test = '${param.language == "python"}'> and lists</c:if>">
             <block type="variables_set">
@@ -152,6 +155,7 @@
             <block type="variables_input">
                 <field name="VAR">p</field>
             </block>
+            <c:if test = '${param.language == "python"}'>
             <block type="variables_input_prompt">
                 <value name="PROMPT">
                     <block type="text">
@@ -160,6 +164,7 @@
                 </value>
                 <field name="VAR">p</field>
             </block>
+            </c:if>
             <c:if test = '${param.language == "python"}'>            
                 <block type="lists_create_empty"></block>
                 <block type="lists_create_with"></block>

@@ -35,6 +35,20 @@ Blockly.Python['text'] = function(block) {
   return [code, Blockly.Python.ORDER_ATOMIC];
 };
 
+Blockly.Python['text_concatenate'] = function(block) {
+  // Concatenate a load of elements
+  var elements = new Array(block.itemCount_);
+  for (var i = 0; i < block.itemCount_; i++) {
+    elements[i] = Blockly.Python.valueToCode(block, 'ADD' + i,
+        Blockly.Python.ORDER_NONE) || 'None';
+    // if number wrap string around it
+    if (isNaN(elements[i]) === false) elements[i] = "str("+elements[i]+")";
+  }
+  var code = elements.join('+');
+  code = code.replace("+None","");
+  return [code, Blockly.Python.ORDER_ATOMIC];
+};
+
 Blockly.Python['text_join'] = function(block) {
   // Create a string made up of any number of elements of any type.
   //Should we allow joining by '-' or ',' or any other characters?
