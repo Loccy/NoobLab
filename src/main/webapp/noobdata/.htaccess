@@ -17,5 +17,5 @@ Define MOD_PHP
 </IfModule>
 
 <IfDefine MOD_PHP>
-php_value auto_prepend_file "/explicit/file/system/location/php_error_handler.php"
+php_value auto_prepend_file "/data/webapps/NoobLab/noobdata/php_error_handler.php"
 </IfDefine>

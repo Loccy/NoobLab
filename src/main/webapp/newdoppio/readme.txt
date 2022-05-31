@@ -55,6 +55,15 @@ context of NoobLab:
   t.prototype.loadingCompleted and add a simple newDoppioLoaded() call at the
   beginning of the function.
 
+* Also also also also also in app.js, I changed the mount point of the
+  localStorage based filesystem and also renamed it. It is now in
+  /tmp/myfiles
+  /myfiles
+  To replicate, look for
+  r.mount("/mnt/localStorage",new l.FileSystem.LocalStorage)
+  and replace with
+  r.mount("/tmp/myfiles",new l.FileSystem.LocalStorage),r.mount("/myfiles",new l.FileSystem.LocalStorage)
+
 * index.html and associated CSS has been butchered so that all is displayed
   is the console. Some aspects of the original demo's HTML are retained and
   set to display: none as it was easier to programmatically interact with

@@ -3,6 +3,14 @@ var $builtinmodule = function(name)
     var mod = {};
     var feedbacks = [];
     
+    mod.regexReplace = new Sk.builtin.func(function(str,regex,replacement){
+       str = str.v;
+       regex = regex.v;
+       replacement = replacement.v;
+       result = eval('str.replace('+regex+',replacement)');
+       return Sk.builtin.str(result);
+    });
+    
     mod.alert = new Sk.builtin.func(function(text){
        alert(text.v); 
     });

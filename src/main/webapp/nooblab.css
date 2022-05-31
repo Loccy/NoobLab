@@ -98,6 +98,70 @@ body {
     overflow : hidden;
 }
 
+div#filetree {
+    padding : 0 1em;
+    position : absolute;
+    top : 1px;
+    left : 1px;
+    right : 1px;
+    bottom : -14px;
+    background-color : white;
+    z-index : 4;
+    font-size : 90%;
+    display : none;
+}
+
+div#filetree li div.controls {
+    display : inline-block;
+    margin-left : 0.5em;
+    visibility: hidden;
+}
+
+div#filetree li.jqtree-selected>div>div.controls {
+    visibility : visible;
+}
+
+div#filetree li.jqtree_common.file>div>span:before {
+    font-family: FontAwesome;
+    content : "\f016";
+    padding-right : 0.5em;
+}
+
+div#filetree li.jqtree_common.folder>div>span:before {
+    font-family: FontAwesome;
+    content : "\f114";
+    padding-right : 0.5em;
+}
+
+div#filetree i {
+    position : relative;
+}
+
+div#filetree i.addfolder span {
+    position: absolute;
+    top: 3px;
+    font-weight: bold;
+    color: #BEE0F5;
+    font-size: 60%;
+    left: 4px;
+}
+
+div#filetree li.jqtree_common.file>div>div>i.addfile,
+div#filetree li.jqtree_common.file>div>div>i.addfolder {
+    display : none;
+}
+
+div#filetree li.jqtree_common.folder>div>div>i.display,
+div#filetree li.jqtree_common.root>div>div>i.display {
+    display : none;
+}
+
+div#filetree li.jqtree_common.root>div>div>i.delete {
+    display : none;
+}
+
+
+
 #code-titlebar div.tab i.close {
     margin-left: 0.8em;
 }
@@ -109,7 +173,6 @@ div.tab:after {
 div.tab:before {
 	content : "\00a0\00a0";
 }
-
 
 #code-titlebar div.tab.newtab {
     position : absolute;
@@ -366,6 +429,50 @@ form {
 
 
 /* Rules for content area follow */
+
+div.CodeMirror.prettyprint {
+    border : 1px solid #888;
+    margin-bottom : 1em;
+    background-color : transparent;    
+    position : relative;
+    font-size : 110%;
+}
+
+div.CodeMirror.prettyprint * {
+    cursor : default;
+}
+
+div.CodeMirror.prettyprint.codepaste * {
+    cursor : pointer;
+}
+
+div.CodeMirror.prettyprint .CodeMirror-gutters {
+    background-color : rgba(0, 0, 0, 0.4);    
+}
+
+div.CodeMirror.prettyprint .CodeMirror-linenumber {
+    color : white;
+}
+
+div.CodeMirror.prettyprint .CodeMirror-line {
+    padding-left : 10px;
+}
+
+div.CodeMirror.prettyprint.codepaste:before {
+    position : absolute;
+    top : 0px;
+    right : 0px;
+    content : ' CLICK CODE TO PASTE >>> ';
+    background-color : #888;
+    color : white;
+    padding : 2px 0.5em;
+    font-family : sans-serif;
+    font-size : 11px;
+}
+
+div.CodeMirror.prettyprint.codepaste div.CodeMirror-code {
+    margin-top: 1em;
+}
 
 
 pre.prettyprint, code.prettyprint, #content code {
@@ -893,6 +1000,31 @@ div#output-outer { display : none }
     z-index : 5;
 }
 
+/* CSS for Java filesystem elements */
+div.javafs-file {
+    border : 2px solid black;
+    background-color : white;
+    padding : 5px;
+    padding-left : 80px;
+    cursor : pointer;
+    position : relative;
+}
+
+div.javafs-file img {
+    position : absolute;
+    top : -10px;
+    left : 5px;
+    filter : hue-rotate(180deg)
+}
+
+div.javafs-file pre {
+    display : none;
+}
+
+div.javafs-file.automatic {
+    display : none;
+}
+
 /* Colourbox CSS */
 
 
@@ -1100,4 +1232,141 @@ div#loadingspinner iframe {
     border : 0px;
     width : 100%;
     height : 100%;    
+}
+
+/* JQ Filetree */
+ul.jqtree-tree {
+  list-style: none outside;
+  margin-left: 0;
+  margin-bottom: 0;
+  padding: 0; }
+  ul.jqtree-tree ul.jqtree_common {
+    list-style: none outside;
+    margin-left: 12px;
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 0;
+    display: block; }
+  ul.jqtree-tree li.jqtree-closed > ul.jqtree_common {
+    display: none; }
+  ul.jqtree-tree li.jqtree_common {
+    clear: both;
+    list-style-type: none; }
+  ul.jqtree-tree .jqtree-toggler {
+    border-bottom: none;
+    color: #333;
+    text-decoration: none;
+    vertical-align: middle; }
+    ul.jqtree-tree .jqtree-toggler:hover {
+      color: #000;
+      text-decoration: none; }
+    ul.jqtree-tree .jqtree-toggler.jqtree-closed {
+      background-position: 0 0; }
+    ul.jqtree-tree .jqtree-toggler.jqtree-toggler-left {
+      margin-right: 0.5em; }
+    ul.jqtree-tree .jqtree-toggler.jqtree-toggler-right {
+      margin-left: 0.5em; }
+  ul.jqtree-tree .jqtree-element {
+    cursor: pointer;
+    position: relative; }
+  ul.jqtree-tree .jqtree-title {
+    color: #1C4257;
+    vertical-align: middle;
+    margin-left: 1.5em; }
+    ul.jqtree-tree .jqtree-title.jqtree-title-folder {
+      margin-left: 0; }
+/*  ul.jqtree-tree li.jqtree-folder {
+    margin-bottom: 4px; } */
+    ul.jqtree-tree li.jqtree-folder.jqtree-closed {
+      margin-bottom: 1px; }
+  ul.jqtree-tree li.jqtree-ghost {
+    position: relative;
+    z-index: 10;
+    margin-right: 10px;
+    /* todo: add classes to span? */ }
+    ul.jqtree-tree li.jqtree-ghost span {
+      display: block; }
+    ul.jqtree-tree li.jqtree-ghost span.jqtree-circle {
+      border: solid 2px #0000ff;
+      -webkit-border-radius: 100px;
+      -moz-border-radius: 100px;
+      border-radius: 100px;
+      height: 8px;
+      width: 8px;
+      position: absolute;
+      top: -4px;
+      left: -6px;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box; }
+    ul.jqtree-tree li.jqtree-ghost span.jqtree-line {
+      background-color: #0000ff;
+      height: 2px;
+      padding: 0;
+      position: absolute;
+      top: -1px;
+      left: 2px;
+      width: 100%; }
+    ul.jqtree-tree li.jqtree-ghost.jqtree-inside {
+      margin-left: 48px; }
+  ul.jqtree-tree span.jqtree-border {
+    position: absolute;
+    display: block;
+    left: -2px;
+    top: 0;
+    border: solid 2px #0000ff;
+    border-radius: 6px;
+    margin: 0;
+    box-sizing: content-box; }
+  ul.jqtree-tree li.jqtree-selected > .jqtree-element,
+  ul.jqtree-tree li.jqtree-selected > .jqtree-element:hover {
+    background-color: #97BDD6;
+    background: -webkit-gradient(linear, left top, left bottom, from(#BEE0F5), to(#89AFCA));
+    background: -moz-linear-gradient(top, #BEE0F5, #89AFCA);
+    background: -ms-linear-gradient(top, #BEE0F5, #89AFCA);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
+  ul.jqtree-tree .jqtree-moving > .jqtree-element .jqtree-title {
+    outline: dashed 1px #0000ff; }
+
+ul.jqtree-tree.jqtree-rtl {
+  direction: rtl; }
+  ul.jqtree-tree.jqtree-rtl ul.jqtree_common {
+    margin-left: 0;
+    margin-right: 12px; }
+  ul.jqtree-tree.jqtree-rtl .jqtree-toggler {
+    margin-left: 0.5em;
+    margin-right: 0; }
+  ul.jqtree-tree.jqtree-rtl .jqtree-title {
+    margin-left: 0;
+    margin-right: 1.5em; }
+    ul.jqtree-tree.jqtree-rtl .jqtree-title.jqtree-title-folder {
+      margin-right: 0; }
+  ul.jqtree-tree.jqtree-rtl li.jqtree-ghost {
+    margin-right: 0;
+    margin-left: 10px; }
+    ul.jqtree-tree.jqtree-rtl li.jqtree-ghost span.jqtree-circle {
+      right: -6px; }
+    ul.jqtree-tree.jqtree-rtl li.jqtree-ghost span.jqtree-line {
+      right: 2px; }
+    ul.jqtree-tree.jqtree-rtl li.jqtree-ghost.jqtree-inside {
+      margin-left: 0;
+      margin-right: 48px; }
+  ul.jqtree-tree.jqtree-rtl span.jqtree-border {
+    right: -2px; }
+
+span.jqtree-dragging {
+  color: #fff;
+  background: #000;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 2px 8px; }
+
+.jqtree-toggler {
+    display : inline-block;
+    width : 1em;
+    border-radius : 5px;
+    text-align : center;
+    background-color : #aaa;
+    color : white !important;
+    z-index : 1;
 }

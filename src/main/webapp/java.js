@@ -7,57 +7,283 @@ var numTestMon;
 var javaFailTips = [];
 var javaTestCount = 0;
 
+var alternateScanner;
+
+$.get(contextPath+"/newdoppio/Scanner.java",function(result){
+   alternateScanner = result;
+});
+
 function writeBase64(base64,path,name)
-{    
+{
     var fd = outputframe.fs.openSync(path+name, 'w');
     var buff = new outputframe.Buffer(base64, 'base64');
     outputframe.fs.writeSync(fd, buff, 0, buff.length, 0);
     outputframe.fs.closeSync(fd);
 }
 
+// automatically runs once (new) Doppio has finished loading...
+function postDoppio()
+{
+    // automatically run any file-system automatic uploads
+    $("div.javafs-file.automatic").each(function(){
+         pushToJFS("auto",this);
+     });
+}
+
 function getMainsPkgs(codeTabs)
 {
-    //var codeTabs = getTabBundleCode(true)[0];   
+    //var codeTabs = getTabBundleCode(true)[0];
     var mainsPkgs = [];
     $.each(codeTabs,function(i,codeTab){
         var className = getClassName(codeTab);
-        if (hasMain(codeTab)) mainsPkgs.push([ className,getPackageName(codeTab)]);        
-    });    
+        if (hasMain(codeTab)) mainsPkgs.push([ className,getPackageName(codeTab)]);
+    });
     return mainsPkgs;
 }
 
+function getDirectories(filename) {
+    var fs = outputframe.fs;
+    var stats = fs.lstatSync(filename),
+        info = {
+            name : filename.split("/").pop(),
+            fullname : filename,
+            path : filename.substring(0, filename.lastIndexOf("/"))/*,
+            name: path.basename(filename) */
+        };
+
+    if (stats.isDirectory()) {
+        info.type = "folder";
+        info.children = fs.readdirSync(filename).map(function(child) {
+            return getDirectories(filename + '/' + child);
+        });
+    } else {
+        // Assuming it's a file. In real life it could be a symlink or
+        // something else!
+        info.type = "file";
+    }
+    return info;
+}
+
+function updateFileTree(startup)
+{
+    $('#filetree').tree('destroy');
+    // get a file listing from the "file system"
+    var files = getDirectories("/tmp/myfiles");
+    var data = [{
+        name : '(my Java files)',
+        children : files.children,
+        fullname : "/tmp/myfiles",
+        type : "root"
+    }];
+    $('#filetree').tree({
+        data : data,
+        autoOpen: "auto",
+        closedIcon: '+',
+        openedIcon: '-',
+        onCreateLi : function(node,li) {
+            li.addClass(node.type);
+            li.attr("data-fullname",node.fullname);
+            var controls = $('<div class="controls"><i class="fa fa-binoculars display" onclick="displayFileFromJavaFS(this)"></i> <i class="fa fa-plus-square addfile" onclick="addFileToJavaFS(this); return false" title="Upload file"></i> <i class="fa fa-folder addfolder" title="Add folder" onclick="addFolderToJavaFS(this)"><span>+</span></i> <i class="fa fa-trash delete" title="Delete file/directory" onclick="deleteFileOrFolderJavaFS(this)"></i></div>');
+            li.find("div").append(controls);
+        }
+    });
+    if (!startup)
+    {
+        var topnode = $('#filetree').tree('getNodeByHtmlElement',$("#filetree li").eq(0));
+        $("#filetree").tree("selectNode",topnode);
+    }
+    else
+    {
+        var li = $("#filetree").find("li[data-fullname='"+startup+"']");
+        var topnode = $('#filetree').tree('getNodeByHtmlElement',li);
+        $("#filetree").tree("selectNode",topnode);
+    }
+}
+
+function deleteFileOrFolderJavaFS(source)
+{
+    var li = $(source).closest("li");
+    var targetNode = $('#filetree').tree('getNodeByHtmlElement',li);
+    var targetname = targetNode.fullname;
+    var filename = targetNode.name;
+
+    apprise("This will delete "+filename+" and, if it's a directory, everything in it! Are you sure?",{confirm:true},function(r){
+        if (r)
+        {
+            if (targetNode.type == "file") outputframe.fs.unlinkSync(targetname);
+            if (targetNode.type == "folder") deleteFolderRecursive(targetname);
+        }
+        updateFileTree();
+    });
+
+    function deleteFolderRecursive(path)
+    {
+        var fs = outputframe.fs;
+        if (fs.existsSync(path)) {
+          fs.readdirSync(path).forEach(function(file, index){
+            var curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+              deleteFolderRecursive(curPath);
+            } else { // delete file
+              fs.unlinkSync(curPath);
+            }
+          });
+          fs.rmdirSync(path);
+        }
+    }
+}
+
+function displayFileFromJavaFS(source)
+{
+    var li = $(source).closest("li");
+    var targetNode = $('#filetree').tree('getNodeByHtmlElement',li);
+    var targetname = targetNode.fullname;
+    outputframe.runShellCommand("cat "+targetname);
+    updateFileTree(targetname);
+}
+
+function toggleJFS()
+{
+    $("#filetree").toggle();
+    if ($("#filetree").is(":visible"))
+    {
+        $("input#toggleJFS").val("Hide Java FS");
+    }
+    else
+    {
+        $("input#toggleJFS").val("Show Java FS");
+    }
+    updateFileTree();
+}
+
+function addFileToJavaFS(source)
+{
+    var li = $(source).closest("li");
+    var targetNode = $('#filetree').tree('getNodeByHtmlElement',li);
+    var dirname = targetNode.fullname;
+
+    // create file input and then click it
+    $("body").append('<input type="file" id="tempfilejava" style="display: none"/>');
+    $("input#tempfilejava").on("change",function(){
+        var file = $("input#tempfilejava")[0].files[0];
+        var filename = $("input#tempfilejava").val().split('/').pop().split('\\').pop();
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            var base64 = e.target.result.toString();
+            base64 = base64.split(",").pop();
+            // upload file to targetdir
+            writeBase64(base64,dirname+"/",filename);
+            updateFileTree(dirname+"/",filename);
+        };
+    })
+    $("input#tempfilejava").click();
+}
+
+function addFolderToJavaFS(source)
+{
+    var li = $(source).closest("li");
+    var targetNode = $('#filetree').tree('getNodeByHtmlElement',li);
+    var dirname = targetNode.fullname;
+    apprise("Enter the folder name you want to create:", {'input':true}, function(r)
+    {
+        if (r)
+        {
+            outputframe.fs.mkdirSync(dirname+"/"+r);
+            updateFileTree(dirname+"/",r);
+        }
+    });
+}
+
+function pushToJFS(noprompt,source)
+{
+    if (!source) source = this;
+    var files = [];
+    var basedir = $(source).attr("data-basedir");
+    $(source).find("pre").each(function(){
+        var obj = {};
+        obj.filename = $(this).attr("data-filename");
+        obj.data = $(this).text().trim();
+        files.push(obj);
+    });
+
+    if (noprompt === "auto")
+    {
+        performUpload("auto");
+    }
+    else
+    {
+        var msg = "This will create a folder called <b>"+basedir+"</b> in your <b>myfiles</b> directory which will contain a file called <b>"+files[0].filename+"</b>. Are you sure?";
+        if (files.length > 1)
+        {
+            msg = "This will create a folder called <b>"+basedir+"</b> in your <b>myfiles</b> directory which will contain the following files:<p>";
+            for (var i = 0; i < files.length; i++)
+            {
+                msg+="<b>"+files[i].filename+"</b><br/>";
+            }
+            msg += "&nbsp;<br/>Are you sure?";
+        }
+        apprise(msg,{confirm:true},performUpload);
+    }
+
+    function performUpload(r)
+    {
+       if (r)
+       {
+            if (!outputframe.fs.existsSync("/myfiles/"+basedir)) outputframe.fs.mkdirSync("/myfiles/"+basedir);
+            for (var i = 0; i < files.length; i++)
+            {
+                var base64 =  $.base64.encode(files[i].data);
+                writeBase64(base64,"/myfiles/"+basedir+"/",files[i].filename);
+            }
+            updateFileTree();
+            if (r === true) setTimeout(function() { apprise("File(s) successfully pushed to your Java file system in <b>/myfiles/"+basedir+"</b>."); },50);
+       }
+    }
+}
+
+
+
 function runjava()
-{   
+{
+    // PN: HACK ON 15/01/2021
+    // Check to see if they are creating a scanner in a code block in a pidgin mode exercise
+    if (editor.getValue().match(/\{[\s\S]*.*new Scanner/) && $("div#multi").text().trim() != "true")
+    {
+        var x = confirm("Your code appears to create multiple Scanner objects which almost certainly is not what you want, and will make it seem as if you are not winning medals when you should be. You should usually only create one instance of Scanner towards the very start of your program and reuse this single instance as you need it. Click OK to ignore this and run the code anyway, but don't expect it to win any medals if you do...!");
+        if (!x) return;
+    }
+
     // clear anything left over from tests
     javaSuccessfulRun = standardJavaSuccessfulRun;
     javaRuntimeError = standardJavaRuntimeError;
     $("div#output-main div.status").remove();
-    
+
     if (numTestMon)
     {
         clearInterval(numTestMon);
         numTestMon = undefined;
     }
-    
+
     // reset and show console
     if (!newdoppio)
     {
-        $("div#console pre",outputframe.document).show();    
+        $("div#console pre",outputframe.document).show();
     }
-    
+
     if (editorfontsize)
     {
         $("iframe#outputframe").contents().find("body").css("font-size",editorfontsize+"px")
     }
-    
+
     // JQuery console is as glitchy as hell. If at first you don't succeed...
     //$("div#main pre",outputframe.document).text("");
     if (!newdoppio)
     {
         outputframe.controller.reset();
-        outputframe.controller.reset();    
-        outputframe.controller.reset();    
-    }    
+        outputframe.controller.reset();
+        outputframe.controller.reset();
+    }
     else
     {
         // not sure why we need the reset/blur/focus combo - focus doesn't seem to work without the preceding blur - but hey ho
@@ -65,26 +291,26 @@ function runjava()
         outputframe.globalTerm.blur();
         outputframe.globalTerm.focus();
     }
-    
+
     var codeMess = getTabBundleCode();
     if (codeMess.match(/import\s*java.awt/) || codeMess.match(/import\s*javax.swing/))
     {
         apprise("This code tries to use graphical libraries that are not supported in NoobLab."+
                 "You cannot run this code in this environment. If this message was unexpected, please speak to your tutor.");
         return;
-    }    
-    
-    var codeTabs = getTabBundleCode(true)[0];   
+    }
+
+    var codeTabs = getTabBundleCode(true)[0];
 
     if ($("div.parameter#multi").text().trim() != "true")
-    {   
+    {
         var code = codeTabs[0];
         if (!code.match(/\s*class\s*/) && !code.match(/\s*void\s*main/))
         {
             // pigin Java :-) Wrap a class/main around it
             code = "import java.util.Scanner; public class Pigin { public static void main(String[] args) { "+code+"\n} }";
             codeTabs[0] = code;
-        }   
+        }
     }
 
     var mainsPkgs = getMainsPkgs(codeTabs);
@@ -93,11 +319,11 @@ function runjava()
         apprise("None of the classes in the editor appear to have a <i>main</i> method. This code cannot be run without one.");
         return;
     }
-    
+
     $.each(codeTabs,function(i,codeTab){
-        $("div#code-titlebar div.tab").eq(i).contents().eq(0).replaceWith(getClassName(codeTab)+".java");        
-    });    
-    
+        $("div#code-titlebar div.tab").eq(i).contents().eq(0).replaceWith(getClassName(codeTab)+".java");
+    });
+
     saveState();
     if (mainsPkgs.length == 1)
     {
@@ -118,7 +344,7 @@ function runjava()
             if (r)
             {
                 $("div.status",outputframe.window.document).remove();
-                actuallyDoRunJava(codeTabs,getClassName(currentCode));            
+                actuallyDoRunJava(codeTabs,getClassName(currentCode));
             }
         });
         return;
@@ -131,7 +357,7 @@ function runjava()
     apprise("You have several main methods across different classes in your project:<br/>"+
             mainList+"<br/>"+
             "Select one of these classes in the editor in order to indicate which main method you wish to run."
-            );    
+            );
 }
 
 function actuallyDoRunJava(codeFiles,main,actuallyRun)
@@ -148,12 +374,12 @@ function actuallyDoRunJava(codeFiles,main,actuallyRun)
     }
     main = main[1]+main[0];
     main = main.replace(/\./g,"/");
-    if (actuallyRun == undefined) actuallyRun = true;        
-    
+    if (actuallyRun == undefined) actuallyRun = true;
+
     LOGrun(getTabBundleCode());
-    
-    disableRun();    
-    
+
+    disableRun();
+
     // remove any "files" already in Doppio
     //outputframe.doCommand("rm *");
     if (!newdoppio)
@@ -163,12 +389,24 @@ function actuallyDoRunJava(codeFiles,main,actuallyRun)
     else
     {
         // if newdoppio, go through each codefile and modify to introduce a
-        // clear screen as first line of main
+        // clear screen as first line of main.
+        //
+        // Also, check for combination of Scanner and File. If both used,
+        // we need to switch to using NoobLab.FileScanner.
+        var alternateScannerNeeded = false;
         for (var i = 0; i < codeFiles.length; i++)
         {
             // not sure why we need the reset/blur/focus combo, but hey ho
             codeFiles[i] = codeFiles[i].replace(/(public\s*static\s*void\s*main[\s\S]*?{)/,'$1doppio.JavaScript.eval("globalTerm.reset(); globalTerm.blur(); globalTerm.focus()");');
+
+            if (codeFiles[i].indexOf("File") !=-1 && codeFiles[i].indexOf("Scanner") != -1)
+            {
+                codeFiles[i] = codeFiles[i].replace(/\bScanner/g,"Nooblab.Scanner");
+                codeFiles[i] = codeFiles[i].replace(/java.util.NoobLab.Scanner/g,"java.util.Scanner");
+                alternateScannerNeeded = true;
+            }
         }
+        if (alternateScannerNeeded) codeFiles.push(alternateScanner);
     }
 
     // The following ugly hack is dedicated to Bob Hambrook.
@@ -181,7 +419,7 @@ function actuallyDoRunJava(codeFiles,main,actuallyRun)
 
 package Java;
 import java.lang.reflect.*;
-        
+
 public class Code
 {
   public static String getRaw()
@@ -197,7 +435,7 @@ public class Code
   {
      return getRaw().split(System.getProperty("line.separator")+"...ENDOFCLASS..."+System.getProperty("line.separator"));
   }
-        
+
    public static boolean classExists(String clazz) {
   try {
    Object target = Class.forName(clazz);
@@ -275,7 +513,7 @@ public class Code
    return false;
   }
  }
-        
+
  public static Object callMethod(Object instance, String methodName, Object param, String clazz) {
   try {
    return instance.getClass().getMethod(methodName,Class.forName(clazz) ).invoke(instance, param);
@@ -333,14 +571,14 @@ public class Code
   } catch (Exception e) {}
   return null;
  }
-        
+
  public static Object createObject(String clazz, Object param, String override) {
   if (!classExists(clazz)) return null;
   try {
    return Class.forName(clazz).getDeclaredConstructor(Class.forName(override)).newInstance(param);
   } catch (Exception e) {}
   return null;
- }      
+ }
 
  public static Object createObject(String clazz, Object[] params) {
   if (!classExists(clazz)) return null;
@@ -353,29 +591,29 @@ public class Code
   } catch (Exception e) {}
   return null;
  }
-        
+
  public static Object[] testGettersAndSetters(String[] classNames, java.util.ArrayList attribs)
  {
     for (String className : classNames)
     {
       if (Java.Code.classExists(className.toLowerCase()))
       {
-        return(new Object[]{false,"You were asked to create a '"+className+"' class - check your capitalisation!"});        
+        return(new Object[]{false,"You were asked to create a '"+className+"' class - check your capitalisation!"});
       }
       if (!Java.Code.classExists(className))
       {
-        return(new Object[]{false,"You were asked to create a '"+className+"' class but don't seem to have it"});        
+        return(new Object[]{false,"You were asked to create a '"+className+"' class but don't seem to have it"});
       }
       if (!Java.Code.validEncapsulation(className))
       {
-        return(new Object[]{false,className+" seems to have public attriutes. Whither encaspulation?"});        
+        return(new Object[]{false,className+" seems to have public attriutes. Whither encaspulation?"});
       }
       if (!Java.Code.classHasDefaultConstructor(className))
       {
         return(new Object[]{false,className+" does not seem to have the default constructor. Have you added a constructor that wasn't asked for in the exercise?"});
       }
     }
-    
+
     for (int i = 0; i < attribs.size(); i++)
     {
       String targetClass = classNames[i];
@@ -387,7 +625,7 @@ public class Code
       }
       catch (Exception e)
       {
-        return(new Object[]{false,"I tried to create an instance of "+targetClass+" but wasn't able to. Maybe you have messed with its constructors - we didn't ask for any parameterised constructors in this exercise."});        
+        return(new Object[]{false,"I tried to create an instance of "+targetClass+" but wasn't able to. Maybe you have messed with its constructors - we didn't ask for any parameterised constructors in this exercise."});
       }
 
       String[] attribList = (String[])attribs.get(i);
@@ -405,8 +643,8 @@ public class Code
         String cappedFirst = attrib.substring(0, 1).toUpperCase() + attrib.substring(1);
         String setter = "set"+cappedFirst+"("+attribType+")";
         if (!Java.Code.classHasMethod(targetClass,setter))
-        {          
-          return(new Object[]{false,targetClass+" does not seem to have a correct setter for the attribute "+attrib});          
+        {
+          return(new Object[]{false,targetClass+" does not seem to have a correct setter for the attribute "+attrib});
         }
 
         String getter = attribType.equals("boolean") ? "is"+cappedFirst+"()" : "get"+cappedFirst+"()";
@@ -432,7 +670,7 @@ public class Code
         }
         catch (Exception e)
         {
-          return(new Object[]{false,"I tried to use the setter for "+attrib+" in "+targetClass+" but something went wrong."});          
+          return(new Object[]{false,"I tried to use the setter for "+attrib+" in "+targetClass+" but something went wrong."});
         }
 
         try
@@ -442,7 +680,7 @@ public class Code
             String res = (String)Java.Code.callMethod(instance,"get"+cappedFirst);
             if (!"bums".equals(res))
             {
-              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});
             }
           }
           if (attribType.equals("int"))
@@ -450,7 +688,7 @@ public class Code
             int res = (Integer)Java.Code.callMethod(instance,"get"+cappedFirst);
             if (res != 17)
             {
-              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});
             }
           }
           if (attribType.equals("double"))
@@ -458,28 +696,28 @@ public class Code
             double res = (Double)Java.Code.callMethod(instance,"get"+cappedFirst);
             if (res != 17.5)
             {
-              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});
             }
           }
           if (attribType.equals("boolean"))
           {
             boolean res = (Boolean)Java.Code.callMethod(instance,"is"+cappedFirst);
             if (!res)
-            {              
-              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});              
+            {
+              return(new Object[]{false,"I tried to set a value for "+attrib+" in "+targetClass+" but when I tried to read it back with the getter I didn't get what I expected."});
             }
           }
         }
         catch (Exception e)
         {
-          return(new Object[]{false,"I tried to use the getter and setters for "+attrib+" in "+targetClass+" but something went wrong."});          
+          return(new Object[]{false,"I tried to use the getter and setters for "+attrib+" in "+targetClass+" but something went wrong."});
         }
 
       }
-      
+
     }
-    return new Object[] { true };    
-    
+    return new Object[] { true };
+
  }
 
 }
@@ -489,19 +727,19 @@ public class Code
     var bobbifiedCode = getTabBundleCode(true)[0].join("CAPTAINCLIMAX").replace(/\n/g,"FUCKTHEPANTOMINE").replace(/"/g,"BASEBALLCAP").replace(/\r/g,"");
     codeIncludesClass = codeIncludesClass.replace(/SARRIESBOB/,bobbifiedCode);
     codeFiles.push(codeIncludesClass);
-    
+
     /*if (newdoppio)
     {
         // push JS eval through
         codeFiles.push('package doppio;public class JavaScript { public static native String eval(String jsCode);}');
     }*/
-    
+
     var noOfFiles = codeFiles.length;
     var filesBack = 0;
-    
+
     // push code first
-    status("Compiling...");        
-    
+    status("Compiling...");
+
     $.ajax({
         data : {
             mode : "compile",
@@ -518,7 +756,7 @@ public class Code
             if (data.indexOf("**ERROR**") != -1)
             {
                 if (data.indexOf("**NEWJAVA**") == -1)
-                {                                        
+                {
                     var msg = data.split(":");
                     msg.shift(); msg.shift();
                     var className = msg.shift().split("/").pop();
@@ -528,16 +766,17 @@ public class Code
                     }).replace(/\n/g,"<br/>");
                 }
                 else
-                {                    
+                {
                     var msg = data.split(":");
-                    var className = msg[1].split("/").pop().replace(".java","");                    
+                    var className = msg[1].split("/").pop().replace(".java","");
                     var lineno = msg[1].match(/line ([0-9]*) in/)[1];
                     var details = data.split("error:")[1].trim();
                     details = details.replace(/\n/g,"<br/>");
-                }                                
+                }
+                if (details.indexOf("FUCKTHEPANTOMINE") != -1) details = "Something went seriously wrong internally with this medal test.<br/>Please report this error to your lecturer.<br/>Be sure to include a copy of your code.";
                 status('Error on line '+lineno+' in class '+className+"<br/>"+details,"error");
                 if (className+".java" != $("div.tab.selected").text().trim())
-                {                    
+                {
                     // switch to the right tab for the error
                     $("div.tab").not(".newtab").contents()
                         .filter(function() {
@@ -545,40 +784,40 @@ public class Code
                     }).parent().click();
                     // frell me, JQuery is bloody awesome
                 }
-                
+
                 if (newdoppio)
                 {
                     $("div#output-main div.status").remove();
                 }
-                
+
                 LOGsyntaxError("Error in line "+lineno+" of "+className+", "+details);
-                editor.focus(); 
+                editor.focus();
                 editor.setCursor(parseInt(lineno)-1);
                 //editor.setLineClass(parseInt(lineno)-1,"error");
                 editor.addLineClass(parseInt(lineno)-1,"background","error");
                 enableRun();
             }
             else
-            {            
+            {
                 var classes = data.split(":");
 
                 classes.pop(); // remove empty last
-                
+
                 // Clear anything in the /tmp directory...
                 if (newdoppio) outputframe.fs.getRootFS().mntMap["/tmp"].empty();
-                
+
                 $.each(classes,function(i,clas){
 
                     $.ajax({
                        data : { classfile : clas },
                        type : "POST",
                        url : contextPath + "/GetClass",
-                       success : function(classBin) {                       
+                       success : function(classBin) {
                            if (!newdoppio) classBin = $.base64.decode(classBin);
                            var name = clas.replace(/\./g,"/");
-                           //clas.split(".").pop();                
-                            if (newdoppio) 
-                            {                                 
+                           //clas.split(".").pop();
+                            if (newdoppio)
+                            {
                                 // create directories if they don't already exist...
                                 var dirs = name.split(/\//g);
                                 name = dirs.pop(); // remove last non-dir
@@ -588,19 +827,19 @@ public class Code
                                     try { outputframe.fs.mkdirSync("/tmp/"+path+dirs[i]); } catch (e) {};
                                     path = path+dirs[i]+"/";
                                 }
-                                
-                                writeBase64(classBin,"/tmp/"+path,name+".class");                                
-                            } 
-                            else 
-                            { 
-                                outputframe.node.fs.writeFileSync(name+".class", classBin,true); 
+
+                                writeBase64(classBin,"/tmp/"+path,name+".class");
                             }
-                            filesBack++; 
+                            else
+                            {
+                                outputframe.node.fs.writeFileSync(name+".class", classBin,true);
+                            }
+                            filesBack++;
                             if (noOfFiles == filesBack && actuallyRun)
                             {
                                 status("");
 				try
-				{                                                                        
+				{
                                    if (newdoppio)
                                    {
                                        // check to see if we have /tmp/doppio/Graphics.class
@@ -623,23 +862,23 @@ public class Code
                                        {
                                            finalPhaseRunJava();
                                        }
-                                       
+
                                        function finalPhaseRunJava()
                                        {
                                             outputframe.runShellCommand("cd /tmp");
-                                            outputframe.runShellCommand("java "+main,function(){  
-                                                outputframe.globalTerm.writeln("");                                        
+                                            outputframe.runShellCommand("java "+main,function(){
+                                                outputframe.globalTerm.writeln("");
                                                 javaSuccessfulRun();
                                             });
                                        }
-                                   }     
+                                   }
                                    else
                                    {
                                        // Latest codemirror cocks up focus
                                        setTimeout(function()
                                        {
                                           outputframe.focus();
-                                          $("div#console pre",outputframe.document).click();                                        
+                                          $("div#console pre",outputframe.document).click();
                                        },500);
                                        outputframe.doCommand("java "+main);
                                    }
@@ -647,14 +886,14 @@ public class Code
 				catch (e)
 				{
 				   status("Untrapped Doppio Error! :-( - usually this happens if you have a null pointer somewhere. The full error is in the browser console.","error");
-				}  
+				}
                             }
                        }
                     });
 
                 });
             }
-      
+
         }
     });
 }
@@ -697,7 +936,7 @@ function standardJavaSuccessfulRun()
             return;
         }
     }
-    
+
     if (javaruntimeerror)
     {
         javaruntimeerror = false;
@@ -732,15 +971,15 @@ function standardJavaRuntimeError(errorText)
                         .replace("from DynamicJavaSourceCodeObject",""); */
         try
         {
-            var junk = (newdoppio) ? errorText.split(/\n/) : errorText.split(/\t/);        
+            var junk = (newdoppio) ? errorText.split(/\n/) : errorText.split(/\t/);
             var junk2 = junk[1].replace("at ","").split("(");
-            var className = junk2[0].split(".")[0].trim();        
+            var className = junk2[0].split(".")[0].trim();
             var methodName = junk2[0].split(".")[1].split("(")[0].trim();
             var lineNumber = junk2[1].split(":")[1].replace(")","").trim();
             var errorBlurb = junk[0].trim().replace(":","").split('"')[2].trim();
-        
+
             if ($("div.parameter#multi").text().trim() != "true")  //(className == "Pigin")
-            {            
+            {
                 if (className == "java" && errorBlurb.indexOf("java.util.NoSuchElementException") != -1 && errorBlurb.indexOf("bad input") != -1)
                 {
                     // someone's probably typed text into a nextInt scanner...
@@ -751,12 +990,12 @@ function standardJavaRuntimeError(errorText)
             }
             else
             {
-                errorText = "Runtime error on line "+lineNumber+", in class "+className+", in method "+methodName+"<br/>";        
+                errorText = "Runtime error on line "+lineNumber+", in class "+className+", in method "+methodName+"<br/>";
             }
             errorText += errorBlurb;
 
             if (className+".java" != $("div.tab.selected").text().trim())
-            {                    
+            {
                 // switch to the right tab for the error
                 $("div.tab").not(".newtab").contents()
                     .filter(function() {
@@ -765,17 +1004,17 @@ function standardJavaRuntimeError(errorText)
                 // frell me, JQuery is bloody awesome
             }
 
-            editor.focus(); 
+            editor.focus();
             editor.setCursor(parseInt(lineNumber)-1);
             editor.addLineClass(parseInt(lineNumber)-1,"background","error");
         }
-        catch (e) { 
+        catch (e) {
             (console.error || console.log).call(console, e.stack || e);
-        };                
-        
+        };
+
         //editor.setLineClass(parseInt(lineNumber)-1,"error");
         enableRun();
-         
+
         LOGerror(errorText);
     }
     status("<pre>"+errorText+"</pre>","error");
@@ -792,7 +1031,7 @@ function status(msg,type)
         $("div#console",outputframe.document).find("div.status").remove();
         if (status == "") return;
         $("div#console",outputframe.document).append('<div class="status '+type+'">'+
-                                                    msg+"</div>");   
+                                                    msg+"</div>");
         $("div#main",outputframe.document).scrollTop($("div#main",outputframe.document)[0].scrollHeight);
     }
     else
@@ -821,7 +1060,7 @@ function status(msg,type)
             var newmsg = $("<div>"+msg+"</div>");
             if (type.indexOf("error") != -1)
             {
-              newmsg.css("color","red");  
+              newmsg.css("color","red");
             }
             else
             {
@@ -831,16 +1070,16 @@ function status(msg,type)
             $("div#output-main div.status").append(newmsg);
             return;
         }
-        
+
         msg = msg.split(/<br.>/);
         var newmsg = "";
         $.each(msg,function(i,one){
            one = one.replace(/\s*$/,"");
-           newmsg += one+"\r\n"; 
+           newmsg += one+"\r\n";
         });
         newmsg = newmsg.trim();
         newmsg = newmsg.replace(/(<([^>]+)>)/ig,"");
-        
+
         if (newmsg.indexOf("Pigin") != -1)
         {
             // clean up errors on first line...
@@ -866,7 +1105,7 @@ function status(msg,type)
 var lasttestlink = 0;
 function handleTestCasesJava()
 {
-    var testHarness = 
+    var testHarness =
 'import java.io.ByteArrayOutputStream;\n'+
 'import java.io.ByteArrayInputStream;\n'+
 'import java.io.PrintStream;\n'+
@@ -904,7 +1143,7 @@ if (!newdoppio)
 else
 {
     testHarness +=
-'               doppio.JavaScript.eval("parent.javaTestData = \'"+testsPassed+"/"+noOfTests+"\'");    \n'            
+'               doppio.JavaScript.eval("parent.javaTestData = \'"+testsPassed+"/"+noOfTests+"\'");    \n'
 }
 testHarness +=
 '               MEDALHERE\n'+
@@ -940,11 +1179,11 @@ testHarness +=
 
         var singleTestMethod = 'public static boolean testNOOBLABTESTNUMBERHERE() throws IOException'+
 '	{';
-if (!newdoppio) singleTestMethod += 
+if (!newdoppio) singleTestMethod +=
 '		oldSysOut.println(\"TESTCOUNT\");\n';
 else
 '               doppio.JavaScript.eval("parent.javaTestCount++");';
-singleTestMethod += 
+singleTestMethod +=
 '               String inputValues = "NOOBINPUTVALUES";\n'+
 '               ByteArrayInputStream bais = new ByteArrayInputStream(inputValues.trim().getBytes());\n'+
 '		/* Hook System.in */				\n'+
@@ -958,19 +1197,19 @@ singleTestMethod +=
 '		return false;'+
 '	}';
 
-        var singleTestRunLine = 'if (testNOOBLABTESTNUMBERHERE()) testsPassed++;';              
-    
-    $(".testCase").each(function(){    
-        
+        var singleTestRunLine = 'if (testNOOBLABTESTNUMBERHERE()) testsPassed++;';
+
+    $(".testCase").each(function(){
+
         var codeIncludes = $(this).find(".codeIncludes");
-        
+
         var id = $(this)[0].id;
         if ($(this).find("div.id").length != 0)
         {
             id = $(this).find("div.id").text().trim();
         }
         if (id == undefined) id = "";
-        
+
          // get medal details, if any
         var medal = undefined;
         if ($(this).find("div.medalType").length != 0)
@@ -984,15 +1223,15 @@ singleTestMethod +=
             {
                 medal += ":"+id;
             }
-        }         
+        }
         if (medal != undefined) $(this).attr("data-medal",medal);
         $(this).attr("data-id",id);
-                        
+
         var test = testHarness;
         test = test.replace("NUMBER_OF_TESTS",$(this).find(".test").length);
         var testRuns = "";
         var testMethods = "";
-        
+
         if (medal)
         {
             if (!newdoppio)
@@ -1007,68 +1246,68 @@ singleTestMethod +=
         else
         {
             test = test.replace("MEDALHERE","");
-        }        
-        
-        // build test code        
-        $(this).find(".test").each(function(i,individualTest){                        
+        }
+
+        // build test code
+        $(this).find(".test").each(function(i,individualTest){
             var inputValues = "";
-            
-            var testCode = ($(individualTest).hasClass("code")) ? 
+
+            var testCode = ($(individualTest).hasClass("code")) ?
                     $(individualTest).text().trim() : $(individualTest).find(".code").text().trim();
-                    
+
             testCode = js_beautify(testCode);
 
-	    var testRun = singleTestRunLine.replace("NOOBLABTESTNUMBERHERE",i);                       
-            
-            var testMethod = singleTestMethod.replace("NOOBLABSINGLETESTCODEHERE",testCode).replace("NOOBLABTESTNUMBERHERE",i); 
-            
+	    var testRun = singleTestRunLine.replace("NOOBLABTESTNUMBERHERE",i);
+
+            var testMethod = singleTestMethod.replace("NOOBLABSINGLETESTCODEHERE",testCode).replace("NOOBLABTESTNUMBERHERE",i);
+
             if (!$(individualTest).hasClass("runmain") && $("div.parameter#multi").text().trim() == "true") testMethod = testMethod.replace("NOOBLABCALLDEFAULTMAINHERE","");
-            
+
             $(individualTest).find(".inputTest").each(function(i,inputValue){
                 inputValues += $(inputValue).text().trim()+"\\n";
             });
-            
+
             testMethod = testMethod.replace("NOOBINPUTVALUES",inputValues+"\\nrandom\\nrandom\\nrandom\\nrandom");
-            
+
             testRuns += testRun;
-            testMethods += testMethod;            
+            testMethods += testMethod;
         });
-        
-        
-        
+
+
+
         test = test.replace("NOOBLABTESTRUNSHERE",testRuns);
         test = test.replace("NOOBLABTESTSGOHERE",testMethods);
-        
+
         var linkText = ">>> Click here to test your code <<<"
         if (medal != undefined)
         {
             linkText = linkText.replace("code","code for a "+medal.split(":")[0]+" medal");
             linkText = linkText.replace("ribbon medal","ribbon");
-        }        
-        
+        }
+
         $(this).text(linkText);
         $(this).append('<span class="override"><br/><input type="password"/><button>Override</button><button>Hide</button></div>');
         //$(this).append('<br/><input type="password"/><button>Override</button><button>Hide</button>');
         $(this).find("input").click(function(e){
-           e.stopPropagation(); 
+           e.stopPropagation();
         });
         $(this).find("button").eq(0).click(function(e){
             e.stopPropagation();
-           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];           
+           //var _0xfae9=["\x6D\x65\x65\x70\x34\x30\x37"]; var pw=_0xfae9[0];
             var inp = $(this).parent().find("input").val();
             $.get(contextPath+"/OverrideCheck?pw="+inp,function(res){
                 if (res == "good")
                 {
                     LOGtestStart(id,"",true,medal);
                     javaSuccessfulTest("1/1", medal);
-                } 
+                }
             });
         });
         $(this).find("button").eq(1).click(function(e){
             e.stopPropagation();
             $(this).parent().find("button,br,input").hide();
-        }).click();        
-        
+        }).click();
+
         $(this).css({
             border : "1px solid black",
             background : "white",
@@ -1078,41 +1317,41 @@ singleTestMethod +=
             fontWeight : "bold",
             textAlign : "center"
         });
-        $(this).click(function(e){   
-            
+        $(this).click(function(e){
+
             lasttestlink = this;
-                 
+
             var attempts = $(lasttestlink).attr("data-fails");
             if (isNaN(attempts)) attempts = 0;
             attempts++;
             $(lasttestlink).attr("data-fails",attempts);
-            
+
             // remove any emotional stuff
             $(this).find("div.emotionselection").remove();
-            
+
             // hidden override option
             if (e.shiftKey)
             {
                 $(this).find("button,br,input").show();
                 return;
-            }            
+            }
 
 	    if (numTestMon)
             {
                 clearInterval(numTestMon);
                 numTestMon = undefined;
             }
-            
+
             var testCode = test;
             var numTests = parseInt(testCode.match(/int noOfTests = (.*);/)[1]);
             var codeFiles = getTabBundleCode(true)[0];
-            
+
 	    var code = editor.getValue();
- 
+
             // do code includes
-            var offset = "";            
+            var offset = "";
            codeIncludes.each(function()
-            {     
+            {
                 var allcode = getTabBundleCode(false);
 		var feedback = $(this).attr("data-feedback");
                 numTests++;
@@ -1139,7 +1378,7 @@ singleTestMethod +=
                     else
                     {
                         offset += "noOfTests++;";
-                        if (!newdoppio) offset += "oldSysOut.out.println(\"TESTCOUNT\");";
+                        if (!newdoppio) offset += "oldSysOut.println(\"TESTCOUNT\");";
                         if (newdoppio) offset += 'doppio.JavaScript.eval("parent.javaTestCount++");';
 			if (feedback) offset += 'feedback("'+feedback+'");';
                     }
@@ -1155,7 +1394,7 @@ singleTestMethod +=
                     else
                     {
                         offset += "noOfTests++;";
-                        if (!newdoppio) offset += "oldSysOut.out.println(\"TESTCOUNT\");";
+                        if (!newdoppio) offset += "oldSysOut.println(\"TESTCOUNT\");";
                         if (newdoppio) offset += 'doppio.JavaScript.eval("parent.javaTestCount++");';
                     	if (feedback) offset += 'feedback("'+feedback+'");';
 		    }
@@ -1172,13 +1411,13 @@ singleTestMethod +=
                     else
                     {
                         offset += "noOfTests++;";
-                        if (!newdoppio) offset += "oldSysOut.out.println(\"TESTCOUNT\");";
+                        if (!newdoppio) offset += "oldSysOut.println(\"TESTCOUNT\");";
                         if (newdoppio) offset += 'doppio.JavaScript.eval("parent.javaTestCount++");';
                     	if (feedback) offset += 'feedback("'+feedback+'");';
 		    }
                 }
             });
- 
+
             if (!newdoppio)
             {
                 status("Testing... test number 0 of "+numTests,"border test wipe");
@@ -1190,20 +1429,20 @@ singleTestMethod +=
                      } catch (e) {}
                 },500);
             };
-             
+
             testCode = testCode.replace("CODEINCLUDESOFFSET",offset);
-            
+
             if ($("div.parameter#multi").text().trim() != "true")
-            {   
+            {
                 if (!code.match(/\s*class\s*/) && !code.match(/\s*void\s*main/))
                 {
                     // pigin Java :-) Wrap a class/main around it
                     code = "import java.util.Scanner; public class Pigin { public static void main(String[] args) { "+code+"\n} }";
                     codeFiles[0] = code;
-                }   
-            }  
+                }
+            }
             //var classname = getClassName(code);
-            //var packig = getPackageName(code); 
+            //var packig = getPackageName(code);
 	    var mainsPkgs = getMainsPkgs(codeFiles);
             if (mainsPkgs.length == 0)
             {
@@ -1216,9 +1455,9 @@ singleTestMethod +=
                 return;
             }
             var classname = getMainsPkgs(codeFiles)[0][0];
-            var packig = getMainsPkgs(codeFiles)[0][1];           
-            if (packig) classname = packig+"."+classname;    
-            testCode = testCode.replace(/NOOBLABCALLDEFAULTMAINHERE/g,classname+".main(new String[5]);  ");  
+            var packig = getMainsPkgs(codeFiles)[0][1];
+            if (packig) classname = packig+"."+classname;
+            testCode = testCode.replace(/NOOBLABCALLDEFAULTMAINHERE/g,classname+".main(new String[5]);  ");
             codeFiles.push(testCode);
 	    var testCodeAsLines = testCode.split("\n");
 	    var fnar = "";
@@ -1233,9 +1472,9 @@ singleTestMethod +=
 	    // try { console.log(testCode); } catch (e) {}
 	    javaSuccessfulRun = javaSuccessfulTest; //standardJavaSuccessfulRun;
             javaRuntimeError = javaRuntimeDuringTest; //standardJavaRuntimeError;
-            // hide the console                 
+            // hide the console
             LOGtestStart(id,getTabBundleCode(),undefined,medal);
-            if (!newdoppio) 
+            if (!newdoppio)
             {
                 outputframe.controller.reset();
             }
@@ -1245,7 +1484,7 @@ singleTestMethod +=
                 outputframe.globalTerm.focus();
             }
             if (!$(this).hasClass("nohide"))
-            {  
+            {
                 if (!newdoppio)
                 {
                     $("div#console pre",outputframe.document).hide();
@@ -1257,18 +1496,18 @@ singleTestMethod +=
                 }
             }
             actuallyDoRunJava(codeFiles,["NoobLabTester",undefined],true);
-        });               
-    });    
+        });
+    });
 }
 
 // successful run cycle, rather than test itself being successful
 function javaSuccessfulTest(mark,medal)
-{    
+{
     clearInterval(numTestMon);
     numTestMon = undefined;
-    
+
     enableRun();
-    
+
     if (newdoppio)
     {
         $("div#output-main div.status div.test").remove();
@@ -1281,8 +1520,8 @@ function javaSuccessfulTest(mark,medal)
             return;
         }
     }
-    
-    // grab the final marks from the console.    
+
+    // grab the final marks from the console.
     if (medal== undefined)
     {
         if (newdoppio)
@@ -1296,7 +1535,7 @@ function javaSuccessfulTest(mark,medal)
             if (medal) medal = medal[1];
         }
     }
-    if (mark == undefined) 
+    if (mark == undefined)
     {
         if (newdoppio)
         {
@@ -1312,9 +1551,9 @@ function javaSuccessfulTest(mark,medal)
     mark = mark.split("/");
     var max = parseInt(mark[1]);
     mark = parseInt(mark[0]);
-    
+
     var msg = "";
-    
+
     var failtips = (newdoppio) ? javaFailTips : getConsoleText().trim().match(/FailTip:(.*)/g);
     if (failtips)
     {
@@ -1324,34 +1563,34 @@ function javaSuccessfulTest(mark,medal)
     }
 
     var type = "error border";
-    
+
     if (mark == max)
     {
        msg += "Well done! Your work successfully passed all the tests for this exercise!";
-       type = "success border"; 
+       type = "success border";
        LOGtestPassed(medal);
     }
     else
     {
-        msg += "Sorry! Your work only passed "+mark+" out of "+max+" tests, and is not a correct solution to the "+
+        msg += "Sorry! Your work "+ /* only passed "+mark+" out of "+max+" tests, and */ "is not a correct solution to the "+
               "exercise.";
         LOGtestFailed(mark+"/"+max);
-        
+
         /*
         var attempts = $(lasttestlink).attr("data-fails");
         if (isNaN(attempts)) attempts = 0;
         attempts++;
         $(lasttestlink).attr("data-fails",attempts);
-            
+
         if (attempts == 5)
         {
             $(lasttestlink).attr("data-fails","0");
                 howDoYouFeelAbout(lasttestlink,"You've been unsuccessful at this activity five in times in a row now...","repeatedFail");
         }
        */
-        
+
     }
-    
+
     if (medal)
     {
      var medalData = medal.split(":");
@@ -1362,9 +1601,9 @@ function javaSuccessfulTest(mark,medal)
      LOGmedal(medal);
      howDoYouFeelAbout(lasttestlink,"Well done! Your code was good enough for a medal!",medalType);
     }
-    
-    status(msg,type);    
-    
+
+    status(msg,type);
+
 }
 
 function javaRuntimeDuringTest(error)

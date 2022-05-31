@@ -64,5 +64,16 @@
                 </tr>
             </c:forEach>
         </table>
+        <script>
+            $("td:nth-child(5)").click(function(){
+                var code = $(this).html();
+                var e = document.createElement('textarea');
+                e.innerHTML = code;
+                code = e.childNodes[0].nodeValue;
+                code = code.replace(/<br>/g,"\n");
+                code = code.replace("/","\n");
+                alert(code);
+            }).css("cursor","pointer");
+        </script>
     </body>
 </html>

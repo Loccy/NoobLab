@@ -14,6 +14,11 @@ window.SCALE = parseFloat(window.SCALE);
 
 newdoppio = false;
 
+var interactionlog = undefined;
+var interactionlogitems = undefined;
+
+var pythonFailCheck = false;
+
 ///// de-crap IE
 String.prototype.trim = function() {
     return $.trim(this)
@@ -88,7 +93,7 @@ function getCode(e)
 
 function codePaste(e)
 {
-    if ($("div.parameter#blockly").text().trim() == "true")
+    if (!$("div#code-main").is(":visible"))
     {
         apprise("You cannot paste this text-based code with the blocks enabled.");
         return;
@@ -96,7 +101,7 @@ function codePaste(e)
     apprise("Pasting this code into the editor will overwrite any existing code. Are you sure?",{verify:true},function(r){
         if (r)
         {
-            var actualCode = getCode(e);
+            var actualCode = typeof e == "string" ? e : getCode(e);
             editor.setValue(actualCode);
             javaPidjinCodeWrapper(true);
             LOGcodePaste(actualCode);
@@ -109,9 +114,11 @@ function codePaste(e)
 
 function resizeFakeDocs()
 {
+    var scrollPos = $("#content").scrollTop();
     $("iframe.fakedoc").each(function(){
         resizeIframe($(this)[0]);
     });
+    $("#content").scrollTop(scrollPos);
 }
 
 function resizeIframe(iframe)
@@ -608,6 +615,12 @@ function maxMinCode(outputheight,force)
      {
         maxMinCodeWeb(outputheight,force);
         return;
+     }
+     
+     if ($("body").hasClass("altstyle"))
+     {
+         $("body").toggleClass("maximised");
+         return;
      }
 
     // otherwise....
@@ -1108,6 +1121,7 @@ function handleTestCasesBasic()
 
 function howDoYouFeelAbout(source,message,shortmsg,message2,recordThoughts)
 {
+    if ($("div.parameter#noemo").text().trim() == "true") return;
     if (message2 == undefined) message2 = "Tell us how you feel about that:";
 
     // if already asked, don't mess around with the how do you feel did...
@@ -1258,7 +1272,7 @@ function medalGreatSuccess(medal,fb)
     if (!fb) fb = ""; else fb += "&nbsp;</br/>";
     var iframeDoc = document.getElementById("outputframe").contentDocument;
 
-    $("body",iframeDoc).append('<div id="testresult" style="font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 10px; padding : 10px; width: 95%; box-sizing: border-box; color: green">'+fb+'Well done! Your work passed the test!</div>');
+    $("body",iframeDoc).append('<div id="testresult" style="max-height: calc(100vh - 20px); overflow: auto; font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 10px; padding : 10px; width: 95%; box-sizing: border-box; color: green">'+fb+'Well done! Your work passed the test!</div>');
 
        if (medal)
        {
@@ -1273,7 +1287,7 @@ function medalGreatSuccess(medal,fb)
         parent.$("#editor-wrapper").css("bottom","");
         parent.$("#editor-wrapper").css("height","");
         parent.resize();
-        $("div#testresult",iframeDoc).append('<p style="text-align: center"><img src="'+parent.contextPath+'/images/medal'+medalTypeOnly+'.png"/></p>Passing this test awards you a '+medalType+' for the "'+medalName+'" challenge!</div>');
+        $("div#testresult",iframeDoc).append('<p style="text-align: center"><img src="'+parent.contextPath+'/images/medal'+medalTypeOnly+'.png"/></p>Passing this test awards you a '+medalType+" for the '"+medalName+"' challenge!</div>");
         $("div#testresult",iframeDoc).css("opacity",0.8);
        }
        parent.LOGtestPassed(medal);
@@ -1309,7 +1323,7 @@ function medalEpicFail(SUCCESSFULTESTS,NUMBEROFTESTS,fb)
 	}
     var iframeDoc = document.getElementById("outputframe").contentDocument;
 
-    $("body",iframeDoc).append('<div id="testresult" style="font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 10px; padding : 10px; width: 95%; box-sizing: border-box; color: red">'+fb+'Sorry! Your work did not produce what we were looking for! It passed '+SUCCESSFULTESTS+' of '+NUMBEROFTESTS+' test(s).</div>');
+    $("body",iframeDoc).append('<div id="testresult" style="max-height: calc(100vh - 20px); overflow: auto; font-family: monospace; font-weight: bold; position: fixed; border: 2px solid black; background-color: white; top: 10px; padding : 10px; width: 95%; box-sizing: border-box; color: red">'+fb+'Sorry! Your work did not produce what we were looking for!</div>'); // It passed '+SUCCESSFULTESTS+' of '+NUMBEROFTESTS+' test(s).</div>');
     $("div#testresult",iframeDoc).css("opacity",0.8);
 
     parent.LOGtestFailed(SUCCESSFULTESTS+"/"+NUMBEROFTESTS);
@@ -1697,19 +1711,53 @@ noobdata = {\n\
         var medaldata = $(source).attr("data-medal");
         var id = $(source).attr("data-id");
         if (medaldata) medaldata = medaldata.replace(/"/g,"''");
+        
+        pythonFailCheck = false;
+        var pythonKludge = "pass\n";        
+        
+        var jsPretest = $(source).find("div.jsPretest").text();
+        if (jsPretest != "" && jsPretest != undefined)
+        {
+            // crafty no-risk syntax check without a full run...
+            var syntaxCheck = undefined
+            $.ajax({
+                type: 'POST',
+                url: contextPath+"/PythonSyntaxCheck",
+                data: {"code" : editor.getValue() },
+                success: function (result) { syntaxCheck = result.replace(/[\n\r]+/g, '|'); },
+                async:false
+              });
+                        
+            if (syntaxCheck != "success") pythonFailCheck = true;
+            
+            function getCode()
+            {
+                return editor.getValue();
+            }
+            
+            function feedback(fb)
+            {
+                fb = fb.replace(/'/g,"\\'")
+                pythonKludge += "noobtest.feedback('"+fb+"')\n";
+            }                                    
+        
+            eval(jsPretest.trim());            
+        }
 
         var inputTestList = [];
 
-        tests.each(function(){
+        tests.each(function(testno){
                var finalOutput = $(this).find(".testFinalOutput").text().trim();
                var finalOutputCode = $(this).find(".testFinalOutputCode").text().trim();
                var codeIncludes = $(this).find(".codeIncludes").text().trim();
+               var runtimeCatch = $(this).find(".runtimeCatch").text().trim();
                var repeat = $(this).attr("data-repeat");
-               var initcond = $(this).attr("data-initcond");
-               var endTestCode = $(this).find(".endTestCode").text().trim();
+               var initcond = $(this).attr("data-initcond");               
+               if (!initcond && $(this).find(".testInit").text().trim() != "") initcond = $(this).find(".testInit").text().trim();
+               var endTestCode = $(this).find(".endTestCode").text().trim();               
 
                // if we have an initial condition, add it
-               if (initcond) code += initcond+"\n";
+               if (initcond) code += initcond+"\n";               
 
                var inputTests = $(this).find(".inputTest");
                inputTests.each(function(){
@@ -1722,13 +1770,27 @@ noobdata = {\n\
                    oneCheck += "import carol;carol.initialiseCarol()\n";
                }
                var codeInEditor = editor.getValue();
+               if (pythonFailCheck)
+               {
+                   if (testno == 0) codeInEditor = pythonKludge;
+                   if (testno != 0) codeInEditor = "pass";
+               }
                codeInEditor += "\n\n";
                codeInEditor = indent(codeInEditor);
 
                codeInEditor = "try:\n"+codeInEditor+"\nexcept Exception as e:\n";
-               codeInEditor += "  noobtest.feedback('Your code caused an error during the test. If you do not get an error when you run your code, your code probably does something completely unexpected for this particular exercise.')\n";
+               //codeInEditor += "  global noobdata\n";
                codeInEditor += "  noobtest.debug(str(e))\n";
-               codeInEditor += "  noobdata['errorsDuringTest'].append(e)\n\n";
+               codeInEditor += "  noobdata['errorsDuringTest'].append(str(e))\n\n";
+               if (runtimeCatch == "")
+               {
+                   codeInEditor += "  noobtest.feedback('Your code caused an error during the test. If you do not get an error when you run your code, your code probably does something completely unexpected for this particular exercise.')\n";
+               }   
+               else
+               {
+                   codeInEditor += indent(runtimeCatch)+"\n\n";
+               }
+                                             
 
 	       oneCheck += codeInEditor+"\n";
                oneCheck += "noobdata['numberOfTests'] = noobdata['numberOfTests'] + 1\n\n";
@@ -1750,8 +1812,9 @@ noobdata = {\n\
                else if (finalOutputCode != "")
                {
                    finalOutputCode = "try:\n"+indent(finalOutputCode)+"\nexcept Exception as e:\n"+indent("noobtest.debug('Runtime error during test run: '+str(e))");
+                   if (pythonFailCheck) finalOutputCode = "return False\n"+finalOutputCode;
                    oneCheck +="\n"+'def noobTestRun():\n'+indent(finalOutputCode)+'\n\n';
-                   oneCheck += "\n"+'if noobTestRun():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";
+                   oneCheck += "\n"+'if noobTestRun():\n  noobdata["successfulTests"] = noobdata["successfulTests"] + 1'+"\nnoobtest.cls()\n\n";                   
                }
 
                // if we have a check for the code needing to include a particular
@@ -2069,6 +2132,42 @@ function handleTestCasesJS()
     });
 }
 
+function restoreMedalCode(e)
+{
+    e.stopPropagation();
+    if ($("#code-blockly").is(":visible"))
+    {
+        apprise("Sorry! You can't retrieve your previous code when you're using the block-based editor.");
+        return;
+    }
+    var url = contextPath+"/stats?type=lastmedal&testid="+$(this).attr("data-id");
+    if ($(this).attr("data-medal")) url += "&medal="+$(this).attr("data-medal");
+    var message = "This will overwrite the code in the editor with the code you used to XYZXYZ. Are you sure?";
+    if ($(this).attr("data-medal"))
+    {
+        message = message.replace("XYZXYZ","win this medal");
+    }
+    else
+    {
+        message = message.replace("XYZXYZ","pass this test");
+    }
+    $.post(url,function(code){
+        apprise(message,{confirm: true},function(r){
+            if (r)
+            {
+                if (code.indexOf("***TAB***") != -1)
+                {
+                    populateTabs(code);
+                }
+                else
+                {
+                    editor.setValue(code);
+                }
+            }
+        });
+    });
+}
+
 //
 function updateTestCases()
 {
@@ -2134,6 +2233,9 @@ function updateTestCases()
                 // if we've passed a test with this ID before...
                 if (medals[testId] != undefined)
                 {
+                    $(this).css("position","relative"); // so the positioning of the "restore code" icon is right
+                    $(this).css("padding-left","40px");
+                    $(this).css("padding-right","40px");
                     $(this).addClass("completed");
                     var medal = medals[testId];
                     targetMedal = targetMedal.split(":")[0];
@@ -2190,8 +2292,13 @@ function updateTestCases()
                         {
                             html = '&gt;&gt;&gt You\'ve passed this already - click to repeat the test &lt;&lt;&lt';
                         }
+                        var reloadCode = $('<div class="reloadcode" style="position: absolute; top: 2px; right: 10px; cursor: pointer; font-size: 130%"><i class="fa fa-file-code-o" aria-hidden="true"></i></div>');                        
                         $(this).contents().not("div.emotionselection,span.override").remove();
                         $(this).prepend(html);
+                        $(this).append(reloadCode);
+                        reloadCode.attr("data-id",testId);
+                        if (medal != "") reloadCode.attr("data-medal",medal);
+                        reloadCode.click(restoreMedalCode);
                     }
                     else if (medal != "")
                     {
@@ -2542,10 +2649,11 @@ function contentNav(sectionNo,delay,nosave)
            try
            {
               resizeFakeDocs();
-              updateVisibleFakeDoc();
+              updateVisibleFakeDoc();              
            } catch (e) {}
        });
        $("#content .section").eq(sectionNo).addClass("selected");
+       sectionLevelBlocklyVisibility();
        resize();
        if (!nosave) saveState();
     });
@@ -2556,27 +2664,109 @@ function contentNav(sectionNo,delay,nosave)
            resizeFakeDocs();
            updateVisibleFakeDoc();
         } catch (e) {}
-    }
+    }    
     LOGsessionNav();
     document.location.hash = "#"+(parseInt(sectionNo)+1);
 }
 
+function sectionLevelBlocklyVisibility()
+{        
+    // otherwise...    
+    if ($("div.section.selected").hasClass("noblockly"))
+    {        
+        // hide blockly for this section after a suitable delay...
+        setTimeout(function(){
+            // hide/disable the controls to enable/disable blocks...
+            // No reason why you couldn't set your "global" level of
+            // block visibility while section-level rules are being
+            // applied - it just strikes me that students would get
+            // confused. Students are like that.
+            $("div#code-titlebar i").hide();
+            if ($("div.parameter#blockly").text().trim() != "true") return;
+            
+            // set blockly parameter to false, stashing original value
+            var original = $("div.parameter#blockly").text().trim();
+            $("div.parameter#blockly").attr("data-original",original);
+            $("div.parameter#blockly").text("false");
+            
+            // hide blockly
+            $("iframe#code-blockly").hide();
+            // show proper editor
+            $("div#code-main").show();            
+            $("div#usermenu div#toggleblocks").hide();
+            editor.refresh()
+        },500)
+    }
+    else
+    {
+        // show the controls to enable/disable blocks...
+        $("div#code-titlebar i").show();
+        
+        // retrieve original blockly parameter
+        var original = $("div.parameter#blockly").attr("data-original",original);                    
+        if (original != "true") return;       
+        // set it back into blockly param
+        $("div.parameter#blockly").text(original);
+        
+        // show blockly for this section
+        $("iframe#code-blockly").show();
+        // hide proper editor
+        $("div#code-main").hide();
+        $("div#usermenu div#toggleblocks").show();        
+        // ugly hack to force a redraw of blockly
+        restoreBlockly(getBlocklyXml());
+    }
+}
+
 function runPython(code,istest,input)
 {
-    // add an extra pass on the end - this fixes things if the last instruction is
-    // an asynchronous Carol instruction
-    code += "\npass\n";
-    document.getElementById("codeinput").value = code;
-    disableRun();
-    if (!istest) LOGrun(code);
-    var form = document.forms[0];
-    document.forms[0].action = contextPath+"/RunPython";
-    $(form).find("textarea[name=inputbuffer]").remove();
-    if (input)
+    $('#outputframe').attr("src","");
+    
+    var checkcode = editor.getValue();    
+    if (pythonFailCheck)
     {
-        $(form).append('<textarea style="width:0px;height:0px;visibility:hidden" name="inputbuffer">'+JSON.stringify(input)+'</textarea>');
+        // if this is a test, and there was a jsPretest, and we failed the Python syntax check...
+        checkcode = "pass"  // don't test the actual code
+        pythonFailCheck = false;
     }
-    document.forms[0].submit();
+    
+    // call syntax check
+    $.post(contextPath+"/PythonSyntaxCheck",{"code" : checkcode },function(result){
+        result = result.trim();
+        if (result == "success")
+        {
+            // add an extra pass on the end - this fixes things if the last instruction is
+            // an asynchronous Carol instruction
+            code += "\npass\n";
+            document.getElementById("codeinput").value = code;
+            disableRun();
+            if (!istest) LOGrun(code);
+            var form = document.forms[0];
+            document.forms[0].action = contextPath+"/RunPython";
+            $(form).find("textarea[name=inputbuffer]").remove();
+            if (input)
+            {
+                $(form).append('<textarea style="width:0px;height:0px;visibility:hidden" name="inputbuffer">'+JSON.stringify(input)+'</textarea>');
+            }
+            document.forms[0].submit();
+        }
+        else // EH-RAW
+        {
+            var errordiv = $("<pre></pre>");
+            errordiv.css({
+                "font-weight" : "bold",
+                "color" : "red"
+            });
+            result = result.replace("Sorry:","").trim();
+            errordiv.text(result);
+            LOGsyntaxError(result);
+            
+            $('#outputframe').contents().find('body').append(errordiv);
+            var errorline = result.match(/line ([0-9]+)/).pop();
+            errorline = errorline.replace("line","").trim();
+            highlightLine(errorline-1);
+        }
+    });
 }
 
 function hiddenRun(code,test,codefortest)
@@ -2891,7 +3081,7 @@ function runFullWeb(code,logcode)
            var name = names[i];
            codefile = codefile.replace(/\<(\?xml|(\!doctype[^\>\[]+(\[[^\]]+)?))+[^>]+\>/gi, '').trim();
 	   var error = validateXML(codefile);
-	   if (name.slice(-5) != ".html" && name.slice(-4) != ".htm" && name.slice(4) != ".php") error = false;
+	   if (name.slice(-5) != ".html" && name.slice(-4) != ".htm") error = false;
            if (error && $("div.parameter#disableValidation") != "true")
            {
 		$("body",outputframe.document).html("");
@@ -3139,11 +3329,43 @@ function resize()
     {
          $("div#topnav").removeClass("compressed");
     }
-    return;
+    if ($("#content").width() < 400)
+    {
+        resizeSplit(400);
+    }
+   
+    setTimeout(function() {
+        $('.CodeMirror.prettyprint').each(function(i, el){
+             el.CodeMirror.refresh();
+         });
+    },50);
+}
+
+function prettyPrint()
+{
+    $("pre.prettyprint").each(function(){
+        var code = $(this).text();
+        var codepaste = $(this).hasClass("codepaste");
+        var nolinenos = $(this).hasClass("nolinenos");
+        var textarea = $("<textarea>"+code+"</textarea>");
+        var maxheight = $(this).attr("data-maxheight");
+        $(this).replaceWith(textarea);
+        var lang = editor.getOption("mode");
+        var cm = CodeMirror.fromTextArea(textarea[0], {
+            lineNumbers : !nolinenos,
+            readOnly : "nocursor",
+            mode : lang
+          });
+        if (maxheight && maxheight.trim() != "") cm.setSize("100%",maxheight);
+        $(textarea).next().addClass("prettyprint");
+        if (codepaste) $(textarea).next().addClass("codepaste");
+    })
 }
 
 function handlePrettyPrintPlus()
 {
+   /* old, prettify-based */
+   /*
    $("pre.codepaste").click(function(){
        codePaste($(this));
    });
@@ -3161,6 +3383,11 @@ function handlePrettyPrintPlus()
                     html += (i+1)+"<br/>";
             }
             $(this).parent().prepend("<div class=\"linenos\">"+html+"</div>");
+   }); */
+    
+   $("div.CodeMirror.prettyprint.codepaste").click(function(e){
+      e.stopPropagation();
+      codePaste(this.CodeMirror.getValue());
    });
    
    $("div.blockpaste").click(function(){
@@ -3407,6 +3634,7 @@ function populateTabs(data,noremove)
            	LOGcheat(source);
         }
         var dewhitespaced = tab[1].replace(/[ |\t]+?\n/g,"\n");
+        dewhitespaced = dewhitespaced.replace(/Â£/g,"£");
         newpre.text(dewhitespaced.trim());        
         $(newtab).append(newpre);
         $(newtab).append('<span class="cursor">0,0</span>');
@@ -3818,8 +4046,7 @@ function toggleBlocks()
     var cookieStatus = $.cookie("disableblocks");
     if (cookieStatus != "true")
     {
-        var msg = "This will disable the blocks and enable the text-based code editor for all block-based exercises.<p>"
-        msg +=    "You are advised to save any current work as any block-based programs may not be retained as text-based code.<p>";
+        var msg = "This will disable the blocks and enable the text-based coding. You must save your work before you proceed.<p>";
         msg +=    "Are you sure you want to proceed?";
         apprise(msg, {verify:true},function(r)
         {
@@ -3833,8 +4060,7 @@ function toggleBlocks()
     }
     else
     {
-        var msg = "This will disable the text-based code editor and re-enable blocks for relevant exercises.<p>"
-        msg +=    "You MUST save your work if you want to keep it. Your code WILL NOT be converted to blocks!<p>";
+        var msg = "This will disable the text-based coding and enable blocks for relevant exercises. You must save your work before you proceed.<p>";
         msg +=    "Are you sure you want to proceed?";
         apprise(msg, {verify:true},function(r)
         {
@@ -3940,7 +4166,16 @@ originalTexts = {};
 
 //$(document).load(function()
 window.onload = function()
-{    
+{  
+    editor.getValue = (function(_super) {
+        return function() {
+            var result = _super.apply(this,arguments);
+            
+            return result;
+        };
+    })(editor.getValue);
+    
+    
    // hoik the navbar out of the content div as it will break if we scale content
    // easier to do it here rather than fix/place it "properly" over in Main.java given
    // how Main.java constructs the page...
@@ -3963,8 +4198,7 @@ window.onload = function()
       originalTexts[preid] = getCode(this);
       $(this).attr("data-preid",preid);
    });
-
-   prettyPrint();
+   
    createQuickQuizzes();
    createEmos();
    
@@ -4017,10 +4251,25 @@ window.onload = function()
    else handleTestCases();
 
    if ($("div.parameter#language").text().trim() == "java")
-   {
+   {       
        if (newdoppio)
        {
-           $("iframe#outputframe").attr("src",contextPath+"/newdoppio");
+           // show filesystem button
+           $("input#toggleJFS").show();
+           // bind any file-system clickable upload
+           $("div.javafs-file").click(pushToJFS);
+           // add a bit more styling to them...
+           $("div.javafs-file").each(function(){
+               var extra = $('<div></div>');
+               extra.append("<span>This is a file bundle.</span>");
+               extra.append("<br/>")
+               extra.append("<b></b>");
+               extra.find("b").text("Click here to upload example files into your Java file system >>>");
+               extra.append('<img src="'+contextPath+'/images/bundle_icon.png"/>');
+               $(this).prepend(extra);
+           })
+           // load doppio
+           $("iframe#outputframe").attr("src",contextPath+"/newdoppio");           
        }
        else
        {
@@ -4243,6 +4492,7 @@ window.onload = function()
        $("div#editorRightClick").css("top","26px");
    }
 
+   prettyPrint();
    handlePrettyPrintPlus();
    createFakeDocs();
    setTimeout(resizeFakeDocs,2000);
@@ -4256,15 +4506,6 @@ window.onload = function()
 
    // reset check every 60 seconds to see if state needs saving
    saveInterval = setInterval(function() {saveState();},60000);
-
-   var hash = document.location.hash;
-   if (hash != "")
-   {
-       hash = parseInt(hash.slice(1));
-       if (isNaN(hash)) { hash = 0; } else { hash--; }
-   }
-   else hash = 0;
-   contentNav(hash,0,true);
    
    if (embed)
    {
@@ -4322,6 +4563,7 @@ window.onload = function()
                  }
                  else
                  {
+                     oldCode = oldCode.replace(/Â£/g,"£");
                      editor.setValue(oldCode);
                      javaPidjinCodeWrapper(true);
                  }
@@ -4602,7 +4844,7 @@ window.onload = function()
      if (cookieeditorfontsize != "")
      {
          editorfontsize = parseInt(cookieeditorfontsize);
-         $(".CodeMirror").css("font-size",(editorfontsize)+"px");
+         $(".CodeMirror").not(".prettyprint").css("font-size",(editorfontsize)+"px");
          editor.refresh();
      }
      // set main content scaling factor
@@ -4622,8 +4864,16 @@ window.onload = function()
         $("#code-blockly").show();
         $("#code-blocklytoggle").show();
 	// we can make the code window a bit bigger too...
-	$("div#output-outer").css("height","220px");
-    	$("div#editor-wrapper").css("bottom","220px");
+        if (!$("body").hasClass("altstyle"))
+        {
+            $("div#output-outer").css("height","220px");
+            $("div#editor-wrapper").css("bottom","220px");
+        }
+        else {
+            document.documentElement.style.setProperty("--code-division","calc(100% - 220px)");
+            // inject altstyle CSS into the blockly iframe...
+            $("head",$("iframe#code-blockly")[0].contentWindow.document).append('<link rel="stylesheet" href="'+$("div.parameter#altstyle").text().trim()+'"/>');
+        }
 	// and hide the code pane
 	if ($("div.parameter#kinder").text().trim() != "true") $("div#code-main").hide();
         // and enable the "disable blocks" option
@@ -4697,12 +4947,20 @@ window.onload = function()
          dragY = setInterval(function(){
             if (window.innerHeight-globalMouseY < 60) return;
             if (globalMouseY < 60) return;
-            $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
-       	    $("div#editor-wrapper").css("bottom",window.innerHeight-globalMouseY+"px");
-            //$("#outputframe").css("height",window.innerHeight-globalMouseY+"px");
-            var wrapperHeight = $("#output-inner").css("height");
-            $("#outputframe").css("height",wrapperHeight);
-            editor.refresh();
+            if (!$("body").hasClass("altstyle"))
+            {
+                $("div#output-outer").css("height",window.innerHeight-globalMouseY+"px");
+                $("div#editor-wrapper").css("bottom",window.innerHeight-globalMouseY+"px");
+                //$("#outputframe").css("height",window.innerHeight-globalMouseY+"px");
+                var wrapperHeight = $("#output-inner").css("height");
+                $("#outputframe").css("height",wrapperHeight);
+                editor.refresh();
+            }
+            else
+            {
+                // CSS variables are quite possibly the best thing since self-removing trousers.
+                document.documentElement.style.setProperty("--code-division",globalMouseY+"px");
+            }
          },10);
      });
      $("div#horizontaldrag").mousedown(function(){
@@ -4720,20 +4978,35 @@ window.onload = function()
              clearInterval(dragY);
              dragY = null;
              $("div#resizeoverlay").remove();
+             $("div#horizontaldrag").css("z-index","");
          }
          if (dragX != null)
          {
              clearInterval(dragX);
              dragX = null;
              $("div#resizeoverlay").remove();
+             $("div#horizontaldrag").css("z-index","");
          }
      }
+     
+     if ($("div.parameter#interactionlog").text().trim() != "") interactionlog = $("div.parameter#interactionlog").text().trim()
+     if ($("div.parameter#interactionlogitems").text().trim() != "") interactionlogitems = $("div.parameter#interactionlogitems").text().trim()
      
      if ($("body").hasClass("embed"))
      {
          configureEmbed();
-     }          
-
+     }
+     
+    // navigate to section specified by #X
+    var hash = document.location.hash;
+    if (hash != "")
+    {
+        hash = parseInt(hash.slice(1));
+        if (isNaN(hash)) { hash = 0; } else { hash--; }
+    }
+    else hash = 0;
+    contentNav(hash,0,true);
+    
 }
 //});
 
@@ -4824,6 +5097,14 @@ function resizeSplit(width)
     {
         $("div#topnav").removeClass("compressed");
     }
+    
+    if ($("body").hasClass("altstyle"))
+    {
+        $("div#horizontaldrag").css("right",width+"px");
+        document.documentElement.style.setProperty('--default-width',(width+8)+"px");
+        return;
+    }
+    
     if ($("div.parameter#language").text().trim() == "fullweb" && $("div#editor-wrapper").hasClass("maxed"))
     {
         $("div#horizontaldrag").css("right",width+"px");
@@ -4872,10 +5153,10 @@ function zoomIn()
     }
     else
     {
-        current = $(".CodeMirror").css("font-size");
+        current = $(".CodeMirror").not(".prettyprint").css("font-size");
         if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
         current = parseInt(current);
-        $(".CodeMirror").css("font-size",(current+1)+"px");
+        $(".CodeMirror").not(".prettyprint").css("font-size",(current+1)+"px");
         editor.refresh();
         $("iframe#outputframe").contents().find("body").css("font-size",(current+1)+"px")
         $.cookie("editorfontsize",current+1, {expires: 365, path: '/'});
@@ -4901,10 +5182,10 @@ function zoomOut()
     }
     else
     {
-        current = $(".CodeMirror").css("font-size");
+        current = $(".CodeMirror").not(".prettyprint").css("font-size");
         if (current == "14.4px") current = "16"; // kludgey hack for MS Edge
         current = parseInt(current);
-        $(".CodeMirror").css("font-size",(current-1)+"px");
+        $(".CodeMirror").not(".prettyprint").css("font-size",(current-1)+"px");
         editor.refresh();
         $("iframe#outputframe").contents().find("body").css("font-size",(current-1)+"px")
         $.cookie("editorfontsize",current-1, {expires: 365, path: '/'});
@@ -4950,6 +5231,9 @@ function toggleOptions()
     if ($("div#usermenu").is(":hidden"))
     {
         $("div#usermenu").show();
+        // ugly hack due to opera bug
+        $("div#usermenu").width("1px");
+        setTimeout(function(){ $("div#usermenu").width("") },0);
         $(document).mouseup(function (e)
         {
             if (e.target.parentElement.id != "optionscog")
@@ -5010,7 +5294,7 @@ function highlightSelectedTheme()
     $("div#theme-"+currenttheme).addClass("selected");
 }
 
-function closeThemeChooser()
+function closeThemeChooser(event)
 {
     if ($(event.target).hasClass("theme")) return;
     $("div#themechooser").animate({right: -250},700);
@@ -5023,8 +5307,8 @@ function openThemeChooser()
     if ($("div#openthemechooser").hasClass("disabled")) return;
     toggleOptions();
     $("div#themechooser").animate({right: 10},700);
-    setTimeout(function() { $("body").bind("click",function() { closeThemeChooser(event) }) },100)
-    setTimeout(function() { $("iframe#outputframe").contents().find("body").bind("click",function() { closeThemeChooser(event) }) },100)
+    setTimeout(function() { $("body").bind("click",function(event) { closeThemeChooser(event) }) },100)
+    setTimeout(function() { $("iframe#outputframe").contents().find("body").bind("click",function(event) { closeThemeChooser(event) }) },100)
 }
 
 function resizeCarols()
@@ -5083,11 +5367,6 @@ $(window).resize(function() {
             lastWindowWidth = $(window).width();
 
             //call my function
-            resize();
-
-            if ($("#content").width() < 300)
-            {
-                resizeSplit(350);
-            }
+            resize();            
         }
 });

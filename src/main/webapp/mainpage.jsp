@@ -7,8 +7,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>NoobLab</title>
-        
-        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i&display=swap" rel="stylesheet">
 
         <%-- put current ${pageContext.request.contextPath} into Javascript land --%>
         <script type="text/javascript">
@@ -24,6 +24,8 @@
 
         <%-- JQuery --%>
         <script src="${pageContext.request.contextPath}/jq.js"></script>
+        <%-- JQuery Tree --%>
+        <script src="${pageContext.request.contextPath}/jqTree.js"></script>
 
         <%-- our own stuff --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/nooblab.js?date=09023018"></script>
@@ -37,46 +39,46 @@
 
         <%-- codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/lib/codemirror.js"></script>
-        
+
         <%-- xml for codemirror, needed for HTMl apparently --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/xml/xml.js"></script>
-        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/xml/xml.css">  --%>               
-        <%-- javascript highlighting for codemirror --%>                        
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/xml/xml.css">  --%>
+        <%-- javascript highlighting for codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/javascript/javascript.js"></script>
-        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/javascript/javascript.css"/>        
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/javascript/javascript.css"/>
         <%-- css/html for Codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/css/css.js"></script>
         <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/css/css.css"> --%>
-        <script src="${pageContext.request.contextPath}/codemirror/mode/htmlmixed/htmlmixed.js"></script>                
-        
+        <script src="${pageContext.request.contextPath}/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+
         <%-- basic highlighting for codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/basic/basic.js"></script>
         <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/basic/basic.css"/> --%>
         <%-- java highlighting for codemirror --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/clike/clike.js"></script>
-        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/clike/clike.css"/> --%>   
+        <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/codemirror/mode/clike/clike.css"/> --%>
         <%-- and PHP --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/php/php.js"></script>
         <%-- and Python --%>
         <script src="${pageContext.request.contextPath}/codemirror/mode/python/python.js"></script>
 
         <%-- prettyprint --%>
-        <script src="${pageContext.request.contextPath}/prettify.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/prettify.css"/>
-        
+        <%--<script src="${pageContext.request.contextPath}/prettify.js"></script>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/prettify.css"/>--%>
+
         <%-- javascript code tidy --%>
         <script src="${pageContext.request.contextPath}/jsbeautify.js"></script>
 
         <%-- appraise --%>
         <script src="${pageContext.request.contextPath}/apprise-1.5.min.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/apprise.min.css"/>
-        
+
         <%-- java runner --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/java.js?date=09003018"></script>
-        
+
         <%-- pcode "compiler" --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/psuedocode.js"></script>
-        
+
         <%-- C++ --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/cpp.js"></script>
 
@@ -90,54 +92,58 @@
             <%-- java on server side run path --%>
             var javaserver = require("${pageContext.request.contextPath}/javaserver");
         </script>
-        
-        <%-- gifpauserxtreme (for animated gifs) --%>        
+
+        <%-- gifpauserxtreme (for animated gifs) --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/gifpause/libgif.js"></script>
-        
-        <%-- graphics library --%>        
+
+        <%-- graphics library --%>
         <script type="text/javascript" src="${pageContext.request.contextPath}/drawing.js"></script>
-        
+
         <%-- font awesome --%>
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
-        
+
         <%-- bring watermark client side --%>
         <script type="text/javascript">
             watermark = "${watermark}";
         </script>
-        
+
         <%-- blockly --%>
         <%-- <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blockly_compressed.js"></script>
 
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/colour.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/logic.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/math.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/text.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/loops.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/procedures.js"></script>  
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/colour.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/logic.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/math.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/text.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/loops.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/procedures.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/variables.js"></script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/carol.js"></script>  
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/blocks/carol.js"></script>
 
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode.js"></script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/colour.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/logic.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/math.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/text.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/loops.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/procedures.js"></script>  
-        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/variables.js"></script>  
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/colour.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/logic.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/math.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/text.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/loops.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/procedures.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/variables.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/generators/pcode/carol.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/blockly/msg/js/en.js"></script> --%>
-        
+
+        <%-- if an alternate style has been provided --%>
+        <c:if test="${altstyle != null}">
+            <link rel="stylesheet" href="${altstyle}"/>
+        </c:if>
 
     </head>
-    <body class="main<c:if test="${embed}"> embed</c:if>">
+    <body class="main<c:if test="${embed}"> embed</c:if><c:if test="${altstyle != null}"> altstyle</c:if>">
         <div id="loadingspinner"><iframe border="0" src="${pageContext.request.contextPath}/holding.html"></iframe></div>
          <div id="topnav">
             <div class="row1">
-                <div title="Logout" id="logout" onclick="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
+                <div style="display: none" title="Logout" id="logout" onclick="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i></div>
                 <div title="Options" id="optionscog" onclick="toggleOptions()"><i class="fa fa-bars"></i></div>
-                <div title="Change zoom settings" id="newzoom" onclick="mainZoom()">Aa</div>                    
-                <div title="Show graphics output" id="navgraphics" onclick="toggleGraphics()"><i class="fa fa-pie-chart"></i></div> 
+                <div title="Change zoom settings" id="newzoom" onclick="mainZoom()">Aa</div>
+                <div title="Show graphics output" id="navgraphics" onclick="toggleGraphics()"><i class="fa fa-pie-chart"></i></div>
 <!--                    <div id="content-zoom"><span onclick="scale('zoomin')">&#128474;</span>&nbsp;<span onclick="scale('zoomout')">&#128475;</span></div>                    -->
             </div>
             <div style="clear:both"></div>
@@ -147,17 +153,17 @@
                     <div class="extramenu" id="extramenuchat" onclick="$('div#navchat').click()">Show/hide chat pane</div>
                     <div class="extramenu" id="extramenucoursenav" onclick="$('div#navcourse').click()">Show/hide course navigation</div>
                     <div class="extramenu" id="extramenulecture" onclick="$('div#navlecture').click()">Show/hide lecture slides</div>
-                    <div class="extramenu" id="extramenuvideo" onclick="$('div#navvideo').click()">Show/hide lecture video</div>                    
+                    <div class="extramenu" id="extramenuvideo" onclick="$('div#navvideo').click()">Show/hide lecture video</div>
                     <div class="extramenu" id="extramenuzoon" onclick="mainZoom()">Change zoom level</div>
-                    <div class="extramenu" id="extramenlogout" onclcik="logout()">Logout</div>                                        
+                    <div style="display: none" class="extramenu" id="extramenlogout" onclcik="logout()">Logout</div>
                     <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=mymedals">View my medals</a></div>
-                    <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>            
+                    <div><a class="medallink" onclick="toggleOptions()" href="${pageContext.request.contextPath}/ScoreTable?type=bigtable">View high score<br/>table for module</a></div>
                     <!--<div onclick="setName()">Set my name</div>-->
                     <div class="disabled" id="toggleblocks" onclick="toggleOptions(); toggleBlocks()">Disable blocks</div>
                     <div id="openthemechooser" onclick="openThemeChooser()">Change editor theme</div>
                     <div id="getembedlink" onclick="getEmbedLink()">Get embed link</div>
                     <div id="javaruntimemenu" onclick="toggleJavaRuntime()">Use new Java runtime<br/>(old currently in use)</div>
-                </div>            
+                </div>
                 <div id="mainZoomControls">
                     <i class="fa fa-file-text-o" aria-hidden="true"></i>
                     <span onclick="scale('zoomout')"><i class="fa fa-search-minus" aria-hidden="true"></i></span>
@@ -168,8 +174,8 @@
                     <span onclick="zoomIn()"><i class="fa fa-search-plus" aria-hidden="true"></i></span>
                 </div>
             </div>
-        </div>        
-        <div id="content">                        
+        </div>
+        <div id="content">
             <audio id="winsound">
                     <source src="${pageContext.request.contextPath}/images/win.ogg" type="audio/ogg"/>
                     <source src="${pageContext.request.contextPath}/images/win.mp3" type="audio/mpeg"/>
@@ -194,23 +200,24 @@
                 <textarea style="width: 0px; height: 0px; visibility: hidden;" cols="10" rows="10" id="codefortest" name="codefortest"></textarea>
                 <input name="nohalt" id="nohalt" type="hidden"/>
                 <input name="filename" id="filename"/>
-                <input name="tabs" id="tabs"/>                
+                <input name="tabs" id="tabs"/>
             </form>
             <div style="float: right"><%-- <i class="fa fa-search-plus" style="position: relative; top: 4px; right: 14px; cursor: pointer" onclick="zoomIn()"></i><i style="position: relative; top: 4px; right: 14px; cursor: pointer" class="fa fa-search-minus" onclick="zoomOut()"></i>--%><span class="maximisebutton fa fa-window-maximize" onclick="maxMinCode()" style="position: relative; top: 4px; right: 2px; cursor: hand; cursor: pointer;"></span></div>
             &nbsp;<input id="runbutton" type="button" value="Run" onclick="run();"/>
             <input id="stopbutton" type="button" value="Stop" onclick="stop();" disabled="true"/>
-            <input id="loadbutton" type="button" value="Load file"/>            
+            <input id="loadbutton" type="button" value="Load file"/>
             <input id="savebutton" type="button" value="Save file" onclick ="save()"/>
             <input id="clearbutton" type="button" value="Clear editor" onclick ="clearEditor();"/>
-            <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>            
+            <input id="saveallbutton" style="display: none" type="button" value="Save all as zip" onclick ="save(true);"/>
             <input id="tidy" type="button" value="Tidy" onclick ="tidyCode();"/>
+            <input id="toggleJFS" style="display: none" type="button" value="Show Java FS" onclick="toggleJFS()"/>
             <input id="toggleEmbed" type="button" value="Show output" onclick="toggleEmbedOutput()"/>
             <input id="pasteExample" type="button" value="Paste example code" onclick="pasteCodeEmbed()"/>
             <input id="runMedal" type="button" value="Try for medal" onclick="tryMedalEmbed()"/>
             <input id="gettersAndSetters" type="button" value="G&S" onclick="$('div#editorRightClick').toggle()"/>
         </div>
-                       
-        <div style="clear: both"></div>                    
+
+        <div style="clear: both"></div>
         <script type="text/javascript">
             var stoppit = false;
             var lastFilename = "";
@@ -224,7 +231,7 @@
                     onComplete: function(response) {
                         setTimeout(function()
                         {
-                            response = response.replace(/#RET#/g,"\n");                            
+                            response = response.replace(/#RET#/g,"\n");
                             // if multitab response
                             if (response.indexOf("***TAB***") != -1 && $("div.parameter#multi").text().trim() == "true")
                             {
@@ -242,7 +249,7 @@
                                         // we can overwrite
                                         // use populateTabs with wipe out
                                         populateTabs("***TAB***\n"+lastFilename+"\n***CODE***\n"+response);
-                                        
+
                                         //editor.setValue(response);
                                         lastcode = getTabBundleCode();
                                         //$("div.tab.selected").html(lastFilename+'<i class="close fa fa-times" onclick="deleteSelectedEditorTab()"></i>');
@@ -269,9 +276,9 @@
                                         var sourceUID = getUID(inboundWatermark);
                                         if (sourceUID != getUID()) LOGcheat(sourceUID);
                                     }
-                                    
+
                                     if ($("div.parameter#blockly").text().trim() == "true" && lastFilename.slice(-6) == ".bnoob")
-                                    {                                        
+                                    {
                                         // blockly file
                                         restoreBlockly(response);
                                     }
@@ -281,20 +288,20 @@
                                         //$("div.parameter#blockly").remove();
                                         //$("#code-blockly").hide();
                                         //$("#code-blocklytoggle").hide();
-                                        
-                                         // inspect pasted code for not-you watermarks       
+
+                                         // inspect pasted code for not-you watermarks
                                         var source = cheatSource(response);
 
                                         // strip watermarking from pastedText
                                         response = response.replace(/\t\s+\n/g,"\n");
-                                        
+
                                         if (source) LOGcheat(source);
-                                        
-                                        editor.setValue(response);      
+
+                                        editor.setValue(response);
                                         lastcode = response;
                                     }
-                                                                            
-                                    
+
+
                                 }
                             }
                             LOGload(response);
@@ -313,32 +320,33 @@
             <div id="code-titlebar"><%--<div id="code-blocklytoggle" unselectable="on" onclick="toggleBlockly()">Hide visual editor</div>--%>[ Code ]</div>
             <iframe id="code-blockly" src="${pageContext.request.contextPath}/blockly.jsp?language=${requestScope.blocklylang}"></iframe>
             <div id="code-main"><!-- editor will go in here --></div>
+            <div id="filetree"></div>
         </div>
-        <script type="text/javascript">            
+        <script type="text/javascript">
             if ($("div.parameter#language").text().trim() == "basic")
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",
-                    mode:  "basic",                    
+                    mode:  "basic",
                     lineNumbers: false
                 });
             }
             else if ($("div.parameter#language").text().trim().slice(0,4) == "java")
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
-                    value: "${codetext}",                    
+                    value: "${codetext}",
                     mode: "text/x-java",
-                    //tabMode : "shift",                    
+                    //tabMode : "shift",
                     lineNumbers: true
                 });
-            }            
+            }
             else if ($("div.parameter#language").text().trim() == "pcode" || $("div.parameter#language").text().trim() == "pcarol")
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",
                     mode : "text/plain",
                     tabMode : "shift",
-                    lineNumbers: true/*,                    
+                    lineNumbers: true/*,
                     onKeyEvent : function(a,b){
                         if (stoppit) return;
                         if ($("div.parameter#blockly").text().trim() == "true")
@@ -350,7 +358,7 @@
                                     // not blockly - hide/disable it
                                     $("div.parameter#blockly").remove();
                                     $("#code-blockly").hide();
-                                    $("#code-blocklytoggle").hide(); 
+                                    $("#code-blocklytoggle").hide();
                                     saveState();
                                 }
                                 stoppit = false;
@@ -358,12 +366,12 @@
                         }
                     }*/
                 });
-            } 
+            }
             else
             {
                 editor = CodeMirror(document.getElementById("code-main"),{
                     value: "${codetext}",
-                    mode:  "javascript",                                        
+                    mode:  "javascript",
                     lineNumbers: true
                 });
             }
@@ -376,7 +384,7 @@
             </div>
         </div>
         <div style="clear: both"></div>
-        <div id="horizontaldrag"></div>        
+        <div id="horizontaldrag"></div>
         <div id="themechooser">
             <div class="tbar theme"><div class="close">X</div>Theme Chooser</div>
             <div class="themes">
@@ -386,7 +394,7 @@
                 </c:forEach>
             </div>
         </div>
-        <div id="graphics">            
+        <div id="graphics">
             <svg class="container">
                 <rect x="0" y="0" width="100%" height="100%" fill="gray"/>
                 <svg class="main" version="1.1" viewBox="0 0 1000 1000" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
@@ -397,14 +405,14 @@
                     <g clip-path="url(#clip)">
                     </g>
                 </svg>
-            </svg>            
+            </svg>
         </div>
         <div id="editorRightClick">
             <div class="option" onclick="addGettersAndSetters('getters')">Add getters</div>
             <div class="option" onclick="addGettersAndSetters('setters')">Add setters</div>
             <div class="option" onclick="addGettersAndSetters('both')">Add both getters and setters</div>
         </div>
-        <img id="embedmedalhighlight" src="${pageContext.request.contextPath}/images/medalgold.png"/>        
-        ${navbar}        
+        <img id="embedmedalhighlight" src="${pageContext.request.contextPath}/images/medalgold.png"/>
+        ${navbar}
     </body>
 </html>

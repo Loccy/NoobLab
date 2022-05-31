@@ -72,8 +72,9 @@ function newDoppioLoaded()
     shell._shellEnabled = false;
     Buffer = BrowserFS.BFSRequire('buffer').Buffer;
     parent.status("The enhanced Java runtime has loaded. Photon torpedoes ready, captain.","border");
+    parent.postDoppio();
     setTimeout(function(){
-        parent.$("div#output-main div.status").remove();
+        parent.$("div#output-main div.status").remove();          
     },5000);        
     
     setTimeout(function(){
@@ -87,7 +88,7 @@ function newDoppioLoaded()
             //console.log("stopped");
           },50);
         });
-      },1000);
+      },1000);               
 }
 
 $(document).ready(function(){

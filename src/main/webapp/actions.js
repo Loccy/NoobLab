@@ -8,6 +8,9 @@ function logActivity(activity,position, details, code, module)
     
     var date = new Date();
     if (code == undefined) code = "";
+    
+    // remove any Python passes
+    code = code.replace(/pass\n/g,"");
 
     var dateString = ('0' + date.getHours()).slice(-2)+":"+
                      ('0' + date.getMinutes()).slice(-2)+":"+
@@ -34,6 +37,35 @@ function logActivity(activity,position, details, code, module)
     {
         // remove first - keep 20
         lastLogEntries.shift();
+    }
+    
+    // if interactionlog...
+    if (typeof interactionlog != "undefined")
+    {
+        console.log(interactionlog);
+        var targetInteractions = [];
+        if (typeof interactionlogitems != "undefined")
+        {
+            targetInteractions = interactionlogitems.split(",");
+        }
+        if (targetInteractions.length == 0 || targetInteractions.indexOf(activity) != -1)
+        {
+            var ip = sourceips[0].trim() == "" ? sourceips[1] : sourceips[0];
+            if (ip.indexOf(",") != -1) ip = ip.split(",").shift();
+            
+            var obj = {
+                "id" : getKNo(),
+                "interaction" : [dateString,ip,activity,position,details,code.trim()]
+            }
+            $.ajax({
+                url:interactionlog,
+                type:"POST",
+                data: JSON.stringify(obj),
+                contentType:"application/json",
+                dataType:"json"              
+              })
+            //$.post(interactionlog,obj);            
+        }
     }
 }
 
@@ -112,7 +144,10 @@ function LOGquizInteract(sourceDistractor)
     // get right or wrong from original distractor
     var dstatus = $(sourceDistractor)[0].className.replace("distractor ","");
     // get distractor text
-    var dtext = $(sourceDistractor).contents().eq(0).text().trim();
+    //var dtext = $(sourceDistractor).contents().eq(0).text().trim();
+    var dtext = $(sourceDistractor).clone();
+    dtext.find(".response").remove();
+    dtext = dtext.text().trim();
 
     logActivity("QuizInteractMCQ",CLSstr()+":Q"+qno,dstatus+" ("+dtext+")");
 }

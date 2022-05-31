@@ -94,3 +94,8 @@
 .terminal .xterm-color-9 {
     color : red;
 }
+
+/* PN: 23/09/2021 */
+div.xterm-rows div {
+    white-space : nowrap;
+}
