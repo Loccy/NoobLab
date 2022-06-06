@@ -53,17 +53,6 @@ public class StatsService extends HttpServlet
         
         PrintWriter out = response.getWriter();
         try {            
-            if ("lastmedal".equals(statsType))
-            {                
-                String testid = request.getParameter("testid");
-                String medalgrade = request.getParameter("grade");
-                if (medalgrade != null && medalgrade.trim().equals("")) medalgrade = null;                                
-                String code = StudentStatuses.findSuccessCode(testid, basedir+"/"+username+"/main.csv", medalgrade);
-                
-                response.setContentType("text/plain;charset=UTF-8");                
-                out.print(code);                
-            }
-                    
             if ("studentlist".equals(statsType))
             {
                 String[] studentlist = RealStats.getStudentList(basedir);  

@@ -145,7 +145,6 @@ public class JavaRunningUtils {
                 compileOptions = new String[]{
                     "-d", basedir+"/compiled",
                     "-target","1.6",
-                    "-nowarn",  // needed as later JDKs generate warnings for 1.6 source
                     "-source","1.6",
                     "-bootclasspath", oldrt.getCanonicalPath(),
                     "-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
@@ -157,10 +156,9 @@ public class JavaRunningUtils {
                 compileOptions = new String[]{
                     "-d", basedir+"/compiled",
                     "-target","1.8",
-                    "-nowarn",  // needed as later JDKs generate warnings for 1.8 source
                     "-source","1.8",
-                    //"-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
-                    "-cp", sc.getRealPath("/WEB-INF/classes"), "-g" // this seems to need flipping on JDK 11
+                    "-cp", JavaRunningUtils.class.getResource("/").getPath(),"-g"
+                    //"-cp", sc.getRealPath("/WEB-INF/classes"), "-g"
                 };
             }
         }
