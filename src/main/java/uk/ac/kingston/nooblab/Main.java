@@ -72,10 +72,26 @@ public class Main extends HttpServlet
             if (embedFile.exists()) embed = true;
         }        
         
+        // if (request.getSession().getAttribute("username") == null && !embed)
+        String referrer = request.getHeader("referer");
+        String urlUserId = request.getParameter("userID");
+        String ssoreferer = getServletContext().getInitParameter("ssoreferer");
+        
+        //System.out.println("REF: "+referrer);
+        //System.out.println("USERID: "+urlUserId);
+        //System.out.println("SSO: "+ssoreferer);
+        
+        if (ssoreferer != null && referrer != null && urlUserId != null && referrer.matches(ssoreferer))
+        {
+            //System.out.println("SSO active");
+            request.getSession().setAttribute("username",urlUserId);
+            request.getSession().setAttribute("watermark",MiscUtils.klungeUID(urlUserId));
+        }
+        
+        
         String embedMedal = request.getParameter("embedmedal");
         if (embedMedal != null && !embedMedal.equals(""))
-        {                        
-            String referrer = request.getHeader("referer");
+        {                                    
             String mydomain = request.getServerName().replaceAll(".*\\.(?=.*\\.)", "");            
             if (referrer != null && referrer.matches("(.*)"+mydomain+"(.*)"))
             {            
@@ -255,7 +271,13 @@ public class Main extends HttpServlet
             {
                 request.getSession().setAttribute("module", originalCNo);                
             }
-            String basedir = MiscUtils.getDataDir(request)+"/"+username+"/";       
+            String basedir = MiscUtils.getDataDir(request)+"/"+username+"/";   
+            
+            String altstyle = doc.select("div.parameter[id=altstyle]").text();
+            if (altstyle != null && !altstyle.equals(""))
+            {                
+                request.setAttribute("altstyle",altstyle);
+            }
             
             String language = doc.select("div.parameter[id=language]").text();
             if ("python".equals(language) || "pythoncarol".equals(language))
@@ -291,21 +313,25 @@ public class Main extends HttpServlet
                     }
                     else
                     {
-                        // check whether it's a valid time
-                        String[] x = lockTimeDay.split(" ");
-                        String day = x[0];
-                        x = x[1].split("-");
-                        LocalTime startime = new LocalTime(x[0]);
-                        startime = startime.minusMinutes(10);
-                        LocalTime endtime = new LocalTime(x[1]);
-                        endtime = endtime.plusMinutes(10);
-                        String currentDay = StringUtils.left(new SimpleDateFormat("EEEE", Locale.ENGLISH).format(System.currentTimeMillis()),3);
-                        LocalTime currentTime = new LocalTime();
-                        DateTimeComparator compare = DateTimeComparator.getTimeOnlyInstance();
-                        
-                        if (currentDay.equalsIgnoreCase(day) && currentTime.isAfter(startime) && currentTime.isBefore(endtime))
-                        {
-                            validTime = true;
+                        String[] validTimeDays = lockTimeDay.split(",");
+                        for (String validTimeDay : validTimeDays)
+                        {                        
+                            // check whether it's a valid time
+                            String[] x = validTimeDay.split(" ");
+                            String day = x[0];
+                            x = x[1].split("-");
+                            LocalTime startime = new LocalTime(x[0]);
+                            startime = startime.minusMinutes(10);
+                            LocalTime endtime = new LocalTime(x[1]);
+                            endtime = endtime.plusMinutes(10);
+                            String currentDay = StringUtils.left(new SimpleDateFormat("EEEE", Locale.ENGLISH).format(System.currentTimeMillis()),3);
+                            LocalTime currentTime = new LocalTime();
+                            DateTimeComparator compare = DateTimeComparator.getTimeOnlyInstance();
+
+                            if (currentDay.equalsIgnoreCase(day) && currentTime.isAfter(startime) && currentTime.isBefore(endtime))
+                            {
+                                validTime = true;
+                            }
                         }
                     }
                     String debug = "";
@@ -545,8 +571,11 @@ public class Main extends HttpServlet
             {
                 //System.out.println(title.text());
                 // html += "<div class=\"navitem\">"+title.text()+"</div>";
-                html += "<div id=\"navitem"+i+"\" class=\"navitem\"><a href=\"#\" "
-                        + "onclick=\"contentNav("+i+"); return false;\" title=\""
+//                html += "<div id=\"navitem"+i+"\" class=\"navitem\"><a href=\"#\" "
+//                        + "onclick=\"contentNav("+i+"); return false;\" title=\""
+//                        + title.text()+"\">"+/*(i+1) +*/"</a></div>";
+                html += "<div id=\"navitem"+i+"\" onclick=\"contentNav("+i+"); return false;\"  class=\"navitem\"><a href=\"#\" "
+                        + "title=\""
                         + title.text()+"\">"+/*(i+1) +*/"</a></div>";
                 i++;
             }

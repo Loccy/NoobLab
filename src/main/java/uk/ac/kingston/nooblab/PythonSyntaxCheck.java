@@ -53,7 +53,7 @@ public class PythonSyntaxCheck extends HttpServlet
     }
     
     public static String checkPythonCode(String code) throws IOException
-    {
+    {        
         // stash source files somewhere in the temp directory
         String temp = System.getProperty("java.io.tmpdir");
         // create temp directory in system temp
@@ -62,14 +62,15 @@ public class PythonSyntaxCheck extends HttpServlet
         File tempdir = new File(tempdirStr);
         tempdir.mkdir();
         
-        File output = new File(tempdirStr+"/checkcode.py");
+        File output = new File(tempdirStr+"/python_main");
         FileUtils.writeStringToFile(output, code);
         
-        String emcl = (System.getProperty("os.name")+"").startsWith("Windows") ? "pylint.exe" : "pylint";
+        String emcl = (System.getProperty("os.name")+"").startsWith("Windows") ? "python.exe" : "python3";
         CommandLine cmdLine = new CommandLine(emcl);
         // disable everything other than errors
-        cmdLine.addArgument("-E");
-        cmdLine.addArgument(tempdirStr+"/checkcode.py");
+        cmdLine.addArgument("-m");
+        cmdLine.addArgument("py_compile");
+        cmdLine.addArgument(tempdirStr+"/python_main");
         
         DefaultExecutor executor = new DefaultExecutor();
         ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
@@ -78,10 +79,25 @@ public class PythonSyntaxCheck extends HttpServlet
         PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
         executor.setStreamHandler(streamHandler);
         int exitValue = 0;
-        try { exitValue = executor.execute(cmdLine); } catch (ExecuteException e) { exitValue = 1; };
+        String errors = "success";
+        try 
+        { 
+            exitValue = executor.execute(cmdLine); 
+        } 
+        catch (Exception e) 
+        {
+            //e.printStackTrace();
+            exitValue = 1;
+            errors = "";
+        };
         // we should now have javsscript in tempdirStr/out.js
         // suck this into a string, then clean up, and return string
-        String errors = outputStream.toString();
+        errors += outputStream.toString();
+        errors = errors.trim();
+        FileUtils.deleteDirectory(tempdir);
+        
+        errors = errors.replaceAll("File.*,","Error in");
+        errors = errors.replaceAll("\\(.*, ","(");
         
         return errors;
         
