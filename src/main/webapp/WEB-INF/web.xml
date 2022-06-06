@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <!-- proxy for Canvas integration and other same-origin woes -->
+    <servlet>
+        <servlet-name>ajaxproxy</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.URITemplateProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>{_url}</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>PythonSyntaxCheck</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.PythonSyntaxCheck</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WaitServlet</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.PromptServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ajaxproxy</servlet-name>
+        <url-pattern>/ajaxproxy</url-pattern>
+    </servlet-mapping>
+    <!-- main stuff -->
     <servlet>
         <servlet-name>RunPage</servlet-name>
         <servlet-class>uk.ac.kingston.nooblab.RunPage</servlet-class>
@@ -149,6 +175,14 @@
         <servlet-name>RunFullWeb</servlet-name>
         <url-pattern>/RunFullWeb</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>GenerateEmbed</servlet-name>
+        <servlet-class>uk.ac.kingston.nooblab.GenerateEmbed</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GenerateEmbed</servlet-name>
+        <url-pattern>/GenerateEmbed</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LogViewer</servlet-name>
         <url-pattern>/LogViewer</url-pattern>
@@ -185,6 +219,14 @@
         <servlet-name>XMLCheck</servlet-name>
         <url-pattern>/XMLCheck</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PythonSyntaxCheck</servlet-name>
+        <url-pattern>/PythonSyntaxCheck</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WaitServlet</servlet-name>
+        <url-pattern>/WaitServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>240</session-timeout>
     </session-config>
@@ -197,7 +239,7 @@
              web service should then send back one of two words (without the
              quotes) - "good" or "bad". -->
         <param-name>authType</param-name>
-        <param-value>remote:https://kunet.kingston.ac.uk/ku46587/pnnl.php</param-value>
+        <param-value>remote:https://wherever.com/whatever</param-value>
     </context-param>
     <context-param>
         <description>AD domain</description>
@@ -228,7 +270,6 @@
     <context-param>
         <description>Data dir</description>
         <param-name>datadir</param-name>
-        <!--<param-value>/Users/paulneve/Desktop/noobdata</param-value>-->
         <param-value>/data/noobdata</param-value>
     </context-param>
     <context-param>
@@ -262,7 +303,7 @@
         <!-- leave empty if you don't want any admin exceptions -->
         <!-- Do NOT remove the entry -->
         <param-name>adminExceptions</param-name>
-        <param-value>ku.*|k1618702|k1620737</param-value>
+        <param-value>ku.*</param-value>
     </context-param>
     <context-param>
         <description>Override password to manually award medals</description>
@@ -282,7 +323,17 @@
         <!-- leave empty if you don't want this -->
         <!-- Do NOT remove the entry -->
         <param-name>homeip</param-name>
-        <param-value>.*</param-value>
+        <param-value>(either wildcard it with .* or leave empty)</param-value>
+    </context-param>
+    <context-param>
+        <description>Single sign-on domain</description>
+        <!-- a regex match is done on the param-value supplied against domain name of referer -->
+        <!-- if match is valid, then authentication will be bypassed in favour of the userID supplied in -->
+        <!-- the URL. -->
+        <!-- leave empty if you don't want this -->
+        <!-- Do NOT remove the entry -->
+        <param-name>ssoreferer</param-name>
+        <param-value>(.*)localhost(.*)</param-value>
     </context-param>
     <context-param>
         <description>Acceptable sources for embedmedal links</description>
@@ -290,6 +341,11 @@
         <!-- leave empty if you don't want this -->
         <!-- Do NOT remove the entry -->
         <param-name>emsources</param-name>
-        <param-value>kingston.ac.uk</param-value>
+        <param-value>somecanvasinstance.com</param-value>
+    </context-param>
+    <context-param>
+        <description>Canvas API token</description>
+        <param-name>canvastoken</param-name>
+        <param-value>xxxxxxxSomeCanvasTokenxxxxxxxx</param-value>
     </context-param>
 </web-app>
