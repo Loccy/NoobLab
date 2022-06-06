@@ -8,19 +8,75 @@ import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 
 /**
  *
  * @author paulneve
  */
 public class StudentStatuses
-{    
+{
+    public static String findSuccessCode(String testid,String basefile)
+    {
+        return findSuccessCode(testid,basefile,null);
+    }
+    
+    public static String findSuccessCode(String testid,String basefile,String medal)
+    {
+        try {
+            CSVReader reader = new CSVReader(new FileReader(basefile));
+            String [] nextLine;
+            boolean testStartFound = false;
+            String code = "";
+            while ((nextLine = reader.readNext()) != null)
+            {
+                String interaction = nextLine[2];
+                if (interaction.equals("TestStart"))
+                {
+                    testStartFound = false;
+                    String[] locBits = nextLine[3].split(":");
+                    String currentTestId = locBits[3];
+                    if (currentTestId.equals(testid))
+                    {
+                        // this is the start of potential successful test
+                        testStartFound = true;
+                        code = nextLine[5]
+                                .replace("pass$$","")
+                                .replace("$$","\n")
+                                .trim();
+                    }
+                }
+                else if (testStartFound && interaction.equals("TestPassed"))
+                {                    
+                    String currentMedal = nextLine[4];                    
+                    String[] cmBits = currentMedal.split(":");
+                    if (cmBits.length > 1) currentMedal = cmBits[1];
+                    if (medal == null || currentMedal.equals(medal))
+                    {
+                        // all matches! We have a test passed, either we
+                        // aren't bothered about the medal, it's a non-medal
+                        // test or the medals match, and we previously harvested
+                       // the code!
+                        return code;
+                    }
+                }
+            }
+            return null;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
     public static boolean hasPassedTest(ArrayList<String> testIds,String basefile)
     {
         int passed = 0;
@@ -111,7 +167,7 @@ public class StudentStatuses
             medalDetails.put("finalscore","0");
             File datafile = new File(medalFile);
             HashMap<String,Integer> assists = 
-                    getAssists(medalFile.substring(0,medalFile.lastIndexOf(File.separator)));
+                    getAssists(medalFile.substring(0,medalFile.lastIndexOf("/")));
 
             CSVReader reader = new CSVReader(new FileReader(datafile));
             String [] nextLine;
